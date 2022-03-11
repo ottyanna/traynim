@@ -5,3 +5,8 @@ type
     HdrImage* = object
         width*, height*: int
         pixels*: seq[Color]
+
+proc newHdrImage(width : int, height : int) : HdrImage = 
+    var img : HdrImage
+    img.height = height
+    img.width = width       
