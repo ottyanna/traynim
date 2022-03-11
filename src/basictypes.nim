@@ -48,3 +48,14 @@ proc newHDRImage* ( width, height : int ) : HdrImage =
 #test hdr
 proc validCoordinates* (img : HdrImage, x,y : int ) : bool = 
     result = ((x >= 0) and (x < img.width) and (y >= 0) and (y < img.height))
+
+proc pixelOffset* (img : HdrImage, x,y : int) : int = 
+    result = y * img.width + x
+
+proc getPixel* (img : HdrImage, x,y : int ) : Color =
+    assert validCoordinates(img, x, y)
+    result = img.pixels[img.pixelOffset(x,y)]
+
+proc setPixel* (img : HdrImage, x, y : int) : Color = 
+    assert validCoordinates(img, x, y)
+    result = img.pixels[pixelOffset(img, x, y)]      
