@@ -26,3 +26,8 @@ when isMainModule:
     var img : HdrImage = newHDRImage(7, 4)
     assert img.width == 7
     assert img.height == 4
+
+    #test on pixel offset
+    assert pixelOffset(img, 0, 0) == 0
+    assert pixelOffset(img, 3, 2) == 17
+    assert pixelOffset(img, 6, 3) == 7 * 4 - 1
