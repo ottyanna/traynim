@@ -15,3 +15,4 @@ when isMainModule:
     var img : HdrImage = newHDRImage(7, 4)
     assert img.width == 7
     assert img.height == 4
+    #assert not img.width == 27
