@@ -30,3 +30,11 @@ when isMainModule:
     assert pixelOffset(img, 0, 0) == 0
     assert pixelOffset(img, 3, 2) == 17
     assert pixelOffset(img, 6, 3) == 7 * 4 - 1
+
+    #test 
+    def test_get_set_pixel():
+    img = HdrImage(7, 4)
+
+    reference_color = Color(1.0, 2.0, 3.0)
+    img.set_pixel(3, 2, reference_color)
+    assert are_colors_close(reference_color, img.get_pixel(3, 2))
