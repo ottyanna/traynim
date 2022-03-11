@@ -30,3 +30,5 @@ when isMainModule:
     assert pixelOffset(img, 0, 0) == 0
     assert pixelOffset(img, 3, 2) == 17
     assert pixelOffset(img, 6, 3) == 7 * 4 - 1
+
+    
