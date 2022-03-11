@@ -12,7 +12,7 @@ when isMainModule:
     assert not (col1 + col2).areColorsClose(Color(r: 3.0, g: 9.0, b: 12.0))
 
     #test for coordinates
-    let img = newHDRImage(7,4)
+    var img = newHDRImage(7,4)
     assert validCoordinates(img, 0, 0)
     assert validCoordinates(img, 6, 3)
     assert not validCoordinates(img, -1, 0)
@@ -23,7 +23,6 @@ when isMainModule:
 
 
     #test on HDRimage
-    var img : HdrImage = newHDRImage(7, 4)
     assert img.width == 7
     assert img.height == 4
 
@@ -31,3 +30,8 @@ when isMainModule:
     assert pixelOffset(img, 0, 0) == 0
     assert pixelOffset(img, 3, 2) == 17
     assert pixelOffset(img, 6, 3) == 7 * 4 - 1
+
+    #test on pixel set
+    var referenceColor = Color(r : 1.0, g: 2.0, b: 3.0)
+    setPixel(img, 3, 2 , referenceColor)
+    assert areColorsClose(referenceColor, getPixel(img, 3, 2))
