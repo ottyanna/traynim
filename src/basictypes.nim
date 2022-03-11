@@ -6,7 +6,7 @@ type
         width*, height*: int
         pixels*: seq[Color]
 
-#color functions
+#color Functions
 proc `+`* ( color1, color2 : Color ) : Color =
     result.r = color1.r + color2.r
     result.g = color1.g + color2.g
@@ -46,10 +46,11 @@ proc newHDRImage* ( width, height : int ) : HdrImage =
     result.height = height
     result.pixels = newSeq[Color] (width*height)
 
-#test hdr
+#this function returns 0 i
 proc validCoordinates* (img : HdrImage, x,y : int ) : bool = 
     result = ((x >= 0) and (x < img.width) and (y >= 0) and (y < img.height))
 
+#
 proc pixelOffset* (img : HdrImage, x,y : int) : int = 
     result = y * img.width + x
 
