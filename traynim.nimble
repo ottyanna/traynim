@@ -1,7 +1,7 @@
 # Package
 
 version       = "0.1.0"
-author        = "ottyanna"
+author        = "Jacopo Fera, Anna Spanò"
 description   = "The Nim ray tracer"
 license       = "MIT"
 srcDir        = "src"
