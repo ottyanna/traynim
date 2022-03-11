@@ -10,6 +10,17 @@ when isMainModule:
     assert (col1 - col2).areColorsClose(Color(r: -4.0, g: -5.0, b: -6.0))
     assert (col1 * col2).areColorsClose(Color(r: 5.0, g: 14.0, b: 27.0))
 
+    #test for coordinates
+    let img = newHDRImage(7,4)
+    assert validCoordinates(img, 0, 0)
+    assert validCoordinates(img, 6, 3)
+    assert not validCoordinates(img, -1, 0)
+    assert not validCoordinates(img, 0, -1)
+    assert not validCoordinates(img, 7, 0)
+    assert not validCoordinates(img, 0, 4)
+
+
+
     #test on HDRimage
     var img : HdrImage = newHDRImage(7, 4)
     assert img.width == 7
