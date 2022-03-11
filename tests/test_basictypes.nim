@@ -9,6 +9,7 @@ when isMainModule:
     assert (col1 + col2).areColorsClose(Color(r: 6.0, g: 9.0, b: 12.0))
     assert (col1 - col2).areColorsClose(Color(r: -4.0, g: -5.0, b: -6.0))
     assert (col1 * col2).areColorsClose(Color(r: 5.0, g: 14.0, b: 27.0))
+    assert not (col1 + col2).areColorsClose(Color(r: 3.0, g: 9.0, b: 12.0))
 
     #test for coordinates
     let img = newHDRImage(7,4)
