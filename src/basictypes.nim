@@ -37,3 +37,7 @@ proc newHDRImage* ( width, height : int ) : HdrImage =
     result.width = width
     result.height = height
     result.pixels = newSeq[Color] (width*height)
+
+#test hdr
+proc validCoordinates* (img : HdrImage, x,y : int ) : bool = 
+    result = ((x >= 0) and (x < img.width) and (y >= 0) and (y < img.height))
