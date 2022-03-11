@@ -31,14 +31,7 @@ proc `*`* (color1, color2 : Color) : Color =
     result.r = color1.r * color2.r
     result.g = color1.g * color2.g
     result.b = color1.b * color2.b
-
-#this function determines if two colors are close enough      
-proc areClose* (a, b : float32, epsilon = 1e-5) : bool =
-    return abs(a - b) < epsilon
-
-proc areColorsClose* (color1, color2 : Color) : bool =
-    return areClose(color1.r,color2.r) and areClose(color1.g,color2.g) and areClose(color1.b,color2.b)
-
+      
 #this function creates a new black image (the Color fields are created 0 by default)
 proc newHDRImage* ( width, height : int ) : HdrImage =
     result.width = width
