@@ -2,7 +2,7 @@ import ../src/basictypes
 
 when isMainModule:
 
-    #tests on Color operations
+    # Tests on Color operations
     let col1 = Color(r: 1.0, g: 2.0, b: 3.0)
     let col2 = Color(r: 5.0, g: 7.0, b: 9.0)
 
@@ -14,12 +14,12 @@ when isMainModule:
     assert (3*col2).areColorsClose(Color(r: 15.0, g: 21.0, b: 27.0))
     assert not (3.0*col2).areColorsClose(Color(r: 1.0, g: 21.0, b: 27.0))
 
-    #test on HDRimage operations
+    # Tests on HDRimage operations
     let img = newHDRImage(7, 4)
 
     assert img.width == 7
     assert img.height == 4
-    assert not (img.width == 27) #parenthesis are needed
+    assert not (img.width == 27) # Parenthesis are needed
 
     # Check that valid/invalid coordinates are properly ﬂagged
     assert validCoordinates(img, 0, 0)
