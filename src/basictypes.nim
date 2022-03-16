@@ -34,6 +34,10 @@ proc `*`*(color1, color2: Color): Color =
     result.g = color1.g * color2.g
     result.b = color1.b * color2.b
 
+# Implement "stringfy" operation for Color object
+proc `$`*(color: Color): string =
+    result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " & "b: " & $(color.b) & ">"
+
 # Determine if two colors are equal (to use with floating points)
 proc areClose*(a, b: float32, epsilon = 1e-5): bool =
     return abs(a - b) < epsilon
@@ -58,10 +62,12 @@ proc pixelOffset*(img: HdrImage, x, y: int): int =
 
 # Return Color in pixel of coordinates (x,y)
 proc getPixel*(img: HdrImage, x, y: int): Color =
-    assert validCoordinates(img, x, y)
+    assert img.validCoordinates(x, y)
     result = img.pixels[img.pixelOffset(x, y)]
 
 # Set Color in pixel of coordinates (x,y)
-proc setPixel*(img: HdrImage, x, y: int): Color =
-    assert validCoordinates(img, x, y)
-    result = img.pixels[pixelOffset(img, x, y)]
+proc setPixel*(img: var HdrImage, x, y: int, newColor : Color) = 
+    assert img.validCoordinates(x, y)
+    img.pixels[img.pixelOffset(x, y)] = newColor
+
+
