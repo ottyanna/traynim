@@ -24,7 +24,7 @@ proc `*`*(scalar: float32, col: Color): Color =
     result.g = scalar * col.g
     result.b = scalar * col.b
 
-proc `-`*(color1, color2: Color): Color =
+proc `-`*(color1, color2: Color): Color = 
     result.r = color1.r - color2.r
     result.g = color1.g - color2.g
     result.b = color1.b - color2.b
