@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 import ../src/basictypes
 
 when isMainModule:
@@ -36,4 +38,4 @@ when isMainModule:
     img.setPixel(3, 2, referenceColor)
     assert areColorsClose(referenceColor, img.getPixel(3, 2))
     #test on color print
-    echo($referenceColor)
+    assert ($referenceColor) == "<r: 1.0 , g: 2.0, b: 3.0>"
