@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 type
     Color* = object
         r*, g*, b*: float32
