@@ -50,3 +50,8 @@ when isMainModule:
     line = b""
     
 ]#
+
+    #test on ParseImgSize
+    var x =  ParseImgSize("3 2")
+    x = ParseImgSize("-1 3")
+    echo x

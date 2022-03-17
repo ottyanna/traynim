@@ -1,6 +1,6 @@
 #encoding: utf-8
 
-import streams, endians
+import streams, endians, strutils
 
 type
     Color* = object
@@ -77,6 +77,22 @@ proc setPixel*(img: var HdrImage, x, y: int, newColor : Color) =
 
 #proc ReadFloat*(stream : string, endianness :  ) =
 
+type InvalidPfmFileFormat* = object of CatchableError
 
 
 
+proc ParseImgSize*( line : string ) : tuple =
+    let elements = line.split(" ")
+    type Res = tuple[width, height : int]
+    var res: Res
+    if elements.len != 2:
+        raise newException(InvalidPfmFileFormat, "Invalid image size specification")
+
+    try:
+        res = (elements[0].parseInt, elements[1].parseInt)
+        if (res.width < 0) or (res.height < 0):
+            raise newException(ValueError,"")
+    except ValueError:
+        raise newException(InvalidPfmFileFormat, "Invalid width/height")
+
+    return res
