@@ -1,6 +1,7 @@
 #encoding: utf-8
 
 import ../src/basictypes
+import streams, strutils
 
 when isMainModule:
 
@@ -39,3 +40,13 @@ when isMainModule:
     assert areColorsClose(referenceColor, img.getPixel(3, 2))
     #test on color print
     assert ($referenceColor) == "<r: 1.0 , g: 2.0, b: 3.0>"
+
+#[
+    var strm = openFileStream("tests/referenceBe.pfm")
+    var line = strm.readLine()
+    for i in 0..2:
+        line = readLine(strm)
+        #echo line
+    line = b""
+    
+]#

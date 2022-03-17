@@ -1,5 +1,7 @@
 #encoding: utf-8
 
+import streams, endians
+
 type
     Color* = object
         r*, g*, b*: float32
@@ -69,5 +71,12 @@ proc getPixel*(img: HdrImage, x, y: int): Color =
 proc setPixel*(img: var HdrImage, x, y: int, newColor : Color) = 
     assert img.validCoordinates(x, y)
     img.pixels[img.pixelOffset(x, y)] = newColor
+
+
+#PFM files
+
+#proc ReadFloat*(stream : string, endianness :  ) =
+
+
 
 
