@@ -112,23 +112,18 @@ proc parseEndianness*(line: string): Endianness =
     else:
         raise newException(InvalidPfmFileFormat, "Invalid endianness specification")
 
-proc readFloat(stream : Stream , endianness = littleEndian) :  Color =
+proc readFloat(stream : Stream , endianness = littleEndian) : float32 =
 
     try:
         if endianness == bigEndian:
-            var appo : float32
+            echo "Big Endian"
+            #[var appo : float32
             appo = stream.readFloat32.float32
-            bigEndian32(addr result.r,addr appo)
-            appo = stream.readFloat32.float32
-            bigEndian32(addr result.b,addr appo)
-            appo = stream.readFloat32.float32
-            bigEndian32(addr result.g,addr appo)
+            bigEndian32(addr result,addr appo)]#
 
         #default should be little endian
         if endianness == littleEndian:
-            result.r = stream.readFloat32.float32
-            result.b = stream.readFloat32.float32
-            result.g = stream.readFloat32.float32
+            result = stream.readFloat32.float32 
     except:
         raise newException(InvalidPfmFileFormat, "Impossible to read binary data from the file")
 
@@ -148,5 +143,6 @@ proc readPfmImage*(stream : Stream) : HdrImage =
     #left to right, bottom to top order
     for y in countdown(height-1,0):
         for x in 0..<width:
-            let color : Color = readFloat(stream, endianness)
-            result.setPixel(x, y, color)
+            var color = newSeq[float32](3)
+            for i in 0..<3: color.add(readFloat(stream, endianness))
+            result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
