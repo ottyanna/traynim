@@ -111,3 +111,33 @@ proc parseEndianness*(line: string): Endianness =
         return littleEndian
     else:
         raise newException(InvalidPfmFileFormat, "Invalid endianness specification")
+
+proc readFloat(stream : Stream , endianness = littleEndian) :  Color =
+
+    if endianness == bigEndian:
+        var appo : float32
+        appo = stream.readFloat32.float32
+        bigEndian32(addr result.r,addr appo)
+        result.g= stream.readFloat32.float32
+        result.b = stream.readFloat32.float32
+
+
+
+proc readPfmImage(stream : Stream) : HdrImage =
+    #The ﬁrst bytes in a binary ﬁle are usually called «magic bytes»
+    let magic = readLine(stream)
+    if magic != "PF":
+        raise newException(InvalidPfmFileFormat, "Invalid magic in PFM file")
+
+    let imgSize = readLine(stream)
+    let (width, height) = parseImgSize(imgSize)
+
+    let endianessLine = readLine(stream)
+    let endianness = parseEndianness(endianessLine)
+
+    result = HdrImage( width : width, height : height)
+    #left to right, bottom to top order
+    for y in countdown(height-1,0):
+        for x in 0..<width:
+            let color : Color = readFloat(stream, endianness)
+            result.setPixel(x, y, color)
