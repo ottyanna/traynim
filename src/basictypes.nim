@@ -114,16 +114,25 @@ proc parseEndianness*(line: string): Endianness =
 
 proc readFloat(stream : Stream , endianness = littleEndian) :  Color =
 
-    if endianness == bigEndian:
-        var appo : float32
-        appo = stream.readFloat32.float32
-        bigEndian32(addr result.r,addr appo)
-        result.g= stream.readFloat32.float32
-        result.b = stream.readFloat32.float32
+    try:
+        if endianness == bigEndian:
+            var appo : float32
+            appo = stream.readFloat32.float32
+            bigEndian32(addr result.r,addr appo)
+            appo = stream.readFloat32.float32
+            bigEndian32(addr result.b,addr appo)
+            appo = stream.readFloat32.float32
+            bigEndian32(addr result.g,addr appo)
 
+        #default should be little endian
+        if endianness == littleEndian:
+            result.r = stream.readFloat32.float32
+            result.b = stream.readFloat32.float32
+            result.g = stream.readFloat32.float32
+    except:
+        raise newException(InvalidPfmFileFormat, "Impossible to read binary data from the file")
 
-
-proc readPfmImage(stream : Stream) : HdrImage =
+proc readPfmImage*(stream : Stream) : HdrImage =
     #The ﬁrst bytes in a binary ﬁle are usually called «magic bytes»
     let magic = readLine(stream)
     if magic != "PF":
