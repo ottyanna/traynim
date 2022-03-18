@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 import ../src/basictypes
-import streams, strutils, unittest
+import unittest
 
 when isMainModule:
 
@@ -42,8 +42,15 @@ when isMainModule:
     assert ($referenceColor) == "<r: 1.0 , g: 2.0, b: 3.0>"
 
     #test on ParseImgSize
-    assert ParseImgSize("3 2") == (3, 2)
+    assert parseImgSize("3 2") == (3, 2)
     #expect IOError: #I expect this to fail because it's the wrong type of error
     expect InvalidPfmFileFormat:
-        discard ParseImgSize("-1 3")
-        discard ParseImgSize("1 2 3")
+        discard parseImgSize("-1 3")
+        discard parseImgSize("1 2 3")
+
+    #test on ParseEndianness
+    assert parseEndianness("1.0") == bigEndian
+    assert parseEndianness("-1.0") == littleEndian
+    expect InvalidPfmFileFormat:
+        discard parseEndianness("2.0")
+        discard parseEndianness("abc")

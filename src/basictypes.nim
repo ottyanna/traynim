@@ -26,7 +26,7 @@ proc `*`*(scalar: float32, col: Color): Color =
     result.g = scalar * col.g
     result.b = scalar * col.b
 
-proc `-`*(color1, color2: Color): Color = 
+proc `-`*(color1, color2: Color): Color =
     result.r = color1.r - color2.r
     result.g = color1.g - color2.g
     result.b = color1.b - color2.b
@@ -38,7 +38,8 @@ proc `*`*(color1, color2: Color): Color =
 
 # Implement "stringfy" operation for Color object
 proc `$`*(color: Color): string =
-    result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " & "b: " & $(color.b) & ">"
+    result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " &
+            "b: " & $(color.b) & ">"
 
 # Determine if two colors are equal (to use with floating points)
 proc areClose*(a, b: float32, epsilon = 1e-5): bool =
@@ -68,7 +69,7 @@ proc getPixel*(img: HdrImage, x, y: int): Color =
     result = img.pixels[img.pixelOffset(x, y)]
 
 # Set Color in pixel of coordinates (x,y)
-proc setPixel*(img: var HdrImage, x, y: int, newColor : Color) = 
+proc setPixel*(img: var HdrImage, x, y: int, newColor: Color) =
     assert img.validCoordinates(x, y)
     img.pixels[img.pixelOffset(x, y)] = newColor
 
@@ -80,10 +81,10 @@ proc setPixel*(img: var HdrImage, x, y: int, newColor : Color) =
 type InvalidPfmFileFormat* = object of CatchableError
 
 
-
-proc ParseImgSize*( line : string ) : tuple =
+#Output the HDRimage size (width and height)
+proc parseImgSize*(line: string): tuple =
     let elements = line.split(" ")
-    type Res = tuple[width, height : int]
+    type Res = tuple[width, height: int]
     var res: Res
     if elements.len != 2:
         raise newException(InvalidPfmFileFormat, "Invalid image size specification")
@@ -91,8 +92,22 @@ proc ParseImgSize*( line : string ) : tuple =
     try:
         res = (elements[0].parseInt, elements[1].parseInt)
         if (res.width < 0) or (res.height < 0):
-            raise newException(ValueError,"")
+            raise newException(ValueError, "")
     except ValueError:
         raise newException(InvalidPfmFileFormat, "Invalid width/height")
 
     return res
+
+proc parseEndianness*(line: string): Endianness =
+    var value: float
+    try:
+        value = line.parseFloat
+    except ValueError:
+        raise newException(InvalidPfmFileFormat, "Missing endianness specification")
+
+    if value == 1.0:
+        return bigEndian
+    elif value == -1.0:
+        return littleEndian
+    else:
+        raise newException(InvalidPfmFileFormat, "Invalid endianness specification")
