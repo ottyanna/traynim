@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 import ../src/basictypes
-import streams, strutils
+import streams, strutils, unittest
 
 when isMainModule:
 
@@ -41,17 +41,9 @@ when isMainModule:
     #test on color print
     assert ($referenceColor) == "<r: 1.0 , g: 2.0, b: 3.0>"
 
-#[
-    var strm = openFileStream("tests/referenceBe.pfm")
-    var line = strm.readLine()
-    for i in 0..2:
-        line = readLine(strm)
-        #echo line
-    line = b""
-    
-]#
-
     #test on ParseImgSize
-    var x =  ParseImgSize("3 2")
-    x = ParseImgSize("-1 3")
-    echo x
+    assert ParseImgSize("3 2") == (3, 2)
+    #expect IOError: #I expect this to fail because it's the wrong type of error
+    expect InvalidPfmFileFormat:
+        discard ParseImgSize("-1 3")
+        discard ParseImgSize("1 2 3")
