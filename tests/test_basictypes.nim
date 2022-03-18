@@ -71,7 +71,8 @@ when isMainModule:
     assert imge.width == 3
     assert imge.height == 2
 
-    assert imge.get_pixel(0, 0).areColorsClose(Color(r: 1.0e1,g: 2.0e1, b: 3.0e1))
+    echo imge
+    assert imge.getPixel(0, 0).areColorsClose(Color(r: 1.0e1,g: 2.0e1, b: 3.0e1))
     #[assert imge.get_pixel(1, 0).areColorsClose(Color(4.0e1, 5.0e1, 6.0e1))
     assert imge.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1))
     assert imge.get_pixel(0, 1).is_close(Color(1.0e2, 2.0e2, 3.0e2))

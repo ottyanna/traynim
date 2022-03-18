@@ -139,10 +139,13 @@ proc readPfmImage*(stream : Stream) : HdrImage =
     let endianessLine = readLine(stream)
     let endianness = parseEndianness(endianessLine)
 
-    result = HdrImage( width : width, height : height)
+    result = newHdrImage(width, height)
     #left to right, bottom to top order
-    for y in countdown(height-1,0):
-        for x in 0..<width:
-            var color = newSeq[float32](3)
-            for i in 0..<3: color.add(readFloat(stream, endianness))
-            result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
+    try:
+        for y in countdown(height-1,0):
+            for x in 0..<width:
+                var color = newSeq[float32](3)
+                for i in 0..<3: color.add(readFloat(stream, endianness))
+                result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
+    except IndexDefect:
+        raise newException(IndexDefect, "Fuori dagli indici")
