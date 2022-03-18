@@ -141,11 +141,9 @@ proc readPfmImage*(stream : Stream) : HdrImage =
 
     result = newHdrImage(width, height)
     #left to right, bottom to top order
-    try:
-        for y in countdown(height-1,0):
-            for x in 0..<width:
-                var color = newSeq[float32](3)
-                for i in 0..<3: color.add(readFloat(stream, endianness))
-                result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
-    except IndexDefect:
-        raise newException(IndexDefect, "Fuori dagli indici")
+    
+    for y in countdown(height-1,0):
+        for x in 0..<width:
+            var color = newSeq[float32](3)
+            for i in 0..<3: color.add(readFloat(stream, endianness))
+            result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
