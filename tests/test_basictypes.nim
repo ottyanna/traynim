@@ -66,12 +66,11 @@ when isMainModule:
         0x00, 0x00, 0x20, 0x42, 0x00, 0x00, 0x48, 0x42, 0x00, 0x00, 0x70, 0x42,
         0x00, 0x00, 0x8c, 0x42, 0x00, 0x00, 0xa0, 0x42, 0x00, 0x00, 0xb4, 0x42]
 
-    let strm = newFileStream("tests/reference_le.pfm", fmRead)
+    let strm = newFileStream("tests/HdrImageReferences/reference_le.pfm", fmRead)
     let imge = readPfmImage(strm)
     assert imge.width == 3
     assert imge.height == 2
 
-    echo imge
     assert imge.getPixel(0, 0).areColorsClose(Color(r: 1.0e1,g: 2.0e1, b: 3.0e1))
     #[assert imge.get_pixel(1, 0).areColorsClose(Color(4.0e1, 5.0e1, 6.0e1))
     assert imge.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1))
