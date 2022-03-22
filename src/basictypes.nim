@@ -76,8 +76,6 @@ proc setPixel*(img: var HdrImage, x, y: int, newColor: Color) =
 
 #PFM files
 
-#proc ReadFloat*(stream : string, endianness :  ) =
-
 type InvalidPfmFileFormat* = object of CatchableError
 
 
@@ -122,18 +120,7 @@ proc readFloat(stream : Stream , endianness = littleEndian) : float32 =
             littleEndian32(addr result, addr appo)
         elif endianness == bigEndian:
             bigEndian32(addr result, addr appo)
-
-        #This was the first idea
-        #[
-        var appo : array[4, uint8]
-        for i in 0..3:
-            appo[i] = readUInt8(stream)
-        if endianness == littleEndian:
-            littleEndian32(addr result, addr appo)
-        elif endianness == bigEndian:
-            bigEndian32(addr result, addr appo)
-        ]#
-
+       
     except:
         raise newException(InvalidPfmFileFormat, "Impossible to read binary data from the file")
 
@@ -154,7 +141,33 @@ proc readPfmImage*(stream : Stream) : HdrImage =
     #left to right, bottom to top order
 
     for y in countdown(height-1,0):
-        for x in 0..<width:
+        for x in countup(0, width-1):
             var color = newSeq[float32](3)
             for i in 0..<3: color[i] = readFloat(stream, endianness)
             result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
+
+# beta version for future
+proc writeFloat(stream : Stream, val : float32, endianness = littleEndian) =
+    stream.write(val)
+
+    
+
+proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) = 
+    
+    var endiannessStr : string
+    if endianness == littleEndian:
+        endiannessStr = "-1.0"
+    else:
+        endiannessStr = "1.0"
+    # The PFM header, as a string
+    stream.writeLine("PF")
+    stream.writeLine(img.width, " ", img.height)
+    stream.writeLine(endiannessStr)
+
+    # Write the image (bottom-to-up, left-to-right)
+    for y in countdown(img.height, 0):
+        for x in countup(0, img.width-1):
+           var color = img.getPixel(x, y)
+           writeFloat(stream, color.r, endianness)
+           writeFloat(stream, color.g, endianness)
+           writeFloat(stream, color.b, endianness)
