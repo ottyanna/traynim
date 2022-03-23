@@ -3,7 +3,7 @@
 version       = "0.1.0"
 author        = "Jacopo Fera, Anna Spanò"
 description   = "The Nim ray tracer"
-license       = "MIT"
+license       = "GPLv3"
 srcDir        = "src"
 bin           = @["traynim"]
 

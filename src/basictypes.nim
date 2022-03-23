@@ -1,3 +1,18 @@
+#traynim is a ray tracer program written in Nim
+#Copyright (C) 2022 Jacopo Fera, Anna Spanò
+
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #encoding: utf-8
 
 import streams, endians, strutils
@@ -152,20 +167,17 @@ proc readPfmImage*(stream : Stream) : HdrImage =
             for i in 0..<3: color[i] = readFloat(stream, endianness)
             result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
 
-# beta version for future
+
 proc writeFloat(stream : Stream, val : var float32, endianness = littleEndian) =
-    #stream.write(val)
-    try:
-        var appo : float32
-        if endianness == littleEndian:
-            littleEndian32(addr appo, addr val)
-            write(stream,appo)
-        if endianness == littleEndian:
-            bigEndian32(addr appo, addr val)
-            write(stream,appo)
     
-    except:
-        raise newException(InvalidPfmFileFormat, "Impossible to write binary data from the file")
+    var appo : float32
+    if endianness == littleEndian:
+        littleEndian32(addr appo, addr val)
+        write(stream,appo)
+    elif endianness == bigEndian:
+        bigEndian32(addr appo, addr val)
+        write(stream,appo)
+
 
 proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) = 
     
@@ -180,7 +192,7 @@ proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) 
     stream.writeLine(endiannessStr)
 
     # Write the image (bottom-to-up, left-to-right)
-    for y in countdown(img.height, 0):
+    for y in countdown(img.height-1, 0):
         for x in countup(0, img.width-1):
            var color = img.getPixel(x, y)
            writeFloat(stream, color.r, endianness)
