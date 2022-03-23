@@ -55,6 +55,12 @@ proc newHDRImage*(width, height: int): HdrImage =
     (result.width, result.height) = (width, height)
     result.pixels = newSeq[Color] (width*height)
 
+# Create a new color from scratch
+proc newColor*(r,g,b : float32) : Color =
+    result.r = r
+    result.g = g
+    result.b = b
+
 # Test if the coordinates are in the right range
 proc validCoordinates*(img: HdrImage, x, y: int): bool =
     result = ((x >= 0) and (x < img.width) and (y >= 0) and (y < img.height))
