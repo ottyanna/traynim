@@ -1,7 +1,7 @@
 #encoding: utf-8
 
 import ../src/basictypes
-import unittest,streams,typetraits
+import unittest, streams, typetraits
 
 when isMainModule:
 
@@ -54,11 +54,11 @@ when isMainModule:
     expect InvalidPfmFileFormat:
         discard parseEndianness("2.0")
         discard parseEndianness("abc")
-    
+
 
     # This is the content of "reference_le.pfm" (little-endian file)
-    var leReferenceBytes = @[
-        0x50, 0x46, 0x0a, 0x33, 0x20, 0x32, 0x0a, 0x2d, 0x31, 0x2e, 0x30, 0x0a,
+    const leReferenceBytes = [byte 0x50, 0x46, 0x0a, 0x33, 0x20, 0x32, 0x0a,
+        0x2d, 0x31, 0x2e, 0x30, 0x0a,
         0x00, 0x00, 0xc8, 0x42, 0x00, 0x00, 0x48, 0x43, 0x00, 0x00, 0x96, 0x43,
         0x00, 0x00, 0xc8, 0x43, 0x00, 0x00, 0xfa, 0x43, 0x00, 0x00, 0x16, 0x44,
         0x00, 0x00, 0x2f, 0x44, 0x00, 0x00, 0x48, 0x44, 0x00, 0x00, 0x61, 0x44,
@@ -67,22 +67,22 @@ when isMainModule:
         0x00, 0x00, 0x8c, 0x42, 0x00, 0x00, 0xa0, 0x42, 0x00, 0x00, 0xb4, 0x42]
 
     # This is the content of "reference_be.pfm" (big-endian file)
-    var beReferenceBytes = @[
-        0x50, 0x46, 0x0a, 0x33, 0x20, 0x32, 0x0a, 0x31, 0x2e, 0x30, 0x0a, 0x42,
+    const beReferenceBytes = [byte 0x50, 0x46, 0x0a, 0x33, 0x20, 0x32, 0x0a,
+        0x31, 0x2e, 0x30, 0x0a, 0x42,
         0xc8, 0x00, 0x00, 0x43, 0x48, 0x00, 0x00, 0x43, 0x96, 0x00, 0x00, 0x43,
         0xc8, 0x00, 0x00, 0x43, 0xfa, 0x00, 0x00, 0x44, 0x16, 0x00, 0x00, 0x44,
         0x2f, 0x00, 0x00, 0x44, 0x48, 0x00, 0x00, 0x44, 0x61, 0x00, 0x00, 0x41,
         0x20, 0x00, 0x00, 0x41, 0xa0, 0x00, 0x00, 0x41, 0xf0, 0x00, 0x00, 0x42,
         0x20, 0x00, 0x00, 0x42, 0x48, 0x00, 0x00, 0x42, 0x70, 0x00, 0x00, 0x42,
-        0x8c, 0x00, 0x00, 0x42, 0xa0, 0x00, 0x00, 0x42, 0xb4, 0x00, 0x00, 0x0a]    
+        0x8c, 0x00, 0x00, 0x42, 0xa0, 0x00, 0x00, 0x42, 0xb4, 0x00, 0x00, 0x0a]
 
     let strm = newFileStream("tests/HdrImageReferences/reference_be.pfm", fmRead)
     let imge = readPfmImage(strm)
-    
+
     assert imge.width == 3
     assert imge.height == 2
 
-    assert imge.getPixel(0, 0).areColorsClose(Color(r: 1.0e1,g: 2.0e1, b: 3.0e1))
+    assert imge.getPixel(0, 0).areColorsClose(Color(r: 1.0e1, g: 2.0e1, b: 3.0e1))
     #[assert imge.get_pixel(1, 0).areColorsClose(Color(4.0e1, 5.0e1, 6.0e1))
     assert imge.get_pixel(2, 0).is_close(Color(7.0e1, 8.0e1, 9.0e1))
     assert imge.get_pixel(0, 1).is_close(Color(1.0e2, 2.0e2, 3.0e2))
@@ -92,19 +92,18 @@ when isMainModule:
 ]#
 
 
-
+#var tempImg : HdrImage
 img = newHdrImage(3, 2)
-img.setPixel(0, 0, Color(1.0e1, 2.0e1, 3.0e1))
-img.setPixel(1, 0, Color(4.0e1, 5.0e1, 6.0e1))
-img.setPixel(2, 0, Color(7.0e1, 8.0e1, 9.0e1))
-img.setPixel(0, 1, Color(1.0e2, 2.0e2, 3.0e2))
-img.setPixel(1, 1, Color(4.0e2, 5.0e2, 6.0e2))
-img.setPixel(2, 1, Color(7.0e2, 8.0e2, 9.0e2))
+img.setPixel(0, 0, newColor(1.0e1, 2.0e1, 3.0e1))
+img.setPixel(1, 0, newColor(4.0e1, 5.0e1, 6.0e1))
+img.setPixel(2, 0, newColor(7.0e1, 8.0e1, 9.0e1))
+img.setPixel(0, 1, newColor(1.0e2, 2.0e2, 3.0e2))
+img.setPixel(1, 1, newColor(4.0e2, 5.0e2, 6.0e2))
+img.setPixel(2, 1, newColor(7.0e2, 8.0e2, 9.0e2))
 
-le_buf = newStringStream(leReferenceBytes)
-
-img.writePfmImage(le_buf, endianness=Endianness.LITTLE_ENDIAN)
-assert le_buf.getvalue() == LE_REFERENCE_BYTE
-be_buf = BytesIO()
-img.write_pfm(be_buf, endianness=Endianness.BIG_ENDIAN)
-assert be_buf.getvalue() == BE_REFERENCE_BYTE
+var le_buf = newStringStream()
+img.writePfmImage(le_buf, endianness = littleEndian)
+assert le_buf.readPfmImage == img
+var be_buf = newStringStream()
+img.writePfmImage(be_buf, endianness = bigEndian)
+assert be_buf.readPfmImage == img
