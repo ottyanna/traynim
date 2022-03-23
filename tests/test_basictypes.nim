@@ -91,4 +91,20 @@ when isMainModule:
     assert imge.get_pixel(2, 1).is_close(Color(7.0e2, 8.0e2, 9.0e2))
 ]#
 
-    
+
+
+img = newHdrImage(3, 2)
+img.setPixel(0, 0, Color(1.0e1, 2.0e1, 3.0e1))
+img.setPixel(1, 0, Color(4.0e1, 5.0e1, 6.0e1))
+img.setPixel(2, 0, Color(7.0e1, 8.0e1, 9.0e1))
+img.setPixel(0, 1, Color(1.0e2, 2.0e2, 3.0e2))
+img.setPixel(1, 1, Color(4.0e2, 5.0e2, 6.0e2))
+img.setPixel(2, 1, Color(7.0e2, 8.0e2, 9.0e2))
+
+le_buf = newStringStream(leReferenceBytes)
+
+img.writePfmImage(le_buf, endianness=Endianness.LITTLE_ENDIAN)
+assert le_buf.getvalue() == LE_REFERENCE_BYTE
+be_buf = BytesIO()
+img.write_pfm(be_buf, endianness=Endianness.BIG_ENDIAN)
+assert be_buf.getvalue() == BE_REFERENCE_BYTE

@@ -147,10 +147,19 @@ proc readPfmImage*(stream : Stream) : HdrImage =
             result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
 
 # beta version for future
-proc writeFloat(stream : Stream, val : float32, endianness = littleEndian) =
-    stream.write(val)
-
+proc writeFloat(stream : Stream, val : var float32, endianness = littleEndian) =
+    #stream.write(val)
+    try:
+        var appo : float32
+        if endianness == littleEndian:
+            littleEndian32(addr appo, addr val)
+            write(stream,appo)
+        if endianness == littleEndian:
+            bigEndian32(addr appo, addr val)
+            write(stream,appo)
     
+    except:
+        raise newException(InvalidPfmFileFormat, "Impossible to write binary data from the file")
 
 proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) = 
     
