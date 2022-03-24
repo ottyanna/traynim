@@ -13,9 +13,13 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #encoding: utf-8
 
-import streams, endians, strutils
+## This module implements operations on basictypes
+
+import streams, endians, strutils, options
+from math import pow, log10
 
 type
     Color* = object
@@ -25,7 +29,13 @@ type
         width*, height*: int
         pixels*: seq[Color]
 
-# Implement operations on Color type
+# Create a new color from scratch
+proc newColor*(r,g,b : float32) : Color =
+    result.r = r
+    result.g = g
+    result.b = b
+
+#Implement operations on Color type
 proc `+`*(color1, color2: Color): Color =
     result.r = color1.r + color2.r
     result.g = color1.g + color2.g
@@ -65,16 +75,15 @@ proc areColorsClose*(color1, color2: Color): bool =
             areClose(color1.b, color2.b)
 
 
+proc luminosity*(color: Color) : float32 =
+    result = (max(color.r,max(color.g,color.b)) + min(color.r,min(color.g,color.b)))/2
+
+
 # Create an empty black image (the Color fields are set to 0 by default)
 proc newHDRImage*(width, height: int): HdrImage =
     (result.width, result.height) = (width, height)
     result.pixels = newSeq[Color] (width*height)
 
-# Create a new color from scratch
-proc newColor*(r,g,b : float32) : Color =
-    result.r = r
-    result.g = g
-    result.b = b
 
 # Test if the coordinates are in the right range
 proc validCoordinates*(img: HdrImage, x, y: int): bool =
@@ -178,9 +187,8 @@ proc writeFloat(stream : Stream, val : var float32, endianness = littleEndian) =
         bigEndian32(addr appo, addr val)
         write(stream,appo)
 
-
 proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) = 
-    
+    ## Prova docstring    
     var endiannessStr : string
     if endianness == littleEndian:
         endiannessStr = "-1.0"
@@ -198,3 +206,27 @@ proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) 
            writeFloat(stream, color.r, endianness)
            writeFloat(stream, color.g, endianness)
            writeFloat(stream, color.b, endianness)
+
+
+proc averageLuminosity*(img : HdrImage, delta=1e-10) : float32 =
+        
+        var cumsum = 0.0
+        
+        for pix in img.pixels:
+            cumsum += log10(delta + pix.luminosity())
+
+        result = pow(10, cumsum / len(img.pixels).float)
+#[
+proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = none(float32)) =
+
+    for i in 0..<img.pixels.len:
+        if luminosity.isNone:
+            img.pixels[i]=img.pixels[i]*(factor/averageLuminosity(img))
+        else:
+            img.pixels[i]=img.pixels[i]*(factor/luminosity.get)
+]#
+
+proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = averageLuminosity(img)) =
+
+    for i in 0..<img.pixels.len:
+            img.pixels[i]=img.pixels[i]*(factor/luminosity)

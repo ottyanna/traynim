@@ -16,6 +16,7 @@
 
 #encoding: utf-8
 
+## This is the main
 import basictypes
 
 when isMainModule:

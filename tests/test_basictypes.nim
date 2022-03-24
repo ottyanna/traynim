@@ -19,7 +19,47 @@
 import ../src/basictypes
 import unittest, streams
 
+
+proc testLuminosity( color1, color2 : Color ) =
+
+    assert areClose(luminosity(color1), 2.0)
+    assert areClose(luminosity(color2), 7.0)
+
+proc testAverageLuminosity( img: HdrImage ) =
+
+    assert areClose(img.averageLuminosity(delta=0.0), 100.0)
+    assert img.averageLuminosity(delta=0.0) == 100.0
+
+proc testNormalizeImageWithArgs(img: var HdrImage) =
+    normalizeImage(img, 1000.0, 100.0)
+    assert areColorsClose(img.getPixel(0,0),newColor(0.5e2, 1.0e2, 1.5e2))
+    assert areColorsClose(img.getPixel(1,0),newColor(0.5e4, 1.0e4, 1.5e4))
+
+proc testNormalizeImageWithoutArgs(img: var HdrImage) =
+    normalizeImage(img, 1000.0)
+    assert areColorsClose(img.getPixel(0,0),newColor(0.5e2, 1.0e2, 1.5e2))
+    assert areColorsClose(img.getPixel(1,0),newColor(0.5e4, 1.0e4, 1.5e4))
+
+
 when isMainModule:
+
+    let col11 = newColor(1.0, 2.0, 3.0)
+    let col12 = newColor(9.0, 5.0, 7.0)
+
+    var imgi = newHDRImage(2,1)
+    imgi.set_pixel(0, 0, newColor(  5.0,   10.0,   15.0))  # Luminosity: 10.0
+    imgi.set_pixel(1, 0, newColor(500.0, 1000.0, 1500.0))  # Luminosity: 1000.0
+
+    testLuminosity(col11,col12) 
+    testAverageLuminosity(imgi)
+    testNormalizeImageWithoutArgs(imgi)
+
+    imgi = newHDRImage(2,1)
+    imgi.set_pixel(0, 0, newColor(  5.0,   10.0,   15.0))  # Luminosity: 10.0
+    imgi.set_pixel(1, 0, newColor(500.0, 1000.0, 1500.0))  # Luminosity: 1000.0
+
+    testNormalizeImageWithArgs(imgi)
+    #testClampImage(imgi)
 
     #tests on colors operations
     let col1 = Color(r: 1.0, g: 2.0, b: 3.0)
@@ -35,7 +75,7 @@ when isMainModule:
     #test on HDRimage
     assert img.width == 7
     assert img.height == 4
-    #assert not img.width == 27
+    assert not (img.width == 27)
 
     #test for coordinates
     assert img.validCoordinates(0, 0)
