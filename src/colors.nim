@@ -22,13 +22,17 @@ type
     Color* = object
         r*, g*, b*: float32
 
-# Create a new color from scratch
-proc newColor*(r,g,b : float32) : Color =
+
+proc newColor*(r, g, b: float32): Color =
+
+    ## Create a new color from scratch
+
     result.r = r
     result.g = g
     result.b = b
 
-#Implement operations on Color type
+# Implement simple operations on Color type
+
 proc `+`*(color1, color2: Color): Color =
     result.r = color1.r + color2.r
     result.g = color1.g + color2.g
@@ -59,14 +63,20 @@ proc `$`*(color: Color): string =
     result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " &
             "b: " & $(color.b) & ">"
 
-# Determine if two colors are equal (to use with floating points)
+
 proc areClose*(a, b: float32, epsilon = 1e-5): bool =
     return abs(a - b) < epsilon
 
 proc areColorsClose*(color1, color2: Color): bool =
+
+    ## Determine if two colors are equal (to use with floating points)
+
     return areClose(color1.r, color2.r) and areClose(color1.g, color2.g) and
             areClose(color1.b, color2.b)
 
-#determine the luminosity of a color
-proc luminosity*(color: Color) : float32 =
-    result = (max(color.r,max(color.g,color.b)) + min(color.r,min(color.g,color.b)))/2
+
+proc luminosity*(color: Color): float32 =
+
+    ## Determine the luminosity of a color
+
+    result = (max(color.r, max(color.g, color.b)) + min(color.r, min(color.g, color.b)))/2

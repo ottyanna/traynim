@@ -21,25 +21,25 @@ import ../src/hdrimages
 import unittest, streams
 
 
-proc testLuminosity( color1, color2 : Color ) =
+proc testLuminosity(color1, color2: Color) =
 
     assert areClose(luminosity(color1), 2.0)
     assert areClose(luminosity(color2), 7.0)
 
-proc testAverageLuminosity( img: HdrImage ) =
+proc testAverageLuminosity(img: HdrImage) =
 
-    assert areClose(img.averageLuminosity(delta=0.0), 100.0)
-    assert img.averageLuminosity(delta=0.0) == 100.0
+    assert areClose(img.averageLuminosity(delta = 0.0), 100.0)
+    assert img.averageLuminosity(delta = 0.0) == 100.0
 
 proc testNormalizeImageWithArgs(img: var HdrImage) =
     normalizeImage(img, 1000.0, 100.0)
-    assert areColorsClose(img.getPixel(0,0),newColor(0.5e2, 1.0e2, 1.5e2))
-    assert areColorsClose(img.getPixel(1,0),newColor(0.5e4, 1.0e4, 1.5e4))
+    assert areColorsClose(img.getPixel(0, 0), newColor(0.5e2, 1.0e2, 1.5e2))
+    assert areColorsClose(img.getPixel(1, 0), newColor(0.5e4, 1.0e4, 1.5e4))
 
 proc testNormalizeImageWithoutArgs(img: var HdrImage) =
     normalizeImage(img, 1000.0)
-    assert areColorsClose(img.getPixel(0,0),newColor(0.5e2, 1.0e2, 1.5e2))
-    assert areColorsClose(img.getPixel(1,0),newColor(0.5e4, 1.0e4, 1.5e4))
+    assert areColorsClose(img.getPixel(0, 0), newColor(0.5e2, 1.0e2, 1.5e2))
+    assert areColorsClose(img.getPixel(1, 0), newColor(0.5e4, 1.0e4, 1.5e4))
 
 
 when isMainModule:
@@ -47,17 +47,17 @@ when isMainModule:
     let col11 = newColor(1.0, 2.0, 3.0)
     let col12 = newColor(9.0, 5.0, 7.0)
 
-    var imgi = newHDRImage(2,1)
-    imgi.set_pixel(0, 0, newColor(  5.0,   10.0,   15.0))  # Luminosity: 10.0
-    imgi.set_pixel(1, 0, newColor(500.0, 1000.0, 1500.0))  # Luminosity: 1000.0
+    var imgi = newHDRImage(2, 1)
+    imgi.set_pixel(0, 0, newColor(5.0, 10.0, 15.0)) # Luminosity: 10.0
+    imgi.set_pixel(1, 0, newColor(500.0, 1000.0, 1500.0)) # Luminosity: 1000.0
 
-    testLuminosity(col11,col12) 
+    testLuminosity(col11, col12)
     testAverageLuminosity(imgi)
     testNormalizeImageWithoutArgs(imgi)
 
-    imgi = newHDRImage(2,1)
-    imgi.set_pixel(0, 0, newColor(  5.0,   10.0,   15.0))  # Luminosity: 10.0
-    imgi.set_pixel(1, 0, newColor(500.0, 1000.0, 1500.0))  # Luminosity: 1000.0
+    imgi = newHDRImage(2, 1)
+    imgi.set_pixel(0, 0, newColor(5.0, 10.0, 15.0)) # Luminosity: 10.0
+    imgi.set_pixel(1, 0, newColor(500.0, 1000.0, 1500.0)) # Luminosity: 1000.0
 
     testNormalizeImageWithArgs(imgi)
     #testClampImage(imgi)
@@ -100,7 +100,6 @@ when isMainModule:
 
     #test on ParseImgSize
     assert parseImgSize("3 2") == (3, 2)
-    #expect IOError: #I expect this to fail because it's the wrong type of error
     expect InvalidPfmFileFormat:
         discard parseImgSize("-1 3")
         discard parseImgSize("1 2 3")

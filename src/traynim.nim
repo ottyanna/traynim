@@ -16,8 +16,8 @@
 
 #encoding: utf-8
 
-## This is the main
-import basictypes
+import ./colors
+import ./hdrimages
 
 when isMainModule:
   echo("Hello, World!")

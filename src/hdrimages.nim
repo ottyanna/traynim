@@ -16,10 +16,11 @@
 
 #encoding: utf-8
 
-## This module implements operations on HDRimages
+## This module implements operations on HDRimages and PFM files
 
 import ./colors
 import streams, endians, strutils, options
+#import pixie except Color
 from math import pow, log10
 
 type
@@ -27,27 +28,41 @@ type
         width*, height*: int
         pixels*: seq[Color]
 
-# Create an empty black image (the Color fields are set to 0 by default)
+
 proc newHDRImage*(width, height: int): HdrImage =
+
+    ## Create an empty black image (the Color fields are set to 0 by default)
+
     (result.width, result.height) = (width, height)
     result.pixels = newSeq[Color] (width*height)
 
 
-# Test if the coordinates are in the right range
 proc validCoordinates*(img: HdrImage, x, y: int): bool =
+
+    ## Test if the coordinates are in the right range
+
     result = ((x >= 0) and (x < img.width) and (y >= 0) and (y < img.height))
 
-# Calculate indices in the array
+
 proc pixelOffset*(img: HdrImage, x, y: int): int =
+
+    ## Calculate indices in the array
+
     result = y * img.width + x
 
-# Return Color in pixel of coordinates (x,y)
+
 proc getPixel*(img: HdrImage, x, y: int): Color =
+
+    ## Return Color in pixel of coordinates (x,y)
+
     assert img.validCoordinates(x, y)
     result = img.pixels[img.pixelOffset(x, y)]
 
-# Set Color in pixel of coordinates (x,y)
+
 proc setPixel*(img: var HdrImage, x, y: int, newColor: Color) =
+
+    ## Set Color in pixel of coordinates (x,y)
+
     assert img.validCoordinates(x, y)
     img.pixels[img.pixelOffset(x, y)] = newColor
 
@@ -57,8 +72,10 @@ proc setPixel*(img: var HdrImage, x, y: int, newColor: Color) =
 type InvalidPfmFileFormat* = object of CatchableError
 
 
-#Output the HDRimage size (width and height)
 proc parseImgSize*(line: string): tuple =
+
+    ## Output the HDRimage size (width and height)
+
     let elements = line.split(" ")
     type Res = tuple[width, height: int]
     var res: Res
@@ -88,21 +105,21 @@ proc parseEndianness*(line: string): Endianness =
     else:
         raise newException(InvalidPfmFileFormat, "Invalid endianness specification")
 
-proc readFloat(stream : Stream , endianness = littleEndian) : float32 =
+proc readFloat(stream: Stream, endianness = littleEndian): float32 =
 
     try:
 
-        var appo : float32
+        var appo: float32
         appo = readFloat32(stream)
         if endianness == littleEndian:
             littleEndian32(addr result, addr appo)
         elif endianness == bigEndian:
             bigEndian32(addr result, addr appo)
-       
+
     except:
         raise newException(InvalidPfmFileFormat, "Impossible to read binary data from the file")
 
-proc readPfmImage*(stream : Stream) : HdrImage =
+proc readPfmImage*(stream: Stream): HdrImage =
     #The ﬁrst bytes in a binary ﬁle are usually called «magic bytes»
     let magic = readLine(stream)
     if magic != "PF":
@@ -118,26 +135,28 @@ proc readPfmImage*(stream : Stream) : HdrImage =
 
     #left to right, bottom to top order
 
-    for y in countdown(height-1,0):
+    for y in countdown(height-1, 0):
         for x in countup(0, width-1):
             var color = newSeq[float32](3)
             for i in 0..<3: color[i] = readFloat(stream, endianness)
             result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
 
 
-proc writeFloat(stream : Stream, val : var float32, endianness = littleEndian) =
-    
-    var appo : float32
+proc writeFloat(stream: Stream, val: var float32, endianness = littleEndian) =
+
+    var appo: float32
     if endianness == littleEndian:
         littleEndian32(addr appo, addr val)
-        write(stream,appo)
+        write(stream, appo)
     elif endianness == bigEndian:
         bigEndian32(addr appo, addr val)
-        write(stream,appo)
+        write(stream, appo)
 
-proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) = 
-    ## Prova docstring    
-    var endiannessStr : string
+proc writePfmImage*(img: HdrImage, stream: Stream, endianness = littleEndian) =
+
+    ## Prova docstring
+
+    var endiannessStr: string
     if endianness == littleEndian:
         endiannessStr = "-1.0"
     else:
@@ -150,20 +169,20 @@ proc writePfmImage*(img : HdrImage, stream : Stream, endianness = littleEndian) 
     # Write the image (bottom-to-up, left-to-right)
     for y in countdown(img.height-1, 0):
         for x in countup(0, img.width-1):
-           var color = img.getPixel(x, y)
-           writeFloat(stream, color.r, endianness)
-           writeFloat(stream, color.g, endianness)
-           writeFloat(stream, color.b, endianness)
+            var color = img.getPixel(x, y)
+            writeFloat(stream, color.r, endianness)
+            writeFloat(stream, color.g, endianness)
+            writeFloat(stream, color.b, endianness)
 
 
-proc averageLuminosity*(img : HdrImage, delta=1e-10) : float32 =
-        
-        var cumsum = 0.0
-        
-        for pix in img.pixels:
-            cumsum += log10(delta + pix.luminosity())
+proc averageLuminosity*(img: HdrImage, delta = 1e-10): float32 =
 
-        result = pow(10, cumsum / len(img.pixels).float)
+    var cumsum = 0.0
+
+    for pix in img.pixels:
+        cumsum += log10(delta + pix.luminosity())
+
+    result = pow(10, cumsum / len(img.pixels).float)
 #[
 proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = none(float32)) =
 
@@ -174,7 +193,8 @@ proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = none(float
             img.pixels[i]=img.pixels[i]*(factor/luminosity.get)
 ]#
 
-proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = averageLuminosity(img)) =
+proc normalizeImage*(img: var HdrImage, factor: float32,
+        luminosity = averageLuminosity(img)) =
 
     for i in 0..<img.pixels.len:
-            img.pixels[i]=img.pixels[i]*(factor/luminosity)
+        img.pixels[i] = img.pixels[i]*(factor/luminosity)
