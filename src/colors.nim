@@ -1,0 +1,72 @@
+#traynim is a ray tracer program written in Nim
+#Copyright (C) 2022 Jacopo Fera, Anna Spanò
+
+#This program is free software: you can redistribute it and/or modify
+#it under the terms of the GNU General Public License as published by
+#the Free Software Foundation, either version 3 of the License, or
+#(at your option) any later version.
+
+#This program is distributed in the hope that it will be useful,
+#but WITHOUT ANY WARRANTY; without even the implied warranty of
+#MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#GNU General Public License for more details.
+
+#You should have received a copy of the GNU General Public License
+#along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#encoding: utf-8
+
+## This module implements operations on Color type
+
+type
+    Color* = object
+        r*, g*, b*: float32
+
+# Create a new color from scratch
+proc newColor*(r,g,b : float32) : Color =
+    result.r = r
+    result.g = g
+    result.b = b
+
+#Implement operations on Color type
+proc `+`*(color1, color2: Color): Color =
+    result.r = color1.r + color2.r
+    result.g = color1.g + color2.g
+    result.b = color1.b + color2.b
+
+proc `*`*(col: Color, scalar: float32): Color =
+    result.r = scalar * col.r
+    result.g = scalar * col.g
+    result.b = scalar * col.b
+
+proc `*`*(scalar: float32, col: Color): Color =
+    result.r = scalar * col.r
+    result.g = scalar * col.g
+    result.b = scalar * col.b
+
+proc `-`*(color1, color2: Color): Color =
+    result.r = color1.r - color2.r
+    result.g = color1.g - color2.g
+    result.b = color1.b - color2.b
+
+proc `*`*(color1, color2: Color): Color =
+    result.r = color1.r * color2.r
+    result.g = color1.g * color2.g
+    result.b = color1.b * color2.b
+
+# Implement "stringfy" operation for Color object
+proc `$`*(color: Color): string =
+    result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " &
+            "b: " & $(color.b) & ">"
+
+# Determine if two colors are equal (to use with floating points)
+proc areClose*(a, b: float32, epsilon = 1e-5): bool =
+    return abs(a - b) < epsilon
+
+proc areColorsClose*(color1, color2: Color): bool =
+    return areClose(color1.r, color2.r) and areClose(color1.g, color2.g) and
+            areClose(color1.b, color2.b)
+
+#determine the luminosity of a color
+proc luminosity*(color: Color) : float32 =
+    result = (max(color.r,max(color.g,color.b)) + min(color.r,min(color.g,color.b)))/2

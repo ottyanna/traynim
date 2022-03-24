@@ -16,7 +16,8 @@
 
 #encoding: utf-8
 
-import ../src/basictypes
+import ../src/colors
+import ../src/hdrimages
 import unittest, streams
 
 
