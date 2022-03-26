@@ -74,7 +74,8 @@ type InvalidPfmFileFormat* = object of CatchableError
 
 proc parseImgSize*(line: string): tuple =
 
-    ## Outputs the HDRimage size (width and height) from PFM file format
+    ## Outputs the HDRimage size (width and height) from PFM file format.
+    ## 
     ## Raises InvalidPfmFileFormat Error if the size specifications are not valid  
 
     let elements = line.split(" ")
@@ -94,7 +95,8 @@ proc parseImgSize*(line: string): tuple =
 
 proc parseEndianness*(line: string): Endianness =
 
-    ## Outputs the HDRimage byte endiannes from PFM file format
+    ## Outputs the HDRimage byte endiannes from PFM file format.
+    ## 
     ## Raises `InvalidPfmFileFormat` error if the endianess specification is not valid
 
     var value: float
@@ -112,7 +114,8 @@ proc parseEndianness*(line: string): Endianness =
 
 proc readFloat(stream: Stream, endianness = littleEndian): float32 =
 
-    ## Reads a float32 from PFM file format from binary using given byte endiannes
+    ## Reads a float32 from PFM file format from binary using given byte endiannes.
+    ## 
     ## Raises `InvalidPfmFileFormat` error if data is not valid
 
     try:
