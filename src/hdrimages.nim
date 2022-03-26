@@ -198,3 +198,12 @@ proc normalizeImage*(img: var HdrImage, factor: float32,
 
     for i in 0..<img.pixels.len:
         img.pixels[i] = img.pixels[i]*(factor/luminosity)
+
+proc clamp(x: float32): float32 =
+    result = x / (1 + x)
+
+proc clampImage*(img: var HdrImage) =
+    for i in 0..<img.pixels.len:
+        img.pixels[i].r = clamp(img.pixels[i].r)
+        img.pixels[i].g = clamp(img.pixels[i].g)
+        img.pixels[i].b = clamp(img.pixels[i].b)
