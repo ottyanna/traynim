@@ -19,7 +19,7 @@
 ## This module implements operations on HDRimages and PFM files
 
 import ./colors
-import streams, endians, strutils, options
+import streams, endians, strutils
 #import pixie except Color
 from math import pow, log10
 
