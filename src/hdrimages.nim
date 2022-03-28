@@ -20,7 +20,7 @@
 
 import ./colors
 import streams, endians, strutils
-#import pixie except Color
+import pixie except Color
 from math import pow, log10
 
 type
@@ -245,3 +245,17 @@ proc clampImage*(img: var HdrImage) =
         img.pixels[i].r = clamp(img.pixels[i].r)
         img.pixels[i].g = clamp(img.pixels[i].g)
         img.pixels[i].b = clamp(img.pixels[i].b)
+
+proc writeLdrImage*(img :HdrImage, format : string, gamma = 1.0) =
+    var imgF = newImage(img.width, img.height)
+    for y in 0..<img.height:
+            for x in 0..<img.width:
+                var curColor = img.getPixel(x, y)
+                
+                var curColorF = color((255 * pow(curColor.r, 1 / gamma)), (255 * math.pow(curColor.g, 1 / gamma)), (255 * math.pow(curColor.b, 1 / gamma)))
+
+                setColor(imgF, x, y, curColorF)
+
+    let outputName = "output." & format 
+
+    writeFile(imgF, outputName)
