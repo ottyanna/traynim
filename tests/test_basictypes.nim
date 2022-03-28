@@ -121,8 +121,9 @@ when isMainModule:
         discard parseEndianness("2.0")
         discard parseEndianness("abc")
 
-    let strm = newFileStream("tests/HdrImageReferences/reference_be.pfm", fmRead)
+    var strm = newFileStream("tests/HdrImageReferences/reference_be.pfm", fmRead)
     let imge = readPfmImage(strm)
+    strm.close()
 
     assert imge.width == 3
     assert imge.height == 2
@@ -150,4 +151,7 @@ when isMainModule:
     beBuf.setPosition(0)
     assert beBuf.readPfmImage == img
 
-    writeLdrImage(img,"png")
+    strm = newFileStream("tests/memorial.pfm",fmRead)
+    let imgem = readPfmImage(strm)
+    strm.close()
+    writeLdrImage(imgem,"png")
