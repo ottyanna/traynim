@@ -149,3 +149,5 @@ when isMainModule:
     img.writePfmImage(beBuf, endianness = bigEndian)
     beBuf.setPosition(0)
     assert beBuf.readPfmImage == img
+
+    writeLdrImage(img,"png")
