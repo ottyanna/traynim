@@ -247,7 +247,7 @@ proc writeLdrImage*(img :HdrImage, format : string, gamma = 1.0) =
             for x in 0..<img.width:
                 var curColor = img.getPixel(x, y)
                 
-                var curColorF = color((255 * pow(curColor.r, 1 / gamma)), (255 * math.pow(curColor.g, 1 / gamma)), (255 * math.pow(curColor.b, 1 / gamma)))
+                var curColorF = color((pow(curColor.r, 1 / gamma)), (pow(curColor.g, 1 / gamma)), (pow(curColor.b, 1 / gamma)))
 
                 setColor(imgF, x, y, curColorF)
 

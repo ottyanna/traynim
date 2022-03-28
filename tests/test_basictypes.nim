@@ -154,4 +154,4 @@ when isMainModule:
     strm = newFileStream("tests/memorial.pfm",fmRead)
     let imgem = readPfmImage(strm)
     strm.close()
-    writeLdrImage(imgem,"png")
+    writeLdrImage(imgem,"png",2.0)
