@@ -22,19 +22,21 @@ import ./colors
 import streams, endians, strutils, options
 #import pixie except Color
 from math import pow, log10
+import pixie 
+
 
 type
     HdrImage* = object
         width*, height*: int
-        pixels*: seq[Color]
+        pixels*: seq[colors.Color]
 
 
 proc newHDRImage*(width, height: int): HdrImage =
 
-    ## Create an empty black image (the Color fields are set to 0 by default)
+    ## Create an empty black image (the colors.Color fields are set to 0 by default)
 
     (result.width, result.height) = (width, height)
-    result.pixels = newSeq[Color] (width*height)
+    result.pixels = newSeq[colors.Color] (width*height)
 
 
 proc validCoordinates*(img: HdrImage, x, y: int): bool =
@@ -51,7 +53,7 @@ proc pixelOffset*(img: HdrImage, x, y: int): int =
     result = y * img.width + x
 
 
-proc getPixel*(img: HdrImage, x, y: int): Color =
+proc getPixel*(img: HdrImage, x, y: int): colors.Color =
 
     ## Return Color in pixel of coordinates (x,y)
 
@@ -59,7 +61,7 @@ proc getPixel*(img: HdrImage, x, y: int): Color =
     result = img.pixels[img.pixelOffset(x, y)]
 
 
-proc setPixel*(img: var HdrImage, x, y: int, newColor: Color) =
+proc setPixel*(img: var HdrImage, x, y: int, newColor: colors.Color) =
 
     ## Set Color in pixel of coordinates (x,y)
 
@@ -139,7 +141,7 @@ proc readPfmImage*(stream: Stream): HdrImage =
         for x in countup(0, width-1):
             var color = newSeq[float32](3)
             for i in 0..<3: color[i] = readFloat(stream, endianness)
-            result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
+            result.setPixel(x, y, colors.Color(r: color[0], g: color[1], b: color[2]))
 
 
 proc writeFloat(stream: Stream, val: var float32, endianness = littleEndian) =
@@ -207,3 +209,18 @@ proc clampImage*(img: var HdrImage) =
         img.pixels[i].r = clamp(img.pixels[i].r)
         img.pixels[i].g = clamp(img.pixels[i].g)
         img.pixels[i].b = clamp(img.pixels[i].b)
+
+proc writeLdrImage*(img : HdrImage, stream : Stream, format : string, gamma = 1.0) =
+    var image = newImage(img.width,img.height)
+
+    for y in countup(0, img.height-1):
+        for x in countup(0, img.width-1):
+            var curColor = img.getPixel(x,y)
+            var pippo = rgba(pow(curColor.r,1/gamma).uint8,
+                            pow(curColor.g,1/gamma).uint8,
+                            pow(curColor.b,1/gamma).uint8, 1.uint8)
+            image.setColor(x,y, pippo)
+    
+
+
+    

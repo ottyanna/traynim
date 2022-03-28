@@ -18,6 +18,7 @@
 
 import ./colors
 import ./hdrimages
+import os 
 
 when isMainModule:
   echo("Hello, World!")
