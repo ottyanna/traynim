@@ -22,12 +22,15 @@ from pixie import newImage, color, writeFile, setColor
 #import pixie except Color
 import ./colors
 import streams, endians, strutils
+import pixie
 from math import pow, log10
+
+
 
 type
     HdrImage* = object ## A High-Dynamic-Range 2D image type
         width*, height*: int ## `width` (int) and `height` (int) number of columns and rows of the matrix of colors
-        pixels*: seq[Color] ## `pixels` (seq of Color type): the matrix of colors represented by a 1D array 
+        pixels*: seq[colors.Color] ## `pixels` (seq of Color type): the matrix of colors represented by a 1D array 
 
 
 proc newHDRImage*(width, height: int): HdrImage =
@@ -35,7 +38,7 @@ proc newHDRImage*(width, height: int): HdrImage =
     ## Creates an empty black image (the Color fields are set to 0 by default)
 
     (result.width, result.height) = (width, height)
-    result.pixels = newSeq[Color] (width*height)
+    result.pixels = newSeq[colors.Color] (width*height)
 
 
 proc validCoordinates*(img: HdrImage, x, y: int): bool =
@@ -52,7 +55,7 @@ proc pixelOffset*(img: HdrImage, x, y: int): int =
     result = y * img.width + x
 
 
-proc getPixel*(img: HdrImage, x, y: int): Color =
+proc getPixel*(img: HdrImage, x, y: int): colors.Color =
 
     ## Returns Color in pixel of coordinates (x,y)
 
@@ -60,7 +63,7 @@ proc getPixel*(img: HdrImage, x, y: int): Color =
     result = img.pixels[img.pixelOffset(x, y)]
 
 
-proc setPixel*(img: var HdrImage, x, y: int, newColor: Color) =
+proc setPixel*(img: var HdrImage, x, y: int, newColor: colors.Color) =
 
     ## Sets Color in pixel of coordinates (x,y)
 
@@ -157,7 +160,7 @@ proc readPfmImage*(stream: Stream): HdrImage =
         for x in countup(0, width-1):
             var color = newSeq[float32](3)
             for i in 0..<3: color[i] = readFloat(stream, endianness)
-            result.setPixel(x, y, Color(r: color[0], g: color[1], b: color[2]))
+            result.setPixel(x, y, colors.Color(r: color[0], g: color[1], b: color[2]))
 
 
 proc writeFloat(stream: Stream, val: var float32, endianness = littleEndian) =

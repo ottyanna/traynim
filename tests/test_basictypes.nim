@@ -45,7 +45,7 @@ proc testClampImage(img: var HdrImage) =
     img.clampImage()
 
     # Just test that the R/G/B values are w/i the expected boundaries
-    for curPixel in img.pixels.mitems:
+    for curPixel in img.pixels:
         assert (curPixel.r >= 0) and (curPixel.r <= 1)
         assert (curPixel.g >= 0) and (curPixel.g <= 1)        
         assert (curPixel.b >= 0) and (curPixel.b <= 1)
