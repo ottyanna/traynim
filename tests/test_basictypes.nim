@@ -157,4 +157,4 @@ when isMainModule:
     strm.close()
     imgem.normalizeImage(0.2)
     imgem.clampImage()
-    writeLdrImage(imgem,"png")
+    writeLdrImage(imgem,"tests/HdrImageReferences/output.png")
