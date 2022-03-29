@@ -19,10 +19,8 @@
 ## This module implements operations on HDRimages and PFM files
 
 from pixie import newImage, color, writeFile, setColor
-#import pixie except Color
 import ./colors
 import streams, endians, strutils
-import pixie
 from math import pow, log10
 
 
@@ -216,6 +214,15 @@ proc averageLuminosity*(img: HdrImage, delta = 1e-10): float32 =
         cumsum += log10(delta + pix.luminosity())
 
     result = pow(10, cumsum / len(img.pixels).float)
+#[
+proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = none(float32)) =
+
+    for i in 0..<img.pixels.len:
+        if luminosity.isNone:
+            img.pixels[i]=img.pixels[i]*(factor/averageLuminosity(img))
+        else:
+            img.pixels[i]=img.pixels[i]*(factor/luminosity.get)
+]#
 
 proc normalizeImage*(img: var HdrImage, factor: float32,
         luminosity = averageLuminosity(img)) =
@@ -247,7 +254,7 @@ proc writeLdrImage*(img :HdrImage, format : string, gamma = 1.0) =
             for x in 0..<img.width:
                 var curColor = img.getPixel(x, y)
                 
-                var curColorF = color((pow(curColor.r, 1 / gamma)), (pow(curColor.g, 1 / gamma)), (pow(curColor.b, 1 / gamma)))
+                var curColorF = color((pow(curColor.r, 1 / gamma)), (math.pow(curColor.g, 1 / gamma)), (math.pow(curColor.b, 1 / gamma)))
 
                 setColor(imgF, x, y, curColorF)
 
