@@ -16,9 +16,44 @@
 
 #encoding: utf-8
 
-import ./colors
 import ./hdrimages
 import os 
+from strutils import parseFloat
+import streams
+
 
 when isMainModule:
-  echo("Hello, World!")
+  type RuntimeError = object of CatchableError
+
+  if paramCount() != 5:
+    raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE")
+  var inPfmFileName = paramStr(1)
+
+  try:
+    let nFactor = parseFloat(paramStr(2))
+     
+  except ValueError:
+    var msg = "Invalid factor (" & paramStr(2) & "), it must be a floating-point number."
+    raise newException(ValueError, msg)
+
+  try:
+    let nGamma = parseFloat(paramStr(3))
+    
+  except ValueError:
+    var msg = "Invalid factor (" & paramStr(3) & "), it must be a floating-point number."
+    raise newException(ValueError, msg)
+  
+  let outputPngFileName = paramStr(4)
+
+  let inPfm = newFileStream(inPfmFileName,fmRead)
+  var img = readPfmImage(inPfm)
+  img.normalizeImage(parseFloat(paramStr(2)))
+  img.clampImage()
+
+  let outFile = newFileStream(outputPngFileName, fmWrite)
+  img.writeLdrImage("png", gamma = parseFloat(paramStr(3)))
+
+  echo ("File " & outputPngFileName & "has been written to disk")
+
+
+  
