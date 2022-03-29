@@ -152,6 +152,8 @@ when isMainModule:
     assert beBuf.readPfmImage == img
 
     strm = newFileStream("tests/memorial.pfm",fmRead)
-    let imgem = readPfmImage(strm)
+    var imgem = readPfmImage(strm)
     strm.close()
+    imgem.normalizeImage(0.2)
+    imgem.clampImage()
     writeLdrImage(imgem,"png",2.0)
