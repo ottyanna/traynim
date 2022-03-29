@@ -214,15 +214,6 @@ proc averageLuminosity*(img: HdrImage, delta = 1e-10): float32 =
         cumsum += log10(delta + pix.luminosity())
 
     result = pow(10, cumsum / len(img.pixels).float)
-#[
-proc normalizeImage*(img: var HdrImage, factor: float32, luminosity = none(float32)) =
-
-    for i in 0..<img.pixels.len:
-        if luminosity.isNone:
-            img.pixels[i]=img.pixels[i]*(factor/averageLuminosity(img))
-        else:
-            img.pixels[i]=img.pixels[i]*(factor/luminosity.get)
-]#
 
 proc normalizeImage*(img: var HdrImage, factor: float32,
         luminosity = averageLuminosity(img)) =
@@ -248,16 +239,23 @@ proc clampImage*(img: var HdrImage) =
         img.pixels[i].g = clamp(img.pixels[i].g)
         img.pixels[i].b = clamp(img.pixels[i].b)
 
-proc writeLdrImage*(img :HdrImage, format : string, gamma = 1.0) =
+proc writeLdrImage*(img :HdrImage, outputPath : string, gamma = 1.0) =
+
+    ## Saves the image in a LDR format.
+    ## 
+    ## Before calling this function, you should apply a tone-mapping algorithm to the 
+    ## image and be sure that the R, G, and B values of the colors in the image are all 
+    ## in the range [0, 1]. 
+    ## Use ``NormalizeImage``and ``ClampImage`` to do this.
+
+
     var imgF = newImage(img.width, img.height)
     for y in 0..<img.height:
             for x in 0..<img.width:
                 var curColor = img.getPixel(x, y)
                 
-                var curColorF = color((pow(curColor.r, 1 / gamma)), (math.pow(curColor.g, 1 / gamma)), (math.pow(curColor.b, 1 / gamma)))
+                var curColorF = color((pow(curColor.r, 1 / gamma)), (pow(curColor.g, 1 / gamma)), (pow(curColor.b, 1 / gamma)))
 
                 setColor(imgF, x, y, curColorF)
 
-    let outputName = "output." & format 
-
-    writeFile(imgF, outputName)
+    writeFile(imgF, outputPath)

@@ -151,18 +151,10 @@ when isMainModule:
     beBuf.setPosition(0)
     assert beBuf.readPfmImage == img
     
+
     strm = newFileStream("tests/HdrImageReferences/memorial.pfm",fmRead)
     var imgem = readPfmImage(strm)
     strm.close()
+    imgem.normalizeImage(0.2)
+    imgem.clampImage()
     writeLdrImage(imgem,"png")
-    writeLdrImage(imgem,"png",2.0)
-    imgem.normalizeImage(0.2)
-    imgem.clampImage()
-
-
-    strm = newFileStream("tests/memorial.pfm",fmRead)
-    var imgem = readPfmImage(strm)
-    strm.close()
-    imgem.normalizeImage(0.2)
-    imgem.clampImage()
-    writeLdrImage(imgem,"png",2.0)

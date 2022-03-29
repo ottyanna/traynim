@@ -18,42 +18,63 @@
 
 import ./hdrimages
 import os 
-from strutils import parseFloat
+import strutils
 import streams
+
+type 
+    Parameters = object
+        inPfmFileName : string
+        factor : float32
+        gamma : float32
+        outputFileName : string
+
+type RuntimeError = object of CatchableError
+
+proc parseCommandLine(parameters : var Parameters, argv : seq[string]) =
+
+    if argv.len != 4:
+        raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT")
+        #possible formats are ppm, png, bmp
+
+    parameters.inPfmFileName = argv[0]
+
+    try:
+        parameters.factor = argv[1].parseFloat
+
+    except ValueError:
+        let msg = "Invalid factor (" & argv[1] & "), it must be a floating-point number."
+        raise newException(ValueError, msg)
+
+    try:
+        parameters.gamma = argv[2].parseFloat
+
+    except ValueError:
+        let msg = "Invalid gamma (" & argv[2] & "), it must be a floating-point number."
+        raise newException(ValueError, msg)
+
+    parameters.outputFileName = argv[3]
 
 
 when isMainModule:
-  type RuntimeError = object of CatchableError
 
-  if paramCount() != 5:
-    raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_PNG_FILE")
-  var inPfmFileName = paramStr(1)
+    var parameters = Parameters()
 
-  try:
-    let nFactor = parseFloat(paramStr(2))
-     
-  except ValueError:
-    var msg = "Invalid factor (" & paramStr(2) & "), it must be a floating-point number."
-    raise newException(ValueError, msg)
+    try: 
+        parseCommandLine(parameters,commandLineParams()) #CommandLineParams returns just the parameters
+    except RuntimeError:
+        echo ("Error: " & getCurrentExceptionMsg())
 
-  try:
-    let nGamma = parseFloat(paramStr(3))
-    
-  except ValueError:
-    var msg = "Invalid factor (" & paramStr(3) & "), it must be a floating-point number."
-    raise newException(ValueError, msg)
-  
-  let outputPngFileName = paramStr(4)
+    let inPfm = newFileStream(parameters.inPfmFileName,fmRead)
+    var img = readPfmImage(inPfm)
+    inPfm.close()
 
-  let inPfm = newFileStream(inPfmFileName,fmRead)
-  var img = readPfmImage(inPfm)
-  img.normalizeImage(parseFloat(paramStr(2)))
-  img.clampImage()
+    echo ("File " & parameters.inPfmFileName & " has been read from disk")
 
-  let outFile = newFileStream(outputPngFileName, fmWrite)
-  img.writeLdrImage("png", gamma = parseFloat(paramStr(3)))
+    img.normalizeImage(parameters.factor)
+    img.clampImage()
 
-  echo ("File " & outputPngFileName & "has been written to disk")
+    img.writeLdrImage(parameters.outputFileName, parameters.gamma)
 
+    echo ("File " & parameters.outputFileName & " has been written to disk")
 
   
