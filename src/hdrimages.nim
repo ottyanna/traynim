@@ -28,7 +28,7 @@ from math import pow, log10
 type
     HdrImage* = object ## A High-Dynamic-Range 2D image type
         width*, height*: int ## `width` (int) and `height` (int) number of columns and rows of the matrix of colors
-        pixels*: seq[colors.Color] ## `pixels` (seq of Color type): the matrix of colors represented by a 1D array 
+        pixels*: seq[colors.Color] ## `pixels` (seq of Color type): the matrix of colors represented by a 1D array
 
 
 proc newHDRImage*(width, height: int): HdrImage =
@@ -77,8 +77,8 @@ type InvalidPfmFileFormat* = object of CatchableError
 proc parseImgSize*(line: string): tuple =
 
     ## Outputs the HDRimage size (width and height) from PFM file format.
-    ## 
-    ## Raises InvalidPfmFileFormat Error if the size specifications are not valid  
+    ##
+    ## Raises InvalidPfmFileFormat Error if the size specifications are not valid
 
     let elements = line.split(" ")
     type Res = tuple[width, height: int]
@@ -98,7 +98,7 @@ proc parseImgSize*(line: string): tuple =
 proc parseEndianness*(line: string): Endianness =
 
     ## Outputs the HDRimage byte endiannes from PFM file format.
-    ## 
+    ##
     ## Raises `InvalidPfmFileFormat` error if the endianess specification is not valid
 
     var value: float
@@ -117,7 +117,7 @@ proc parseEndianness*(line: string): Endianness =
 proc readFloat(stream: Stream, endianness = littleEndian): float32 =
 
     ## Reads a float32 from PFM file format from binary using given byte endiannes.
-    ## 
+    ##
     ## Raises `InvalidPfmFileFormat` error if data is not valid
 
     try:
@@ -135,9 +135,9 @@ proc readFloat(stream: Stream, endianness = littleEndian): float32 =
 proc readPfmImage*(stream: Stream): HdrImage =
 
     ## Reads data from PFM file format.
-    ## 
+    ##
     ## The `stream` parameter must be a I/O stream.
-    ## Raises `InvalidPfmFileFormat` error if magic is not valid 
+    ## Raises `InvalidPfmFileFormat` error if magic is not valid
     ## or other data is not readable/enough.
 
     # The ﬁrst bytes in a binary ﬁle are usually called «magic bytes»
@@ -158,7 +158,8 @@ proc readPfmImage*(stream: Stream): HdrImage =
         for x in countup(0, width-1):
             var color = newSeq[float32](3)
             for i in 0..<3: color[i] = readFloat(stream, endianness)
-            result.setPixel(x, y, colors.Color(r: color[0], g: color[1], b: color[2]))
+            result.setPixel(x, y, colors.Color(r: color[0], g: color[1],
+                    b: color[2]))
 
 
 proc writeFloat(stream: Stream, val: var float32, endianness = littleEndian) =
@@ -176,8 +177,8 @@ proc writeFloat(stream: Stream, val: var float32, endianness = littleEndian) =
 proc writePfmImage*(img: HdrImage, stream: Stream, endianness = littleEndian) =
 
     ## Writes the image in PFM file format.
-    ## 
-    ## The `stream` parameter must be a I/O stream. 
+    ##
+    ## The `stream` parameter must be a I/O stream.
     ## The parameter `endianness` specifies the byte endianness to be used in the file,
     ## default is set to little endian.
 
@@ -203,9 +204,9 @@ proc writePfmImage*(img: HdrImage, stream: Stream, endianness = littleEndian) =
 
 proc averageLuminosity*(img: HdrImage, delta = 1e-10): float32 =
 
-    ## Computes average luminosity of an image. 
-    ## 
-    ## The `delta` parameter is to take account of 
+    ## Computes average luminosity of an image.
+    ##
+    ## The `delta` parameter is to take account of
     ## numerical problems for underilluminated pixels, default is set to 10e-10.
 
     var cumsum = 0.0
@@ -219,7 +220,7 @@ proc normalizeImage*(img: var HdrImage, factor: float32,
         luminosity = averageLuminosity(img)) =
 
     ## Normalizes image for a given luminosity.
-    ##  
+    ##
     ## `Luminosity` parameter can be set by user, if the field is empty,
     ## default is set to averageLuminosity() value.
 
@@ -239,23 +240,24 @@ proc clampImage*(img: var HdrImage) =
         img.pixels[i].g = clamp(img.pixels[i].g)
         img.pixels[i].b = clamp(img.pixels[i].b)
 
-proc writeLdrImage*(img :HdrImage, outputPath : string, gamma = 1.0) =
+proc writeLdrImage*(img: HdrImage, outputPath: string, gamma = 1.0) =
 
     ## Saves the image in a LDR format.
-    ## 
-    ## Before calling this function, you should apply a tone-mapping algorithm to the 
-    ## image and be sure that the R, G, and B values of the colors in the image are all 
-    ## in the range [0, 1]. 
+    ##
+    ## Before calling this function, you should apply a tone-mapping algorithm to the
+    ## image and be sure that the R, G, and B values of the colors in the image are all
+    ## in the range [0, 1].
     ## Use ``NormalizeImage``and ``ClampImage`` to do this.
 
 
     var imgF = newImage(img.width, img.height)
     for y in 0..<img.height:
-            for x in 0..<img.width:
-                var curColor = img.getPixel(x, y)
-                
-                var curColorF = color((pow(curColor.r, 1 / gamma)), (pow(curColor.g, 1 / gamma)), (pow(curColor.b, 1 / gamma)))
+        for x in 0..<img.width:
+            var curColor = img.getPixel(x, y)
 
-                setColor(imgF, x, y, curColorF)
+            var curColorF = color((pow(curColor.r, 1 / gamma)), (pow(curColor.g,
+                    1 / gamma)), (pow(curColor.b, 1 / gamma)))
+
+            setColor(imgF, x, y, curColorF)
 
     writeFile(imgF, outputPath)

@@ -17,20 +17,20 @@
 #encoding: utf-8
 
 import ./hdrimages
-import os 
+import os
 import strutils
 import streams
 
-type 
+type
     Parameters = object
-        inPfmFileName : string
-        factor : float32
-        gamma : float32
-        outputFileName : string
+        inPfmFileName: string
+        factor: float32
+        gamma: float32
+        outputFileName: string
 
 type RuntimeError = object of CatchableError
 
-proc parseCommandLine(parameters : var Parameters, argv : seq[string]) =
+proc parseCommandLine(parameters: var Parameters, argv: seq[string]) =
 
     if argv.len != 4:
         raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT")
@@ -59,12 +59,12 @@ when isMainModule:
 
     var parameters = Parameters()
 
-    try: 
-        parseCommandLine(parameters,commandLineParams()) #CommandLineParams returns just the parameters
+    try:
+        parseCommandLine(parameters, commandLineParams()) #CommandLineParams returns just the parameters
     except RuntimeError:
         echo ("Error: " & getCurrentExceptionMsg())
 
-    let inPfm = newFileStream(parameters.inPfmFileName,fmRead)
+    let inPfm = newFileStream(parameters.inPfmFileName, fmRead)
     var img = readPfmImage(inPfm)
     inPfm.close()
 
@@ -77,4 +77,3 @@ when isMainModule:
 
     echo ("File " & parameters.outputFileName & " has been written to disk")
 
-  
