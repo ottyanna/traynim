@@ -122,7 +122,7 @@ when isMainModule:
         discard parseEndianness("abc")
 
     var strm = newFileStream("tests/HdrImageReferences/reference_be.pfm", fmRead)
-    var imge = readPfmImage(strm)
+    let imge = readPfmImage(strm)
     strm.close()
 
     assert imge.width == 3
@@ -160,4 +160,7 @@ when isMainModule:
     imgem.clampImage()
 
 
-    writeLdrImage(imgem,"png")
+    strm = newFileStream("tests/memorial.pfm",fmRead)
+    let imgem = readPfmImage(strm)
+    strm.close()
+    writeLdrImage(imgem,"png",2.0)
