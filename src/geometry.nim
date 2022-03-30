@@ -12,8 +12,30 @@ type
         x*, y*, z* : float64
 
 
+template defineNew3dOp(fname: untyped, rettype: typedesc) =
+    proc fname*(a, b, c: float64): rettype =
+        
+        ## Creates a new 3D object
+
+
+        result.x = a
+        result.y = b
+        result.z = c
+
+defineNew3dOp(newVec,Vec)
+defineNew3dOp(newPoint,Point)
+defineNew3dOp(newNormal,Normal)
+
+
 template defineNew3dOp(rettype: typedesc) =
     proc new3dOp*(res: var rettype, a, b, c: float64) =
+        
+        ##
+        ## Creates new 3d object. 
+        ## 
+        ## It needs also the 3d object (`Vec`, `Point`, `Normal`)
+        ## as `var` parameters.
+        ## 
         
         res.x = a
         res.y = b
