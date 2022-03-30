@@ -9,4 +9,11 @@ type
         x*, y*, z* : float64
 
     Normal* = object
-        x*, y*, z* : float64
+        x*, y*, z* : 
+            
+
+template new3dOp(rettype: typedesc) =
+    proc new3dOp*(a, b, c: float64): rettype =
+        result.x = a
+        result.y = b
+        result.z = c
