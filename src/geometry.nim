@@ -9,24 +9,20 @@ type
         x*, y*, z* : float64
 
     Normal* = object
-        x*, y*, z* : 
-            
+        x*, y*, z* : float64
 
-template defineNew3dOp(type1 : typedesc, rettype: typedesc) =
+
+template defineNew3dOp(rettype: typedesc) =
     proc new3dOp*(a, b, c: float64): rettype =
         
         result.x = a
         result.y = b
         result.z = c
 
+defineNew3dOp(Vec)
+defineNew3dOp(Point)
+defineNew3dOp(Normal)
 
-proc newVec*(x, y, z: float64): Vec =
-
-    ## Creates a new color from scratch
-
-    result.x = x
-    result.y = y
-    result.z = z
 
 template print3Dop(type1: typedesc) =
     proc `$`*(a: type1): string =

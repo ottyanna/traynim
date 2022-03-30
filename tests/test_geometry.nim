@@ -1,6 +1,6 @@
 import ../src/geometry
 
-let v = newVec(1.0, 1.0, 1.0)
+var v : Vec 
+v = new3dOp(1.0, 1.0, 1.0)
 
 echo ($v)
-
