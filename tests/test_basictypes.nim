@@ -172,3 +172,4 @@ when isMainModule:
     testClampImage(img)
 
     testwriteLdrImage()
+    
