@@ -222,7 +222,7 @@ proc normalizeImage*(img: var HdrImage, factor: float32,
     ## Normalizes image for a given luminosity.
     ##
     ## `Luminosity` parameter can be set by user, if the field is empty,
-    ## default is set to averageLuminosity() value.
+    ## default is set to `averageLuminosity()` value.
 
     for i in 0..<img.pixels.len:
         img.pixels[i] = img.pixels[i]*(factor/luminosity)
@@ -247,7 +247,7 @@ proc writeLdrImage*(img: HdrImage, outputPath: string, gamma = 1.0) =
     ## Before calling this function, you should apply a tone-mapping algorithm to the
     ## image and be sure that the R, G, and B values of the colors in the image are all
     ## in the range [0, 1].
-    ## Use ``NormalizeImage``and ``ClampImage`` to do this.
+    ## Use `normalizeImage`and `clampImage` to do this.
 
 
     var imgF = newImage(img.width, img.height)

@@ -21,6 +21,8 @@ import ../src/hdrimages
 import unittest, streams
 
 
+# Tests on Colors.nim procedures
+
 proc testColorOperations(col1, col2: Color) =
     assert (col1 + col2).areColorsClose(Color(r: 6.0, g: 9.0, b: 12.0))
     assert (col1 - col2).areColorsClose(Color(r: -4.0, g: -5.0, b: -6.0))
@@ -29,26 +31,27 @@ proc testColorOperations(col1, col2: Color) =
     assert ($col1) == "<r: 1.0 , g: 2.0, b: 3.0>" #test on Color print
 
 proc testLuminosity(color1, color2: Color) =
-
     assert areClose(luminosity(color1), 2.0)
     assert areClose(luminosity(color2), 7.0)
 
 
-proc testImageCreation(img: HdrImage) = #test on HDRimage
+# Tests on HdrImages.nim procedures
+
+proc testImageCreation(img: HdrImage) =
     assert img.width == 7
     assert img.height == 4
     assert not (img.width == 27)
 
-proc testPixelOffset(img: HdrImage) = #test on pixel offset
+proc testPixelOffset(img: HdrImage) =
     assert (img.pixelOffset(0, 0) == 0)
     assert (img.pixelOffset(3, 2) == 17)
     assert (img.pixelOffset(6, 3) == 7 * 4 - 1)
 
-proc testSetPixel(img: var HdrImage, referenceColor: Color) = #test on set pixel
+proc testSetPixel(img: var HdrImage, referenceColor: Color) =
     img.setPixel(3, 2, referenceColor)
     assert areColorsClose(referenceColor, img.getPixel(3, 2))
 
-proc testCoordinates(img: HdrImage) = #test for coordinates
+proc testCoordinates(img: HdrImage) =
     assert img.validCoordinates(0, 0)
     assert img.validCoordinates(6, 3)
     assert not img.validCoordinates(-1, 0)
@@ -58,14 +61,12 @@ proc testCoordinates(img: HdrImage) = #test for coordinates
 
 
 proc testParseImgSize() =
-    #test on ParseImgSize
     assert parseImgSize("3 2") == (3, 2)
     expect InvalidPfmFileFormat:
         discard parseImgSize("-1 3")
         discard parseImgSize("1 2 3")
 
 proc testParseEndianness() =
-    #test on ParseEndianness
     assert parseEndianness("1.0") == bigEndian
     assert parseEndianness("-1.0") == littleEndian
     expect InvalidPfmFileFormat:
@@ -83,7 +84,6 @@ proc testReadPfm() =
     assert img.getPixel(0, 0).areColorsClose(Color(r: 1.0e1, g: 2.0e1, b: 3.0e1))
 
 proc integrationTestReadWritePfmImage() =
-
     var img = newHdrImage(3, 2)
     img.setPixel(0, 0, newColor(1.0e1, 2.0e1, 3.0e1))
     img.setPixel(1, 0, newColor(4.0e1, 5.0e1, 6.0e1))
@@ -106,7 +106,6 @@ proc integrationTestReadWritePfmImage() =
 
 
 proc testAverageLuminosity(img: HdrImage) =
-
     assert areClose(img.averageLuminosity(delta = 0.0), 100.0)
     assert img.averageLuminosity(delta = 0.0) == 100.0
 
@@ -139,9 +138,8 @@ proc testwriteLdrImage() =
 
 when isMainModule:
 
-    #tests on colors operations
-    var col1 = Color(r: 1.0, g: 2.0, b: 3.0)
-    var col2 = Color(r: 5.0, g: 7.0, b: 9.0)
+    var col1 = newColor(1.0, 2.0, 3.0)
+    var col2 = newColor(5.0, 7.0, 9.0)
 
     testColorOperations(col1, col2)
 

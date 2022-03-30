@@ -2,10 +2,6 @@
 
 Traynim is a ray tracer written in Nim.
 
-<!-- TO DO: 
-- [ ] Choose ldr image library
-- [ ] Clean up test code 
--->
 
 
 ## License
