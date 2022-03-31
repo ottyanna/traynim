@@ -16,14 +16,14 @@
 
 #encoding: utf-8
 
-import colors
+## This module implements operations on geometry types,
+## such as `Point`, `Vec`, `Normal` and `Tranformation`.
+
+import common
 
 type
     Point* = object
         x*,y*,z* :float64
-    
-    Transformation* = object
-        m*, invm* : array[4, array[4, float64]]
     
     Vec* = object 
         x*, y*, z* : float64
@@ -31,6 +31,9 @@ type
     Normal* = object
         x*, y*, z* : float64
 
+    Transformation* = object
+        m*, invm* : array[4, array[4, float64]]
+    
 
 template defineNew3dObj(fname: untyped, rettype: typedesc) =
     proc fname*(a, b, c: float64): rettype =

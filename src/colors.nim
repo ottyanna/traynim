@@ -18,6 +18,8 @@
 
 ## This module implements operations on Color type
 
+import common
+
 type
     Color* = object
         r*, g*, b*: float32
@@ -62,10 +64,6 @@ proc `*`*(color1, color2: Color): Color =
 proc `$`*(color: Color): string =
     result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " &
             "b: " & $(color.b) & ">"
-
-
-proc areClose*(a, b: float32, epsilon = 1e-5): bool =
-    return abs(a - b) < epsilon
 
 proc areColorsClose*(color1, color2: Color): bool =
 

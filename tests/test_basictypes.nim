@@ -18,6 +18,7 @@
 
 import ../src/colors
 import ../src/hdrimages
+import ../src/common
 import unittest, streams
 
 
