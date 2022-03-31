@@ -22,16 +22,16 @@
 import common
 
 type
-    Point* = object
+    Point* = object ## A point in 3d space with three floating-point fields: `x`, `y`, and `z`
         x*,y*,z* :float64
     
-    Vec* = object 
+    Vec* = object ## A 3d vector with three floating-point fields: `x`, `y`, and `z`
         x*, y*, z* : float64
 
-    Normal* = object
+    Normal* = object ## A 3d normal vector with three floating-point fields: `x`, `y`, and `z`
         x*, y*, z* : float64
 
-    Transformation* = object
+    Transformation* = object 
         m*, invm* : array[4, array[4, float64]]
     
 
@@ -78,6 +78,21 @@ template defineDotProd(type1: typedesc, type2: typedesc) =
 defineDotProd(Vec,Vec)    
 defineDotProd(Vec,Normal)
 
+template defineOuterProd(type1: typedesc, type2: typedesc, rettype : typedesc) =
+    proc cross*(a: type1, b: type2): rettype =
+
+        ## Implements outer product operation on 3d objects such as `Vec` and `Normal`
+
+        result.x=a.y * b.z - a.z * b.y
+        result.y=a.z * b.x - a.x * b.z
+        result.z=a.x * b.y - a.y * b.x
+
+    
+defineOuterProd(Vec,Vec,Vec)    
+defineOuterProd(Normal,Normal,Vec)
+defineOuterProd(Normal,Vec,Vec)
+
+
 template defineProdScalar3dObj(rettype: typedesc) =
     proc `*`*(scalar: float64, a: rettype): rettype = 
 
@@ -105,13 +120,16 @@ defineProd3dObjScalar(Normal)
 
 template defineMirrorOp(rettype: typedesc) =
     proc `-`*(a: rettype): rettype = 
+
+        ## Returns the reversed vector
+
         result.x = -a.x
         result.y = -a.y
         result.z = -a.z
 
 defineMirrorOp(Vec)
 defineMirrorOp(Normal)
-    
+
 
 template definePrint3dObj(type1: typedesc) =
     proc `$`*(a: type1): string =
