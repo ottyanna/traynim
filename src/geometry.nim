@@ -154,3 +154,13 @@ template defineAreClose3dObj(type1: typedesc) =
 defineAreClose3dObj(Vec)
 defineAreClose3dObj(Point)
 defineAreClose3dObj(Normal)
+
+template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
+    proc fname*(a: type1): rettype =
+
+        result.x = a.x
+        result.y = a.y
+        result.z = a.z
+
+define3dOpParsing(parsePointToVec,Point,Vec)
+define3dOpParsing(parseVecToNormal,Vec,Normal)
