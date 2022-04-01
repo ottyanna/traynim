@@ -40,7 +40,7 @@ proc testVecOperations (a, b :Vec) =
     assert (b - a).areClose(newVec(3.0, 4.0, 5.0))
     assert ( 2 * a).areClose(newVec(2.0, 4.0, 6.0))
     assert ( a * 2).areClose(newVec(2.0, 4.0, 6.0))
-    assert (a * b).areClose(40.0)
+    assert (a.dot(b)).areClose(40.0)
     assert a.cross(b).areClose(newVec(-2.0, 4.0, -2.0))
     assert b.cross(a).areClose(newVec(2.0, -4.0, 2.0))
     #assert pytest.approx(14.0) == a.squared_norm()

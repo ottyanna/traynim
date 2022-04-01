@@ -68,7 +68,7 @@ define3dOp(`+`,Normal,Normal,Normal)
 define3dOp(`-`,Normal,Normal,Normal)
 
 template defineDotProd(type1: typedesc, type2: typedesc) =
-    proc `*`*(a: type1, b: type2): float64 =
+    proc `dot`*(a: type1, b: type2): float64 =
 
         ## Implements scalar product operation on 3d objects such as `Vec` and `Normal`
 
