@@ -215,5 +215,14 @@ template defineNorm(type1: typedesc) =
 defineNorm(Vec)
 defineNorm(Normal)
 
+template defineNormalize(type1) =
+    proc normalize*(a: type1): type1 =
+        result.x = a.x / a.norm()
+        result.y = a.y / a.norm()
+        result.z = a.z / a.norm()
+        
+defineNormalize(Vec)    
+defineNormalize(Normal)    
+
     
 
