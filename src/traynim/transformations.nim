@@ -74,8 +74,14 @@ proc isConsistent*(t : Transformation): bool =
         let prod = matrixProd(t.m, t.invm)
         return areMatrClose(prod, IdentityMatrix4x4)
 
-proc areTranClose(t1, t2 :Transformation):bool=
+proc areTranClose*(t1, t2 :Transformation):bool=
         
         #Checks if two tranformations represent the same transformation.
         
         return areMatrClose(t1.m, t2.m) and areMatrClose(t1.invm, t2.invm)
+
+proc inverse*(t :Transformation): Transformation=
+        
+        ## Return a `Transformation` object representing the inverse affine transformation.
+        
+        return Transformation(m : t.invm, invm : t.m)
