@@ -48,6 +48,27 @@ proc testVecOperations (a, b: Vec) =
     assert areClose(a.norm()*a.norm(), 14.0)
 
 
+proc testIsClose (m,invm: Matrix4x4) =
+
+    let t1 = newTransformation(m,invm)
+
+    assert (t1.m == m)
+    assert (t1.invm == invm)
+    assert t1.isConsistent
+
+    let t2 = newTransformation(m,invm)
+    assert t1.areTranClose(t2)
+
+    var t3 = newTransformation(m,invm)
+    t3.m[2][2] += 1.0
+    assert not t3.isConsistent
+    assert not t3.areTranClose(t2)
+
+    var t4 = newTransformation(m,invm)
+    t4.invm[2][3] += 1.0
+    assert not t4.areTranClose(t1)
+
+
 when isMainModule:
 
     var a = newVec(1.0, 2.0, 3.0)
@@ -66,16 +87,18 @@ when isMainModule:
 
     testCreation(e)
 
-    var m : Matrix4x4 =[[1.0, 0.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0, 0.0],
-                        [0.0, 0.0, 1.0, 0.0],
-                        [0.0, 0.0, 0.0, 1.0]]
+    let m = [
+                [1.0, 2.0, 3.0, 4.0],
+                [5.0, 6.0, 7.0, 8.0],
+                [9.0, 9.0, 8.0, 7.0],
+                [6.0, 5.0, 4.0, 1.0],
+            ]
 
-    var n : Matrix4x4 =[[1.0, 0.0, 0.0, 0.0],
-                        [0.0, 1.0, 0.0, 0.0],
-                        [0.0, 0.0, 1.0, 0.0],
-                        [0.0, 0.0, 0.0, 1.0]]
+    let invm = [
+                [-3.75, 2.75, -1, 0],
+                [4.375, -3.875, 2.0, -0.5],
+                [0.5, 0.5, -1.0, 1.0],
+                [-1.375, 0.875, 0.0, -0.5],
+               ]
 
-    #echo matrixProd(m,n)
-    #echo areMatrClose(m,n)
-
+    testIsClose(m,invm)
