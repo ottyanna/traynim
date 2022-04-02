@@ -16,7 +16,7 @@
 
 #encoding: utf-8
 
-import ./hdrimages
+import ./traynim/hdrimages
 import os
 import strutils
 import streams

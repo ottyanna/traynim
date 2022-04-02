@@ -17,43 +17,44 @@
 #encoding: utf-8
 
 
-import ../src/geometry
-import ../src/common
+import ../src/traynim/geometry
+import ../src/traynim/common
+import ../src/traynim/transformations
 
-template test3dObjCreation(type1 : typedesc) =
-    
-    proc testCreation (a : type1) =
-        assert areClose(a.x,1.0)
-        assert not areClose(a.y,5.0)
-        assert areClose(a.z,3.0)
+template test3dObjCreation(type1: typedesc) =
+
+    proc testCreation (a: type1) =
+        assert areClose(a.x, 1.0)
+        assert not areClose(a.y, 5.0)
+        assert areClose(a.z, 3.0)
 
 test3dObjCreation(Vec)
 test3dObjCreation(Point)
 test3dObjCreation(Normal)
 
-proc testVecOperations (a, b :Vec) =
+proc testVecOperations (a, b: Vec) =
     assert not (($b) == "<x: 1.0 , y: 2.0, z: 3.0>")
     assert ($a) == "<x: 1.0 , y: 2.0, z: 3.0>"
     assert (-a).areClose(newVec(-1.0, -2.0, -3.0))
     assert (a + b).areClose(newVec(5.0, 8.0, 11.0))
     assert (b - a).areClose(newVec(3.0, 4.0, 5.0))
-    assert ( 2 * a).areClose(newVec(2.0, 4.0, 6.0))
-    assert ( a * 2).areClose(newVec(2.0, 4.0, 6.0))
+    assert (2 * a).areClose(newVec(2.0, 4.0, 6.0))
+    assert (a * 2).areClose(newVec(2.0, 4.0, 6.0))
     assert (a.dot(b)).areClose(40.0)
     assert a.cross(b).areClose(newVec(-2.0, 4.0, -2.0))
     assert b.cross(a).areClose(newVec(2.0, -4.0, 2.0))
     assert b.parseVecToNormal == newNormal(4.0, 6.0, 8.0)
-    assert (a.sqrNorm() - 14.0) < 1e5
-    assert (a.norm()*a.norm()  - 14.0) < 1e5
+    assert areClose(a.sqrNorm(), 14.0)
+    assert areClose(a.norm()*a.norm(), 14.0)
 
 
 when isMainModule:
-    
+
     var a = newVec(1.0, 2.0, 3.0)
     var b = newVec(4.0, 6.0, 8.0)
 
     testCreation(a)
-    testVecOperations(a,b)
+    testVecOperations(a, b)
 
     var c = newPoint(1.0, 2.0, 3.0)
     var d = newPoint(4.0, 6.0, 8.0)
@@ -64,5 +65,17 @@ when isMainModule:
     var f = newNormal(4.0, 6.0, 8.0)
 
     testCreation(e)
-    
-    
+
+    var m : Matrix4x4 =[[1.0, 0.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0, 0.0],
+                        [0.0, 0.0, 1.0, 0.0],
+                        [0.0, 0.0, 0.0, 1.0]]
+
+    var n : Matrix4x4 =[[1.0, 0.0, 0.0, 0.0],
+                        [0.0, 1.0, 0.0, 0.0],
+                        [0.0, 0.0, 1.0, 0.0],
+                        [0.0, 0.0, 0.0, 1.0]]
+
+    #echo matrixProd(m,n)
+    #echo areMatrClose(m,n)
+

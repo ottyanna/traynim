@@ -16,9 +16,9 @@
 
 #encoding: utf-8
 
-import ../src/colors
-import ../src/hdrimages
-import ../src/common
+import ../src/traynim/colors
+import ../src/traynim/hdrimages
+import ../src/traynim/common
 import unittest, streams
 
 
