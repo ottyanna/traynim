@@ -20,6 +20,7 @@
 ## such as `Point`, `Vec`, `Normal` and `Tranformation`.
 
 import common
+from math import sqrt
 
 type
     Point* = object ## A point in 3d space with three floating-point fields: `x`, `y`, and `z`
@@ -30,10 +31,35 @@ type
 
     Normal* = object ## A 3d normal vector with three floating-point fields: `x`, `y`, and `z`
         x*, y*, z* : float64
+    
+    Matrix = array[4, array[4, float64]] ## 4x4 invertible real values matrix
 
     Transformation* = object 
-        m*, invm* : array[4, array[4, float64]]
+        m*, invm* : Matrix
     
+proc matrixProd*(a, b: Matrix): Matrix =
+    
+    ## Row by column multiplication
+    
+    for i in 0..high(a):
+        for j in 0..high(a):
+            for k in 0..high(a):
+                result[i][j] += a[i][k] * b[k][j]
+
+
+const IdentityMatrix* = [[1.0, 0.0, 0.0, 0.0],
+           [0.0, 1.0, 0.0, 0.0],
+           [0.0, 0.0, 1.0, 0.0],
+           [0.0, 0.0, 0.0, 1.0]]
+
+proc newTransformation*(m = IdentityMatrix, invm = IdentityMatrix): Transformation =
+    result.m = m
+    result.invm = invm
+
+
+
+
+
 
 template defineNew3dObj(fname: untyped, rettype: typedesc) =
     proc fname*(a, b, c: float64): rettype =
@@ -158,9 +184,36 @@ defineAreClose3dObj(Normal)
 template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
     proc fname*(a: type1): rettype =
 
+        ## 
+        ## Convertion between 3d objects
+        ## 
+        
         result.x = a.x
         result.y = a.y
         result.z = a.z
 
 define3dOpParsing(parsePointToVec,Point,Vec)
 define3dOpParsing(parseVecToNormal,Vec,Normal)
+
+template defineSqrNorm(type1: typedesc) =
+    proc sqrNorm*(a: type1): float64 =
+
+        ## Quick 3d Vector/Normal square norm  
+
+        result = a.x * a.x + a.y * a.y + a.z * a.z
+
+defineSqrNorm(Vec)
+defineSqrNorm(Normal) 
+
+template defineNorm(type1: typedesc) =
+    proc norm*(a: type1): float64 = 
+        
+        ## A 3d Vector/Normal norm calculator
+        
+        result = sqrt(a.x * a.x + a.y * a.y + a.z * a.z)
+
+defineNorm(Vec)
+defineNorm(Normal)
+
+    
+

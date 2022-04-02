@@ -20,7 +20,6 @@
 import ../src/geometry
 import ../src/common
 
-
 template test3dObjCreation(type1 : typedesc) =
     
     proc testCreation (a : type1) =
@@ -44,8 +43,8 @@ proc testVecOperations (a, b :Vec) =
     assert a.cross(b).areClose(newVec(-2.0, 4.0, -2.0))
     assert b.cross(a).areClose(newVec(2.0, -4.0, 2.0))
     assert b.parseVecToNormal == newNormal(4.0, 6.0, 8.0)
-    #assert pytest.approx(14.0) == a.squared_norm()
-    #assert pytest.approx(14.0) == a.norm() ** 2
+    assert (a.sqrNorm() - 14.0) < 1e5
+    assert (a.norm()*a.norm()  - 14.0) < 1e5
 
 
 when isMainModule:
@@ -65,3 +64,5 @@ when isMainModule:
     var f = newNormal(4.0, 6.0, 8.0)
 
     testCreation(e)
+    
+    
