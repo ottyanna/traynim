@@ -183,7 +183,7 @@ template defineNorm(type1: typedesc) =
 
         ## A 3d Vector/Normal norm calculator
 
-        result = sqrt(sqrNorm(a))
+        result = sqrt(a.sqrNorm())
 
 defineNorm(Vec)
 defineNorm(Normal)
