@@ -121,7 +121,6 @@ proc translation*(v: Vec): Transformation =
 proc rotationX*(theta: float64): Transformation =
 
     ## Input angle in deg
-
     let (sinang, cosang) = (sin(degToRad(theta)), cos(degToRad(theta)))
     
     result.m = [[1.0, 0.0, 0.0, 0.0],
@@ -129,7 +128,7 @@ proc rotationX*(theta: float64): Transformation =
      [0.0, sinang, cosang, 0.0],
      [0.0, 0.0, 0.0, 1.0]]
 
-    result.m = [[1.0, 0.0, 0.0, 0.0],
+    result.invm = [[1.0, 0.0, 0.0, 0.0],
      [0.0, cosang, sinang, 0.0],
      [0.0, -sinang, cosang, 0.0],
      [0.0, 0.0, 0.0, 1.0]]
@@ -145,7 +144,7 @@ proc rotationY*(theta: float64): Transformation =
      [-sinang, 0.0, cosang, 0.0],
      [0.0, 0.0, 0.0, 1.0]]
 
-    result.m = [[cosang, 0.0, -sinang, 0.0],
+    result.invm = [[cosang, 0.0, -sinang, 0.0],
      [0.0, 1.0, 0.0, 0.0],
      [sinang, 0.0, cosang, 0.0],
      [0.0, 0.0, 0.0, 1.0]]
@@ -161,7 +160,7 @@ proc rotationZ*(theta: float64): Transformation =
      [0.0, 0.0, 1.0, 0.0],
      [0.0, 0.0, 0.0, 1.0]]
 
-    result.m = [[cosang, sinang, 0.0, 0.0],
+    result.invm = [[cosang, sinang, 0.0, 0.0],
      [-sinang, cosang, 0.0, 0.0],
      [0.0, 0.0, 1.0, 0.0],
      [0.0, 0.0, 0.0, 1.0]]
