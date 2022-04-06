@@ -63,6 +63,27 @@ proc testIsClose (m,invm: Matrix4x4) =
     t4.invm[2][3] += 1.0
     assert not t4.areTranClose(t1)
 
+proc testInverse() =
+    let m1 = newTransformation(m=[
+                [1.0, 2.0, 3.0, 4.0],
+                [5.0, 6.0, 7.0, 8.0],
+                [9.0, 9.0, 8.0, 7.0],
+                [6.0, 5.0, 4.0, 1.0],
+            ],
+            invm=[
+                [-3.75, 2.75, -1, 0],
+                [4.375, -3.875, 2.0, -0.5],
+                [0.5, 0.5, -1.0, 1.0],
+                [-1.375, 0.875, 0.0, -0.5],
+            ])
+    let m2 = m1.inverse()
+    assert m2.isConsistent()
+
+    let prod = m1 * m2
+    assert prod.isConsistent()
+    assert areTranClose(prod, newTransformation())
+    
+
 
 when isMainModule:
 
@@ -108,11 +129,5 @@ when isMainModule:
             ])
     assert mPoint.isConsistent()
 
-    let vExpected = newVec(14.0, 38.0, 51.0)
-    assert areClose(vExpected, mPoint * newVec(1.0, 2.0, 3.0))
+    testInverse()
 
-    let pExpected = newPoint(18.0, 46.0, 58.0)
-    assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
-
-    let nExpected = newNormal(-8.75, 7.75, -3.0)
-    assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
