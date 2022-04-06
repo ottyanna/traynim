@@ -179,20 +179,20 @@ proc `*`*(t: Transformation, v: Vec): Vec =
 proc `*`*(t: Transformation, n: Normal): Normal =
     let (row0, row1, row2) = (t.invm[0],t.invm[1],t.invm[2])
     
-    result.x = n.x * row0[0] + n.y * row0[1] + n.z * row0[2]
-    result.y = n.x * row1[0] + n.y * row1[1] + n.z * row1[2]
-    result.z = n.x * row2[0] + n.y * row2[1] + n.z * row2[2]
+    result.x = n.x * row0[0] + n.y * row1[0] + n.z * row2[0]
+    result.y = n.x * row0[1] + n.y * row1[1] + n.z * row2[1]
+    result.z = n.x * row0[2] + n.y * row1[2] + n.z * row2[2]
 
 
 
 proc `*`*(t: Transformation, p: Point): Point =
     
-    
-    let (row0, row1, row2, row3) = (t.m[0],t.m[1],t.m[2],t.m[3]) 
-    result.x = p.x * row0[0] + p.y * row0[1] + p.z * row0[2]
-    result.y = p.x * row1[0] + p.y * row1[1] + p.z * row1[2]
-    result.z = p.x * row2[0] + p.y * row2[1] + p.z * row2[2]
-    let w = p.x * row3[0] + p.y * row3[1] + p.z * row3[2]
+    let (row0, row1, row2, row3) = (t.m[0],t.m[1],t.m[2],t.m[3])
+    result.x = p.x * row0[0] + p.y * row0[1] + p.z * row0[2] + row0[3]
+    result.y = p.x * row1[0] + p.y * row1[1] + p.z * row1[2] + row1[3]
+    result.z = p.x * row2[0] + p.y * row2[1] + p.z * row2[2] + row2[3]
+    let w = p.x * row3[0] + p.y * row3[1] + p.z * row3[2] + row3[3]
+
     if w == 1.0:
         return result
     else:

@@ -112,9 +112,7 @@ when isMainModule:
     assert areClose(vExpected, mPoint * newVec(1.0, 2.0, 3.0))
 
     let pExpected = newPoint(18.0, 46.0, 58.0)
-    echo pExpected
-    #assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
+    assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
 
     let nExpected = newNormal(-8.75, 7.75, -3.0)
-    
     assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
