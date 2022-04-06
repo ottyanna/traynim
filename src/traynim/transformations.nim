@@ -198,7 +198,10 @@ proc `*`*(t: Transformation, p: Point): Point =
     else:
         result = newPoint(p.x/w, p.y/w, p.z/w)
 
+proc `*`*(t1,t2: Transformation): Transformation =
 
+    result.m = matrixProd(t1.m, t2.m)
+    result.invm = matrixProd(t2.invm, t1.invm) # Reverse order! (A B)^-1 = B^-1 A^-1
             
 
     

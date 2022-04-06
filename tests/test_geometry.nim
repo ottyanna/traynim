@@ -41,6 +41,7 @@ proc testVecOperations (a, b: Vec) =
     assert b.parseVecToNormal == newNormal(4.0, 6.0, 8.0)
     assert areClose(a.sqrNorm(), 14.0)
     assert areClose(a.norm()*a.norm(), 14.0)
+    assert sqrNorm(a.normalize()) == 1
 
 
 proc testIsClose (m,invm: Matrix4x4) =
@@ -63,6 +64,41 @@ proc testIsClose (m,invm: Matrix4x4) =
     t4.invm[2][3] += 1.0
     assert not t4.areTranClose(t1)
 
+proc testMultiplication (m, invm : Matrix4x4) =
+
+    let m1= [[3.0, 5.0, 2.0, 4.0],
+             [4.0, 1.0, 0.0, 5.0],
+             [6.0, 3.0, 2.0, 0.0],
+             [1.0, 4.0, 2.0, 1.0]]
+
+    let invm1= [
+                [0.4, -0.2, 0.2, -0.6],
+                [2.9, -1.7, 0.2, -3.1],
+                [-5.55, 3.15, -0.4, 6.45],
+                [-0.9, 0.7, -0.2, 1.1],]
+
+    let t = newTransformation(m,invm)
+    let t1 = newTransformation(m1,invm1)
+
+    assert t1.isConsistent()
+
+    let expected = newTransformation(
+            [
+                [33.0, 32.0, 16.0, 18.0],
+                [89.0, 84.0, 40.0, 58.0],
+                [118.0, 106.0, 48.0, 88.0],
+                [63.0, 51.0, 22.0, 50.0],
+            ],
+            [
+                [-1.45, 1.45, -1.0, 0.6],
+                [-13.95, 11.95, -6.5, 2.6],
+                [25.525, -22.025, 12.25, -5.2],
+                [4.825, -4.325, 2.5, -1.1],
+            ],)
+
+    assert expected.isConsistent()
+
+    assert expected.areTranClose(t*t1)
 
 when isMainModule:
 
@@ -71,12 +107,6 @@ when isMainModule:
 
     testCreation(a)
     testVecOperations(a, b)
-
-    var c = newPoint(1.0, 2.0, 3.0)
-    var d = newPoint(4.0, 6.0, 8.0)
-
-    var e = newNormal(1.0, 2.0, 3.0)
-    var f = newNormal(4.0, 6.0, 8.0)
 
     let m = [
                 [1.0, 2.0, 3.0, 4.0],
@@ -93,3 +123,5 @@ when isMainModule:
                ]
 
     testIsClose(m,invm)
+
+    testMultiplication(m,invm)
