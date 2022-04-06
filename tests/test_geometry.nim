@@ -161,6 +161,18 @@ proc testVecPointMultiplication()=
     assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
 
 
+proc testTranslations() =
+
+    let tr1 = translation(newVec(1.0, 2.0, 3.0))
+    assert tr1.isConsistent()
+    let tr2 = translation(newVec(4.0, 6.0, 8.0))
+    assert tr1.is_consistent()
+    let prod = tr1 * tr2
+    assert prod.is_consistent()
+    let expected = translation(newVec(5.0, 8.0, 11.0))
+    assert prod.areTranClose(expected)
+
+
 when isMainModule:
 
     var a = newVec(1.0, 2.0, 3.0)
@@ -188,3 +200,5 @@ when isMainModule:
     testVecPointMultiplication()
     testInverse()
     testRotations()
+    testTranslations()
+
