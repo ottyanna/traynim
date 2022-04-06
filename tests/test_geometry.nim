@@ -63,6 +63,27 @@ proc testIsClose (m,invm: Matrix4x4) =
     t4.invm[2][3] += 1.0
     assert not t4.areTranClose(t1)
 
+proc testInverse() =
+    let m1 = newTransformation(m=[
+                [1.0, 2.0, 3.0, 4.0],
+                [5.0, 6.0, 7.0, 8.0],
+                [9.0, 9.0, 8.0, 7.0],
+                [6.0, 5.0, 4.0, 1.0],
+            ],
+            invm=[
+                [-3.75, 2.75, -1, 0],
+                [4.375, -3.875, 2.0, -0.5],
+                [0.5, 0.5, -1.0, 1.0],
+                [-1.375, 0.875, 0.0, -0.5],
+            ])
+    let m2 = m1.inverse()
+    assert m2.isConsistent()
+
+    let prod = m1 * m2
+    assert prod.isConsistent()
+    assert areTranClose(prod, newTransformation())
+    
+
 
 proc testMultiplication (m, invm : Matrix4x4) =
 
@@ -144,13 +165,7 @@ when isMainModule:
 
     testCreation(a)
     testVecOperations(a, b)
-
-    var c = newPoint(1.0, 2.0, 3.0)
-    var d = newPoint(4.0, 6.0, 8.0)
-
-    var e = newNormal(1.0, 2.0, 3.0)
-    var f = newNormal(4.0, 6.0, 8.0)
-
+        
     let m = [
                 [1.0, 2.0, 3.0, 4.0],
                 [5.0, 6.0, 7.0, 8.0],
@@ -168,3 +183,4 @@ when isMainModule:
     testIsClose(m,invm)
     testMultiplication(m,invm)
     testVecPointMultiplication()
+    testInverse()
