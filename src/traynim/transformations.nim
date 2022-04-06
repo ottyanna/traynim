@@ -104,7 +104,7 @@ proc scaling*(v: Vec): Transformation =
      [0.0, 0.0, 0.0, 1.0]]
 
 
-proc traslation*(v: Vec): Transformation =
+proc translation*(v: Vec): Transformation =
 
     ## The parameter `v` specifies the amount of shift to be applied along the three axes 
         
