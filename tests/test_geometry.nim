@@ -157,6 +157,17 @@ proc testTranslations() =
     let expected = translation(newVec(5.0, 8.0, 11.0))
     assert prod.areTranClose(expected)
 
+proc testScalings()=
+    
+    let tr1 = scaling(newVec(2.0, 5.0, 10.0))
+    assert tr1.isConsistent()
+
+    let tr2 = scaling(newVec(3.0, 2.0, 4.0))
+    assert tr2.isConsistent()
+
+    let expected = scaling(newVec(6.0, 10.0, 40.0))
+    assert expected.areTranClose(tr1 * tr2)
+
 
 when isMainModule:
 
@@ -185,3 +196,4 @@ when isMainModule:
     testVecPointMultiplication()
     testInverse()
     testTranslations()
+    testScalings()
