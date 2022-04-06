@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 #traynim is a ray tracer program written in Nim
 #Copyright (C) 2022 Jacopo Fera, Anna Spanò
 
@@ -14,13 +16,13 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#encoding: utf-8
 
 ## This module implements transformations on geometry types,
 ## such as `Point`, `Vec`, `Normal`.
 
 import common 
-from geometry import Point, Vec, Normal
+from geometry import Point, Vec, Normal, newPoint
+from math import sin, cos, degToRad
 
 
 type
@@ -85,3 +87,103 @@ proc inverse*(t :Transformation): Transformation=
         ## Return a `Transformation` object representing the inverse affine transformation.
         
         return Transformation(m : t.invm, invm : t.m)
+
+proc traslation*(v: Vec): Transformation =
+
+    ## The parameter `v` specifies the amount of shift to be applied along the three axes 
+        
+    result.m = [[1.0, 0.0, 0.0, v.x],
+     [0.0, 1.0, 0.0, v.y],
+     [0.0, 0.0, 1.0, v.z],
+     [0.0, 0.0, 0.0, 1.0]]
+
+    result.invm = [[1.0, 0.0, 0.0, -v.x],
+     [0.0, 1.0, 0.0, -v.y],
+     [0.0, 0.0, 1.0, -v.z],
+     [0.0, 0.0, 0.0, 1.0]]
+
+proc rotationX*(theta: float64): Transformation =
+
+    ## Input angle in deg
+
+    let (sinang, cosang) = (sin(degToRad(theta)), cos(degToRad(theta)))
+    
+    result.m = [[1.0, 0.0, 0.0, 0.0],
+     [0.0, cosang, -sinang, 0.0],
+     [0.0, sinang, cosang, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+    result.m = [[1.0, 0.0, 0.0, 0.0],
+     [0.0, cosang, sinang, 0.0],
+     [0.0, -sinang, cosang, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+proc rotationY*(theta: float64): Transformation =
+
+    ## Input angle in deg
+
+    let (sinang, cosang) = (sin(degToRad(theta)), cos(degToRad(theta)))
+    
+    result.m = [[cosang, 0.0, sinang, 0.0],
+     [0.0, 1.0, 0.0, 0.0],
+     [-sinang, 0.0, cosang, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+    result.m = [[cosang, 0.0, -sinang, 0.0],
+     [0.0, 1.0, 0.0, 0.0],
+     [sinang, 0.0, cosang, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+proc rotationZ*(theta: float64): Transformation =
+
+    ## Input angle in deg
+
+    let (sinang, cosang) = (sin(degToRad(theta)), cos(degToRad(theta)))
+    
+    result.m = [[cosang, -sinang, 0.0, 0.0],
+     [sinang, cosang, 0.0, 0.0],
+     [0.0, 0.0, 1.0, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+    result.m = [[cosang, sinang, 0.0, 0.0],
+     [-sinang, cosang, 0.0, 0.0],
+     [0.0, 0.0, 1.0, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+proc `*`*(t: Transformation, v: Vec): Vec =
+    
+    let (row0, row1, row2) = (t.m[0],t.m[1],t.m[2]) 
+
+    result.x = v.x * row0[0] + v.y * row0[1] + v.z * row0[2]
+    result.y = v.x * row1[0] + v.y * row1[1] + v.z * row1[2]
+    result.z = v.x * row2[0] + v.y * row2[1] + v.z * row2[2]
+
+
+
+proc `*`*(t: Transformation, n: Normal): Normal =
+    let (row0, row1, row2) = (t.invm[0],t.invm[1],t.invm[2])
+    
+    result.x = n.x * row0[0] + n.y * row0[1] + n.z * row0[2]
+    result.y = n.x * row1[0] + n.y * row1[1] + n.z * row1[2]
+    result.z = n.x * row2[0] + n.y * row2[1] + n.z * row2[2]
+
+
+
+proc `*`*(t: Transformation, p: Point): Point =
+    
+    
+    let (row0, row1, row2, row3) = (t.m[0],t.m[1],t.m[2],t.m[3]) 
+    result.x = p.x * row0[0] + p.y * row0[1] + p.z * row0[2]
+    result.y = p.x * row1[0] + p.y * row1[1] + p.z * row1[2]
+    result.z = p.x * row2[0] + p.y * row2[1] + p.z * row2[2]
+    let w = p.x * row3[0] + p.y * row3[1] + p.z * row3[2]
+    if areClose(w, 1.0):
+        return result
+    else:
+        result = newPoint(p.x/w, p.y/w, p.z/w)
+
+
+            
+
+    
+    
