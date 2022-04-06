@@ -122,17 +122,17 @@ proc testMultiplication (m, invm : Matrix4x4) =
     assert expected.areTranClose(t*t1)
 
 proc testRotations() = 
-    #assert rotationX(0.1).isConsistent()
-    #assert rotationY(0.1).isConsistent()
-    #assert rotationZ(0.1).isConsistent()
+    assert rotationX(0.1).isConsistent()
+    assert rotationY(0.1).isConsistent()
+    assert rotationZ(0.1).isConsistent()
 
     let vX = newVec(1.0, 0.0, 0.0)
     let vY = newVec(0.0, 1.0, 0.0)
     let vZ = newVec(0.0, 0.0, 1.0)
 
     assert (rotationX(theta = 90) * vY).areClose(vZ)
-    assert (rotationX(theta = 90) * vZ).areClose(vX)
-    assert (rotationX(theta = 90) * vX).areClose(vY)
+    assert (rotationY(theta = 90) * vZ).areClose(vX)
+    assert (rotationZ(theta = 90) * vX).areClose(vY)
 
 
 
