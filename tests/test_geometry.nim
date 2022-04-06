@@ -21,16 +21,10 @@ import ../src/traynim/geometry
 import ../src/traynim/common
 import ../src/traynim/transformations
 
-template test3dObjCreation(type1: typedesc) =
-
-    proc testCreation (a: type1) =
-        assert areClose(a.x, 1.0)
-        assert not areClose(a.y, 5.0)
-        assert areClose(a.z, 3.0)
-
-test3dObjCreation(Vec)
-test3dObjCreation(Point)
-test3dObjCreation(Normal)
+proc testCreation (a: Vec) =
+    assert areClose(a.x, 1.0)
+    assert not areClose(a.y, 5.0)
+    assert areClose(a.z, 3.0)
 
 proc testVecOperations (a, b: Vec) =
     assert not (($b) == "<x: 1.0 , y: 2.0, z: 3.0>")
@@ -80,12 +74,8 @@ when isMainModule:
     var c = newPoint(1.0, 2.0, 3.0)
     var d = newPoint(4.0, 6.0, 8.0)
 
-    testCreation(c)
-
     var e = newNormal(1.0, 2.0, 3.0)
     var f = newNormal(4.0, 6.0, 8.0)
-
-    testCreation(e)
 
     let m = [
                 [1.0, 2.0, 3.0, 4.0],
