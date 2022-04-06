@@ -64,6 +64,67 @@ proc testIsClose (m,invm: Matrix4x4) =
     assert not t4.areTranClose(t1)
 
 
+proc testMultiplication (m, invm : Matrix4x4) =
+
+    let m1= [[3.0, 5.0, 2.0, 4.0],
+             [4.0, 1.0, 0.0, 5.0],
+             [6.0, 3.0, 2.0, 0.0],
+             [1.0, 4.0, 2.0, 1.0]]
+
+    let invm1= [
+                [0.4, -0.2, 0.2, -0.6],
+                [2.9, -1.7, 0.2, -3.1],
+                [-5.55, 3.15, -0.4, 6.45],
+                [-0.9, 0.7, -0.2, 1.1],]
+
+    let t = newTransformation(m,invm)
+    let t1 = newTransformation(m1,invm1)
+
+    assert t1.isConsistent()
+
+    let expected = newTransformation(
+            [
+                [33.0, 32.0, 16.0, 18.0],
+                [89.0, 84.0, 40.0, 58.0],
+                [118.0, 106.0, 48.0, 88.0],
+                [63.0, 51.0, 22.0, 50.0],
+            ],
+            [
+                [-1.45, 1.45, -1.0, 0.6],
+                [-13.95, 11.95, -6.5, 2.6],
+                [25.525, -22.025, 12.25, -5.2],
+                [4.825, -4.325, 2.5, -1.1],
+            ],)
+
+    assert expected.isConsistent()
+
+    assert expected.areTranClose(t*t1)
+
+proc testVecPointMultiplication()=
+    let mPoint = newTransformation(
+            m=[
+                [1.0, 2.0, 3.0, 4.0],
+                [5.0, 6.0, 7.0, 8.0],
+                [9.0, 9.0, 8.0, 7.0],
+                [0.0, 0.0, 0.0, 1.0],
+            ],invm=[
+                [-3.75, 2.75, -1, 0],
+                [5.75, -4.75, 2.0, 1.0],
+                [-2.25, 2.25, -1.0, -2.0],
+                [0.0, 0.0, 0.0, 1.0],
+            ])
+    assert mPoint.isConsistent()
+
+    let vExpected = newVec(14.0, 38.0, 51.0)
+    assert areClose(vExpected, mPoint * newVec(1.0, 2.0, 3.0))
+
+    let pExpected = newPoint(18.0, 46.0, 58.0)
+    assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
+
+    let nExpected = newNormal(-8.75, 7.75, -3.0)
+    assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
+
+
 when isMainModule:
 
     var a = newVec(1.0, 2.0, 3.0)
@@ -93,26 +154,5 @@ when isMainModule:
                ]
 
     testIsClose(m,invm)
-
-    let mPoint = newTransformation(
-            m=[
-                [1.0, 2.0, 3.0, 4.0],
-                [5.0, 6.0, 7.0, 8.0],
-                [9.0, 9.0, 8.0, 7.0],
-                [0.0, 0.0, 0.0, 1.0],
-            ],invm=[
-                [-3.75, 2.75, -1, 0],
-                [5.75, -4.75, 2.0, 1.0],
-                [-2.25, 2.25, -1.0, -2.0],
-                [0.0, 0.0, 0.0, 1.0],
-            ])
-    assert mPoint.isConsistent()
-
-    let vExpected = newVec(14.0, 38.0, 51.0)
-    assert areClose(vExpected, mPoint * newVec(1.0, 2.0, 3.0))
-
-    let pExpected = newPoint(18.0, 46.0, 58.0)
-    assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
-
-    let nExpected = newNormal(-8.75, 7.75, -3.0)
-    assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
+    testMultiplication(m,invm)
+    testVecPointMultiplication()
