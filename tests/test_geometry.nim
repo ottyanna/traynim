@@ -184,3 +184,4 @@ when isMainModule:
     testMultiplication(m,invm)
     testVecPointMultiplication()
     testInverse()
+    testTranslations()
