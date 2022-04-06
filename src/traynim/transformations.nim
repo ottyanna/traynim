@@ -88,6 +88,22 @@ proc inverse*(t :Transformation): Transformation=
         
         return Transformation(m : t.invm, invm : t.m)
 
+
+proc scaling*(v: Vec): Transformation =
+
+    ## The parameter `v` specifies the amount of scaling to be applied along the three axes 
+        
+    result.m = [[v.x, 0.0, 0.0, 0.0],
+     [0.0, v.y, 0.0, 0.0],
+     [0.0, 0.0, v.z, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+    result.invm = [[1/v.x, 0.0, 0.0, 0.0],
+     [0.0, 1/v.y, 0.0, 0.0],
+     [0.0, 0.0, 1/v.z, 0.0],
+     [0.0, 0.0, 0.0, 1.0]]
+
+
 proc traslation*(v: Vec): Transformation =
 
     ## The parameter `v` specifies the amount of shift to be applied along the three axes 
