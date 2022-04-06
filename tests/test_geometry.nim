@@ -93,3 +93,28 @@ when isMainModule:
                ]
 
     testIsClose(m,invm)
+
+    let mPoint = newTransformation(
+            m=[
+                [1.0, 2.0, 3.0, 4.0],
+                [5.0, 6.0, 7.0, 8.0],
+                [9.0, 9.0, 8.0, 7.0],
+                [0.0, 0.0, 0.0, 1.0],
+            ],invm=[
+                [-3.75, 2.75, -1, 0],
+                [5.75, -4.75, 2.0, 1.0],
+                [-2.25, 2.25, -1.0, -2.0],
+                [0.0, 0.0, 0.0, 1.0],
+            ])
+    assert mPoint.isConsistent()
+
+    let vExpected = newVec(14.0, 38.0, 51.0)
+    assert areClose(vExpected, mPoint * newVec(1.0, 2.0, 3.0))
+
+    let pExpected = newPoint(18.0, 46.0, 58.0)
+    echo pExpected
+    #assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
+
+    let nExpected = newNormal(-8.75, 7.75, -3.0)
+    echo nExpected
+    #assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))

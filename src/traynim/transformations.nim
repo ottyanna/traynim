@@ -193,7 +193,7 @@ proc `*`*(t: Transformation, p: Point): Point =
     result.y = p.x * row1[0] + p.y * row1[1] + p.z * row1[2]
     result.z = p.x * row2[0] + p.y * row2[1] + p.z * row2[2]
     let w = p.x * row3[0] + p.y * row3[1] + p.z * row3[2]
-    if areClose(w, 1.0):
+    if w == 1.0:
         return result
     else:
         result = newPoint(p.x/w, p.y/w, p.z/w)
