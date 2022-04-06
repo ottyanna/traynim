@@ -116,5 +116,5 @@ when isMainModule:
     #assert areClose(pExpected, mPoint * newPoint(1.0, 2.0, 3.0))
 
     let nExpected = newNormal(-8.75, 7.75, -3.0)
-    echo nExpected
-    #assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
+    
+    assert areClose(nExpected, mPoint * newNormal(3.0, 2.0, 4.0))
