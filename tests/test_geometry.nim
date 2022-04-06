@@ -130,9 +130,9 @@ proc testRotations() =
     let vY = newVec(0.0, 1.0, 0.0)
     let vZ = newVec(0.0, 0.0, 1.0)
 
-    assert (rotationX(90) * vY).areClose(vZ)
-    assert (rotationX(90) * vZ).areClose(vX)
-    assert (rotationX(90) * vX).areClose(vY)
+    assert (rotationX(theta = 90) * vY).areClose(vZ)
+    assert (rotationY(theta = 90) * vZ).areClose(vX)
+    assert (rotationZ(theta = 90) * vX).areClose(vY)
 
 
 

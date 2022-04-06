@@ -124,14 +124,14 @@ proc rotationX*(theta: float64): Transformation =
     let (sinang, cosang) = (sin(degToRad(theta)), cos(degToRad(theta)))
     
     result.m = [[1.0, 0.0, 0.0, 0.0],
-     [0.0, cosang, -sinang, 0.0],
-     [0.0, sinang, cosang, 0.0],
-     [0.0, 0.0, 0.0, 1.0]]
+            [0.0, cosang, -sinang, 0.0],
+            [0.0, sinang, cosang, 0.0],
+            [0.0, 0.0, 0.0, 1.0]]
 
     result.invm = [[1.0, 0.0, 0.0, 0.0],
-     [0.0, cosang, sinang, 0.0],
-     [0.0, -sinang, cosang, 0.0],
-     [0.0, 0.0, 0.0, 1.0]]
+            [0.0, cosang, sinang, 0.0],
+            [0.0, -sinang, cosang, 0.0],
+            [0.0, 0.0, 0.0, 1.0]]
 
 proc rotationY*(theta: float64): Transformation =
 
