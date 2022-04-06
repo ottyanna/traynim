@@ -182,6 +182,7 @@ proc testScalings()=
 
     let expected = scaling(newVec(6.0, 10.0, 40.0))
     assert expected.areTranClose(tr1 * tr2)
+    echo $(tr1)
 
 
 when isMainModule:
@@ -213,4 +214,4 @@ when isMainModule:
     testRotations()
     testTranslations()
     testScalings()
-
+    

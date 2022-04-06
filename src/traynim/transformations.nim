@@ -202,6 +202,11 @@ proc `*`*(t1,t2: Transformation): Transformation =
 
     result.m = matrixProd(t1.m, t2.m)
     result.invm = matrixProd(t2.invm, t1.invm) # Reverse order! (A B)^-1 = B^-1 A^-1
+
+proc `$`*(t: Transformation): string =
+    let (row0, row1, row2, row3) = (t.m[0],t.m[1],t.m[2],t.m[3])
+    result = "\n" & $(row0) & "\n" & $(row1) & "\n" & $(row2) & "\n" & $(row3) & "\n"
+    
         
 
     
