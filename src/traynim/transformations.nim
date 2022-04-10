@@ -56,6 +56,14 @@ proc areMatrClose*(m1, m2: Matrix4x4): bool=
 
     return true
 
+proc `$`*(m: Matrix4x4): string =
+
+    ## "Stringfy" operation for Matrix4x4 object
+
+    let (row0, row1, row2, row3) = (m[0],m[1],m[2],m[3])
+    
+    result = "\n" & $(row0) & "\n" & $(row1) & "\n" & $(row2) & "\n" & $(row3) & "\n"
+
 
 type
     Transformation* = object ## An affine transformation.
@@ -102,10 +110,7 @@ proc `$`*(t: Transformation): string =
 
     ## "Stringfy" operation for Transformation object
 
-    let (row0, row1, row2, row3) = (t.m[0],t.m[1],t.m[2],t.m[3])
-    
-    result = "\n" & $(row0) & "\n" & $(row1) & "\n" & $(row2) & "\n" & $(row3) & "\n"
-
+    $(t.m)
 
 proc scaling*(v: Vec): Transformation =
 
