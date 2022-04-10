@@ -16,6 +16,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 ## This module implements operations on geometry types,
 ## such as `Point`, `Vec`, `Normal`.
 
@@ -37,7 +38,6 @@ template defineNew3dObj(fname: untyped, rettype: typedesc) =
     proc fname*(a, b, c: float64): rettype =
 
         ## Creates a new 3d object of type `Vec`, `Point` and `Normal`
-
 
         result.x = a
         result.y = b
@@ -132,7 +132,9 @@ defineMirrorOp(Normal)
 
 template definePrint3dObj(type1: typedesc) =
     proc `$`*(a: type1): string =
+
         ## Parse a 3D obj as a string
+
         result = "<" & "x: " & $(a.x) & " , " & "y: " & $(a.y) & ", " &
             "z: " & $(a.z) & ">"
 
@@ -143,10 +145,8 @@ definePrint3dObj(Normal)
 template defineAreClose3dObj(type1: typedesc) =
     proc areClose*(a, b: type1): bool =
 
-        ##
         ## Determines if two 3d objects are equal (to use with floating points)
-        ##
-
+        
         return areClose(a.x, b.x) and areClose(a.y, b.y) and
                 areClose(a.z, b.z)
 
@@ -157,10 +157,8 @@ defineAreClose3dObj(Normal)
 template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
     proc fname*(a: type1): rettype =
 
-        ##
         ## Convertion between 3d objects
-        ##
-
+        
         result.x = a.x
         result.y = a.y
         result.z = a.z
@@ -191,6 +189,8 @@ defineNorm(Normal)
 template defineNormalize(type1) =
     proc normalize*(a: type1): type1 =
         
+        ## A 3d Vector/Normal normalize procedure
+
         result.x = a.x / a.norm()
         result.y = a.y / a.norm()
         result.z = a.z / a.norm()

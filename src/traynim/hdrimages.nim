@@ -16,6 +16,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
 ## This module implements operations on HDRimages and PFM files
 
 from pixie import newImage, color, writeFile, setColor
