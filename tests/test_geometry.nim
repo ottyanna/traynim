@@ -17,7 +17,6 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-
 import ../src/traynim/geometry
 import ../src/traynim/common
 import ../src/traynim/transformations
