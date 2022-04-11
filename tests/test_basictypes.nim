@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 #traynim is a ray tracer program written in Nim
 #Copyright (C) 2022 Jacopo Fera, Anna Spanò
 
@@ -14,10 +16,10 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#encoding: utf-8
 
-import ../src/colors
-import ../src/hdrimages
+import ../src/traynim/colors
+import ../src/traynim/hdrimages
+import ../src/traynim/common
 import unittest, streams
 
 
@@ -172,3 +174,4 @@ when isMainModule:
     testClampImage(img)
 
     testwriteLdrImage()
+    

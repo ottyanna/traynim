@@ -1,3 +1,5 @@
+#encoding: utf-8
+
 #traynim is a ray tracer program written in Nim
 #Copyright (C) 2022 Jacopo Fera, Anna Spanò
 
@@ -14,9 +16,10 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#encoding: utf-8
 
 ## This module implements operations on Color type
+
+import common
 
 type
     Color* = object
@@ -62,10 +65,6 @@ proc `*`*(color1, color2: Color): Color =
 proc `$`*(color: Color): string =
     result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " &
             "b: " & $(color.b) & ">"
-
-
-proc areClose*(a, b: float32, epsilon = 1e-5): bool =
-    return abs(a - b) < epsilon
 
 proc areColorsClose*(color1, color2: Color): bool =
 
