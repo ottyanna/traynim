@@ -35,7 +35,7 @@ proc parseCommandLine(parameters: var Parameters, argv: seq[string]) =
 
     if argv.len != 4:
         raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT")
-        #available formats from pixie are ppm, png, bmp
+        #available formats from pixie are ppm, png, bmp, qoi
 
     parameters.inPfmFileName = argv[0]
 

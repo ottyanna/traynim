@@ -6,7 +6,7 @@ Functionalities implemented:
 - Read from PFM files
 - Tone mapping
 - Gamma correction
-- Save files in PNG, PPM and BMP formats
+- Save files in PNG, PPM, BMP and QOI formats
 
 ## Usage
 
