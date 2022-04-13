@@ -21,40 +21,40 @@ import ray
 import geometry
 
 type 
-    Camera = ref object of RootObj
-        aspectRatio : float64
-        transformation : Transformation
+    Camera* = ref object of RootObj
+        aspectRatio* : float64
+        transformation* : Transformation
 
 type 
-    OrthogonalCamera = ref object of Camera
+    OrthogonalCamera* = ref object of Camera
 
 type 
-    PerspectiveCamera = ref object of Camera
-        distance : float64
+    PerspectiveCamera* = ref object of Camera
+        distance* : float64
 
-method fireRay(c: var Camera) {.base.} =
+method fireRay*(c: var Camera) {.base.} =
     quit "to override!"
 
-method newCamera(c: var Camera) {.base.} =
+method newCamera*(c: var Camera) {.base.} =
     quit "to override!"
 
-method newCamera(c : var PerspectiveCamera, distance = 1.0, aspectRatio = 1.0, transformation = Transformation()) =
+method newCamera*(c : var PerspectiveCamera, distance = 1.0, aspectRatio = 1.0, transformation = Transformation()) =
         c.distance = distance
         c.aspectRatio = aspectRatio
         c.transformation = transformation
 
-method newCamera(c : var OrthogonalCamera, aspectRatio = 1.0, transformation = Transformation()) =
+method newCamera*(c : var OrthogonalCamera, aspectRatio = 1.0, transformation = Transformation()) =
         c.aspectRatio = aspectRatio
         c.transformation = transformation
 
 
-method fireRay(c: PerspectiveCamera, u: float64, v: float64) : Ray =
+method fireRay*(c: PerspectiveCamera, u: float64, v: float64) : Ray =
     result.origin = newPoint(-c.distance,0.0,0.0)
     result.dir = newVec(c.distance, (1.0 - 2 * u) * c.aspect_ratio, 2*v - 1)
     result.tmin=1.0
     return result.transform(c.transformation)
 
-method fireRay(c: OrthogonalCamera, u: float64, v: float64) : Ray =
+method fireRay*(c: OrthogonalCamera, u: float64, v: float64) : Ray =
     result.origin = newPoint(-1.0,(1.0 - 2 * u) * c.aspectRatio, 2 * v - 1)
     result.dir = vecX
     result.tmin=1.0

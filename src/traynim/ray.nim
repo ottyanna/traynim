@@ -40,7 +40,7 @@ proc isClose(a, b: Ray, epsilon = 1e-5): bool =
 proc at(ray: Ray, t: float64): Point =
     result = ray.origin + ray.dir * t
 
-proc transform(ray: Ray, transformation: Transformation): Ray=
+proc transform*(ray: Ray, transformation: Transformation): Ray=
         result.origin=transformation * ray.origin
         result.dir=transformation * ray.dir
         result.tmin=ray.tmin

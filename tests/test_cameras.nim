@@ -16,3 +16,17 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+
+import ../src/traynim/cameras
+
+proc testOrthogonalCamera()=
+    
+    var cam : OrthogonalCamera
+
+    cam.newCamera(aspectRatio=2.0)
+
+    echo cam.aspectRatio
+
+when isMainModule:
+
+    testOrthogonalCamera()
