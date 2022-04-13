@@ -16,3 +16,28 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import ../src/traynim/geometry
+import ../src/traynim/common
+import ../src/traynim/ray
+
+proc testIsClose() =
+    let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
+    let ray2 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
+    let ray3 = newRay(origin = newPoint(5.0, 2.0, 4.0), dir = newVec(3.0, 9.0, 4.0))
+
+    assert ray1.isClose(ray2)
+    assert not ray1.isClose(ray3)
+
+proc testAt() =
+    let ray = newRay(origin = newPoint(1.0, 2.0, 4.0), dir = newVec(4.0, 2.0, 1.0))
+    assert ray.at(0.0).areClose(ray.origin)
+    assert ray.at(1.0).areClose(newPoint(5.0, 4.0, 5.0))
+    assert ray.at(2.0).areClose(newPoint(9.0, 6.0, 6.0))
+    
+
+    
+
+
+when isMainModule:
+    testIsClose()
+    testAt()

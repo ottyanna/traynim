@@ -27,17 +27,17 @@ type Ray* = object
     tmax*: float64
     depth*: int
 
-proc newRay(origin: Point, dir: Vec, tmin = 1e5, tmax = Inf, depth = 0): Ray =
+proc newRay*(origin: Point, dir: Vec, tmin = 1e5, tmax = Inf, depth = 0): Ray =
     result.origin = origin
     result.dir = dir
     result.tmin = tmin
     result.depth = depth
 
-proc isClose(a, b: Ray, epsilon = 1e-5): bool =
+proc isClose*(a, b: Ray, epsilon = 1e-5): bool =
     result = (a.origin.areClose(b.origin, epsilon)) and (
             a.dir.areClose(b.dir, epsilon))
 
-proc at(ray: Ray, t: float64): Point =
+proc at*(ray: Ray, t: float64): Point =
     result = ray.origin + ray.dir * t
 
 proc transform(ray: Ray, transformation: Transformation): Ray=
