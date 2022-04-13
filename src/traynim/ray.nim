@@ -15,3 +15,28 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import geometry
+import common
+
+type Ray* = object
+    origin*: Point
+    dir*: Vec
+    tmin*: float64
+    tmax*: float64
+    depth*: int
+
+proc newRay(origin: Point, dir: Vec, tmin = 1e5, tmax = Inf, depth = 0): Ray =
+    result.origin = origin
+    result.dir = dir
+    result.tmin = tmin
+    result.depth = depth
+
+proc isClose(a, b: Ray, epsilon = 1e-5): bool =
+    result = (a.origin.areClose(b.origin, epsilon = epsilon)) and (
+            a.dir.areClose(b.dir, epsilon = epsilon))
+
+proc at(ray: Ray, t: float64): Point =
+    result = ray.origin + ray.dir * t
+    
+

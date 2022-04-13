@@ -18,9 +18,10 @@
 
 
 ## This module implements useful operations
- 
-proc areClose*(a, b: float32, epsilon = 1e-5): bool =
 
-    ## Checks if two floating points are equal
-
-    return abs(a - b) < epsilon
+template defineAreClose(type1: typedesc) =
+    proc areClose*(a,b : type1, epsilon = 1e-5): bool = 
+        ## Checks if two floating points are equal
+        return abs(a - b) < epsilon
+defineAreClose(float32)
+defineAreClose(float64)
