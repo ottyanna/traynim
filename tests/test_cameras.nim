@@ -18,18 +18,29 @@
 
 
 import ../src/traynim/cameras
+import ../src/traynim/common
 import ../src/traynim/geometry
 import ../src/traynim/ray
 
 proc testOrthogonalCamera()=
     
-    echo "Prova"
-
     let cam = newOrthogonalCamera(aspectRatio = 2.0)
+    let ray1 = cam.fireRay(0.0,0.0)
+    let ray2 = cam.fireRay(1.0,0.0)
+    let ray3 = cam.fireRay(0.0,1.0)
+    let ray4 = cam.fireRay(1.0,1.0)
+    
+    # Verify that the rays are parallel by verifying that cross-products vanish
+    assert areClose(0.0, ray1.dir.cross(ray2.dir).sqrNorm())
+    assert areClose(0.0, ray1.dir.cross(ray3.dir).sqrNorm())
+    assert areClose(0.0, ray1.dir.cross(ray4.dir).sqrNorm())
 
-    echo "fire"
+    # Verify that the ray hitting the corners have the right coordinates
 
-    echo cam.aspectRatio
+    assert ray1.at(1.0).areClose(newPoint(0.0,2.0,-1.0))
+    assert ray2.at(1.0).areClose(newPoint(0.0,-2.0,-1.0))
+    assert ray3.at(1.0).areClose(newPoint(0.0,2.0,1.0))
+    assert ray4.at(1.0).areClose(newPoint(0.0,-2.0,1.0))
 
 proc testIsClose() =
     let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
