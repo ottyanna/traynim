@@ -15,3 +15,19 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+type Camera = ref object of RootObj
+
+type OrthogonalCamera = ref object of Camera
+
+type PerspectiveCamera = ref object of Camera
+
+method fireRay(c: Camera) {.base.} =
+    quit "to override!"
+
+method fireRay(c: OrthogonalCamera) =
+    echo "fire!"
+
+method fireRay(c: PerspectiveCamera) =
+    echo "fire!"
