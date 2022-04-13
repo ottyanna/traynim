@@ -47,6 +47,7 @@ defineNew3dObj(newVec, Vec)
 defineNew3dObj(newPoint, Point)
 defineNew3dObj(newNormal, Normal)
 
+const vecX* = Vec(x: 1.0, y : 0.0, z: 0.0)
 
 template define3dOp(fname: untyped, type1: typedesc, type2: typedesc,
         rettype: typedesc) =
