@@ -50,12 +50,12 @@ method newCamera(c : var OrthogonalCamera, aspectRatio = 1.0, transformation = T
 
 method fireRay(c: PerspectiveCamera, u: float64, v: float64) : Ray =
     result.origin = newPoint(-c.distance,0.0,0.0)
-    result.direction = newVec(c.distance, (1.0 - 2 * u) * c.aspect_ratio, 2*v - 1)
+    result.dir = newVec(c.distance, (1.0 - 2 * u) * c.aspect_ratio, 2*v - 1)
     result.tmin=1.0
     return result.transform(c.transformation)
 
 method fireRay(c: OrthogonalCamera, u: float64, v: float64) : Ray =
     result.origin = newPoint(-1.0,(1.0 - 2 * u) * c.aspectRatio, 2 * v - 1)
-    result.direction = vecX
+    result.dir = vecX
     result.tmin=1.0
     return result.transform(c.transformation)

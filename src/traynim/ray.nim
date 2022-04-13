@@ -18,6 +18,7 @@
 
 import geometry
 import common
+import transformations
 
 type Ray* = object
     origin*: Point
@@ -33,10 +34,17 @@ proc newRay(origin: Point, dir: Vec, tmin = 1e5, tmax = Inf, depth = 0): Ray =
     result.depth = depth
 
 proc isClose(a, b: Ray, epsilon = 1e-5): bool =
-    result = (a.origin.areClose(b.origin, epsilon = epsilon)) and (
-            a.dir.areClose(b.dir, epsilon = epsilon))
+    result = (a.origin.areClose(b.origin, epsilon)) and (
+            a.dir.areClose(b.dir, epsilon))
 
 proc at(ray: Ray, t: float64): Point =
     result = ray.origin + ray.dir * t
+
+proc transform(ray: Ray, transformation: Transformation): Ray=
+        result.origin=transformation * ray.origin
+        result.dir=transformation * ray.dir
+        result.tmin=ray.tmin
+        result.tmax=ray.tmax
+        result.depth=ray.depth
     
 

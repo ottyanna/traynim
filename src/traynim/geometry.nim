@@ -144,12 +144,12 @@ definePrint3dObj(Point)
 definePrint3dObj(Normal)
 
 template defineAreClose3dObj(type1: typedesc) =
-    proc areClose*(a, b: type1): bool =
+    proc areClose*(a, b: type1, epsilon = 1e-5): bool =
 
         ## Determines if two 3d objects are equal (to use with floating points)
         
-        return areClose(a.x, b.x) and areClose(a.y, b.y) and
-                areClose(a.z, b.z)
+        return areClose(a.x, b.x, epsilon) and areClose(a.y, b.y, epsilon) and
+                areClose(a.z, b.z, epsilon)
 
 defineAreClose3dObj(Vec)
 defineAreClose3dObj(Point)
