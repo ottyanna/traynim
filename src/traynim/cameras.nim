@@ -35,17 +35,13 @@ type
 method fireRay*(c: var Camera) {.base.} =
     quit "to override!"
 
-method newCamera*(c: var Camera) {.base.} =
-    quit "to override!"
+proc newPerspectiveCamera*(aspectRatio = 1.0, transformation = newTransformation(), distance = 1.0): PerspectiveCamera  =
+        
+        return PerspectiveCamera(aspectRatio: aspectRatio, transformation: transformation, distance: distance)
 
-method newCamera*(c : var PerspectiveCamera, distance = 1.0, aspectRatio = 1.0, transformation = Transformation()) =
-        c.distance = distance
-        c.aspectRatio = aspectRatio
-        c.transformation = transformation
-
-method newCamera*(c : var OrthogonalCamera, aspectRatio = 1.0, transformation = Transformation()) =
-        c.aspectRatio = aspectRatio
-        c.transformation = transformation
+proc newOrthogonalCamera*(aspectRatio = 1.0, transformation = newTransformation()): OrthogonalCamera  =
+        
+        return OrthogonalCamera(aspectRatio: aspectRatio, transformation: transformation)
 
 
 method fireRay*(c: PerspectiveCamera, u: float64, v: float64) : Ray =

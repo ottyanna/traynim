@@ -17,7 +17,6 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import geometry
-import common
 import transformations
 
 type Ray* = object

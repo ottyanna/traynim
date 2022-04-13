@@ -18,21 +18,18 @@
 
 
 import ../src/traynim/cameras
+import ../src/traynim/geometry
+import ../src/traynim/ray
 
 proc testOrthogonalCamera()=
     
-    var cam : OrthogonalCamera
+    echo "Prova"
 
-    cam.newCamera(aspectRatio=2.0)
+    let cam = newOrthogonalCamera(aspectRatio = 2.0)
+
+    echo "fire"
 
     echo cam.aspectRatio
-
-when isMainModule:
-
-    testOrthogonalCamera()
-import ../src/traynim/geometry
-import ../src/traynim/common
-import ../src/traynim/ray
 
 proc testIsClose() =
     let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
@@ -55,3 +52,4 @@ proc testAt() =
 when isMainModule:
     testIsClose()
     testAt()
+    testOrthogonalCamera()
