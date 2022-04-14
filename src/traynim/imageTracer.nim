@@ -15,3 +15,35 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import hdrimages
+import cameras
+import ray
+
+type
+    ImageTracer* = object
+        image* : HdrImage
+        camera* : Camera
+
+proc newImageTracer*(image: HdrImage, camera: Camera): ImageTracer =
+
+    result.image = image
+    result.camera = camera
+
+proc fireRay*(imagetracer: ImageTracer, col, row : int, uPixel = 0.5, vPixel = 0.5): Ray = 
+    # There's a mistake in the following formula !!!!
+    let u = (col.toFloat + uPixel) / (imagetracer.image.width - 1).toFloat
+    let v = (row.toFloat + vPixel) / (imagetracer.image.height - 1).toFloat
+
+    return (imagetracer.camera.fireRay(u,v))
+
+proc fireAllRays*(imagetracer : var ImageTracer, fn = proc(ray : Ray)) =
+        for row in 0..imagetracer.image.height:
+            for col in 0..imagetracer.image.width:
+                let ray = imagetracer.fireRay(col, row)
+                let color = fn(ray)
+                imagetracer.image.setPixel(col, row, color)
+
+    
+    
+
