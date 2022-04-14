@@ -40,12 +40,11 @@ proc fireRay*(imagetracer: ImageTracer, col, row : int, uPixel = 0.5, vPixel = 0
     return (imagetracer.camera.fireRay(u,v))
 
 proc fireAllRays*(imagetracer : var ImageTracer, fun: (Ray) -> Color) =
-        for row in 0..imagetracer.image.height:
-            for col in 0..imagetracer.image.width:
+        for row in 0..<imagetracer.image.height:
+            for col in 0..<imagetracer.image.width:
                 let ray = imagetracer.fireRay(col, row)
                 let color = fun(ray)
                 imagetracer.image.setPixel(col, row, color)
-
     
     
 

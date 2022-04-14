@@ -18,10 +18,14 @@
 
 
 import ../src/traynim/cameras
+import ../src/traynim/colors
 import ../src/traynim/common
 import ../src/traynim/geometry
 import ../src/traynim/ray
 import ../src/traynim/transformations
+import ../src/traynim/hdrimages
+import ../src/traynim/imageTracer
+import sugar
 
 proc testOrthogonalCamera() =
 
@@ -74,6 +78,19 @@ proc testOrthogonalCameraTransform() =
     assert ray.at(1.0).areClose(newPoint(0.0, -2.0, 0.0))
 
 
+proc testImageTracer()=
+    let image = newHdrImage(width=4, height=2)
+    let camera = newPerspectiveCamera(aspect_ratio=2)
+    var tracer = newImageTracer(image=image, camera=camera)
+
+    let ray1 = tracer.fireRay(0, 0, u_pixel=2.5, v_pixel=1.5)
+    let ray2 = tracer.fireRay(2, 1, u_pixel=0.5, v_pixel=0.5)
+    assert ray1.isClose(ray2)
+
+    tracer.fireAllRays(ray => newColor(1.0, 2.0, 3.0))
+    for row in 0..<tracer.image.height:
+        for col in 0..<tracer.image.width:
+            assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
 
 
 
@@ -84,3 +101,4 @@ when isMainModule:
     testTranform()
     testOrthogonalCamera()
     testOrthogonalCameraTransform()
+    testImageTracer()
