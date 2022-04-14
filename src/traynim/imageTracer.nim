@@ -16,6 +16,8 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+import sugar
+from colors import Color
 import hdrimages
 import cameras
 import ray
@@ -37,11 +39,11 @@ proc fireRay*(imagetracer: ImageTracer, col, row : int, uPixel = 0.5, vPixel = 0
 
     return (imagetracer.camera.fireRay(u,v))
 
-proc fireAllRays*(imagetracer : var ImageTracer, fn = proc(ray : Ray)) =
+proc fireAllRays*(imagetracer : var ImageTracer, fun: (Ray) -> Color) =
         for row in 0..imagetracer.image.height:
             for col in 0..imagetracer.image.width:
                 let ray = imagetracer.fireRay(col, row)
-                let color = fn(ray)
+                let color = fun(ray)
                 imagetracer.image.setPixel(col, row, color)
 
     
