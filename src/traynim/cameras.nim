@@ -34,7 +34,7 @@ type
     PerspectiveCamera* = ref object of Camera
         distance* : float64
 
-method fireRay*(c: var Camera) {.base.} =
+method fireRay*(c: Camera, u: float64, v: float64) : Ray {.base.} =
     quit "to override!"
 
 proc newPerspectiveCamera*(aspectRatio = 1.0, transformation = newTransformation(), distance = 1.0): PerspectiveCamera  =
