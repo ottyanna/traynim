@@ -21,6 +21,7 @@ import ../src/traynim/cameras
 import ../src/traynim/common
 import ../src/traynim/geometry
 import ../src/traynim/ray
+import ../src/traynim/transformations
 
 proc testOrthogonalCamera()=
     
@@ -55,6 +56,14 @@ proc testAt() =
     assert ray.at(0.0).areClose(ray.origin)
     assert ray.at(1.0).areClose(newPoint(5.0, 4.0, 5.0))
     assert ray.at(2.0).areClose(newPoint(9.0, 6.0, 6.0))
+
+proc testTranform() =
+    let ray = newRay(newPoint(1.0, 2.0, 3.0), newVec(6.0, 5.0, 4.0))
+    let transformation = translation(newVec(10.0, 11.0, 12.0)) * rotationX(90.0)
+    let transformed = ray.transform(transformation)
+    
+    assert transformed.origin.areclose(newPoint(11.0, 8.0, 14.0))
+    assert transformed.dir.areclose(newVec(6.0, -4.0, 5.0))
     
 
     
@@ -63,4 +72,5 @@ proc testAt() =
 when isMainModule:
     testIsClose()
     testAt()
+    testTranform()
     testOrthogonalCamera()
