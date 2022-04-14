@@ -38,13 +38,18 @@ method fireRay*(c: var Camera) {.base.} =
     quit "to override!"
 
 proc newPerspectiveCamera*(aspectRatio = 1.0, transformation = newTransformation(), distance = 1.0): PerspectiveCamera  =
-        
-        return PerspectiveCamera(aspectRatio: aspectRatio, transformation: transformation, distance: distance)
+    
+    new(result)
 
+    result.aspectRatio = aspectRatio
+    result.transformation = transformation
+    result.distance = distance
+        
 proc newOrthogonalCamera*(aspectRatio = 1.0, transformation = newTransformation()): OrthogonalCamera  =
         
-        return OrthogonalCamera(aspectRatio: aspectRatio, transformation: transformation)
-
+        new(result)
+        result.aspectRatio = aspectRatio
+        result.transformation = transformation
 
 method fireRay*(c: PerspectiveCamera, u: float64, v: float64) : Ray =
     result.origin = newPoint(-c.distance,0.0,0.0)
