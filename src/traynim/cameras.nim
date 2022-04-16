@@ -22,43 +22,88 @@
 import transformations, ray, geometry
 
 
-type 
+type
     Camera* = ref object of RootObj
-        aspectRatio* : float64
-        transformation* : Transformation
+        aspectRatio*: float64
+        transformation*: Transformation
 
-type 
+type
     OrthogonalCamera* = ref object of Camera
 
-type 
+type
     PerspectiveCamera* = ref object of Camera
-        distance* : float64
+        distance*: float64
 
-method fireRay*(c: Camera, u: float64, v: float64) : Ray {.base.} =
+method fireRay*(c: Camera, u: float64, v: float64): Ray {.base.} =
     quit "to override!"
 
-proc newPerspectiveCamera*(aspectRatio = 1.0, distance = 1.0, transformation = newTransformation()): PerspectiveCamera  =
-    
+proc newPerspectiveCamera*(aspectRatio = 1.0, distance = 1.0,
+        transformation = newTransformation()): PerspectiveCamera =
+
     new(result)
 
     result.aspectRatio = aspectRatio
     result.transformation = transformation
     result.distance = distance
-        
-proc newOrthogonalCamera*(aspectRatio = 1.0, transformation = newTransformation()): OrthogonalCamera  =
-        
-        new(result)
-        result.aspectRatio = aspectRatio
-        result.transformation = transformation
 
-method fireRay*(c: PerspectiveCamera, u: float64, v: float64) : Ray =
-    result.origin = newPoint(-c.distance,0.0,0.0)
-    result.dir = newVec(c.distance, (1.0 - 2 * u) * c.aspect_ratio, 2*v - 1)
-    result.tmin=1.0
-    return result.transform(c.transformation)
+proc newOrthogonalCamera*(aspectRatio = 1.0, transformation = newTransformation()): OrthogonalCamera =
 
-method fireRay*(c: OrthogonalCamera, u: float64, v: float64) : Ray =
-    result.origin = newPoint(-1.0,(1.0 - 2 * u) * c.aspectRatio, 2 * v - 1)
+    new(result)
+    result.aspectRatio = aspectRatio
+    result.transformation = transformation
+
+method fireRay*(c: PerspectiveCamera, u: float64, v: float64): Ray =
+
+    ## Shoots a `Ray` through the camera's screen.
+    ##
+    ## `(u,v)` are the coordinates on the screen. The origin of the reference system
+    ## is in the bottom left corner (following the diagram below)
+    ## and the maximum value is 1 for both `u` and `v`.
+    ##
+    ##                         
+    ##       (0,1)_____________________________(1,1) 
+    ##           |                             |      
+    ##         ^ |                             |      
+    ##         | |                             |      
+    ##         | |                             |      
+    ##       v | |                             |      
+    ##         | |                             |      
+    ##         | |                             |      
+    ##         | |_____________________________|      
+    ##       (0,0)  u --------------->          (0,1) 
+    ## 
+
+    # for PerspectiveCamera the origin of the ray in in the eye of the observer
+    result.origin = newPoint(-c.distance, 0.0, 0.0) 
+    result.dir = newVec(c.distance, (1.0 - 2 * u) * c.aspectRatio, 2*v - 1)
+    result.tmin = 1.0
+    return result.transform(c.transformation) 
+    # The result is the transformed ray, which corresponds to the transformed ray
+
+method fireRay*(c: OrthogonalCamera, u: float64, v: float64): Ray =
+
+    ## Shoots a `Ray` through the camera's screen.
+    ##
+    ## `(u,v)` are the coordinates on the screen. The origin of the reference system
+    ## is in the bottom left corner (following the diagram below)
+    ## and the maximum value is 1 for both `u` and `v`.
+    ##
+    ##                         
+    ##       (0,1)_____________________________(1,1) 
+    ##           |                             |      
+    ##         ^ |                             |      
+    ##         | |                             |      
+    ##         | |                             |      
+    ##       v | |                             |      
+    ##         | |                             |      
+    ##         | |                             |      
+    ##         | |_____________________________|      
+    ##       (0,0)  u --------------->          (0,1) 
+    ##     
+
+    # for orthogonalCamera the origin of the ray is in in the point on the screen
+    result.origin = newPoint(-1.0, (1.0 - 2 * u) * c.aspectRatio, 2 * v - 1)
     result.dir = vecX
-    result.tmin=1.0
+    result.tmin = 1.0
     return result.transform(c.transformation)
+    # The result is the transformed ray, which corresponds to the transformed ray
