@@ -59,7 +59,7 @@ method fireRay*(c: PerspectiveCamera, u: float64, v: float64): Ray =
     ## `(u,v)` are the coordinates on the screen. The origin of the reference system
     ## is in the bottom left corner (following the diagram below)
     ## and the maximum value is 1 for both `u` and `v`.
-    ##
+    ## ::
     ##                         
     ##       (0,1)_____________________________(1,1) 
     ##           |                             |      
@@ -88,7 +88,7 @@ method fireRay*(c: OrthogonalCamera, u: float64, v: float64): Ray =
     ## is in the bottom left corner (following the diagram below)
     ## and the maximum value is 1 for both `u` and `v`.
     ##
-    ##                         
+    ##::                         
     ##       (0,1)_____________________________(1,1) 
     ##           |                             |      
     ##         ^ |                             |      
