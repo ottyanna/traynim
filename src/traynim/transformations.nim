@@ -20,7 +20,7 @@
 ## This module implements transformations on geometry types,
 ## such as `Point`, `Vec`, `Normal`.
 
-import common 
+import common
 from geometry import Point, Vec, Normal, newPoint
 from math import sin, cos, degToRad
 

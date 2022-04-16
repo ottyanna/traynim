@@ -19,8 +19,7 @@
 
 ## This module implements operation on Ray type
 
-import geometry
-import transformations
+import geometry, transformations
 
 type Ray* = object
     origin*: Point

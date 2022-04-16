@@ -17,9 +17,11 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import ../src/traynim/geometry
-import ../src/traynim/common
-import ../src/traynim/transformations
+import 
+    ../src/traynim/geometry,
+    ../src/traynim/common,
+    ../src/traynim/transformations
+    
 
 proc testCreation (a: Vec) =
     assert areClose(a.x, 1.0)

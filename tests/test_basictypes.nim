@@ -16,11 +16,11 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import ../src/traynim/colors
-import ../src/traynim/hdrimages
-import ../src/traynim/common
 import unittest, streams
+import 
+    ../src/traynim/colors,
+    ../src/traynim/hdrimages,
+    ../src/traynim/common
 
 
 # Tests on Colors.nim procedures

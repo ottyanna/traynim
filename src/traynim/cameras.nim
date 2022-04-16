@@ -19,9 +19,8 @@
 
 ## This module implements camera types operations
 
-import transformations
-import ray
-import geometry
+import transformations, ray, geometry
+
 
 type 
     Camera* = ref object of RootObj

@@ -16,17 +16,17 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
-import ../src/traynim/cameras
-import ../src/traynim/colors
-import ../src/traynim/common
-import ../src/traynim/geometry
-import ../src/traynim/ray
-import ../src/traynim/transformations
-import ../src/traynim/hdrimages
-import ../src/traynim/imageTracer
 import sugar
 from math import PI
+import 
+    ../src/traynim/cameras,
+    ../src/traynim/colors,
+    ../src/traynim/common,
+    ../src/traynim/geometry,
+    ../src/traynim/ray,
+    ../src/traynim/transformations,
+    ../src/traynim/hdrimages,
+    ../src/traynim/imageTracer
 
 proc testAreClose() =
     let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))

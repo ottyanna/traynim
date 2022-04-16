@@ -16,11 +16,9 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import sugar
+import sugar, hdrimages, cameras, ray
 from colors import Color
-import hdrimages
-import cameras
-import ray
+
 
 type
     ImageTracer* = object
