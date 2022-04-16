@@ -19,14 +19,14 @@
 import sugar
 from math import PI
 import 
-    ../src/traynim/cameras,
-    ../src/traynim/colors,
-    ../src/traynim/common,
-    ../src/traynim/geometry,
-    ../src/traynim/ray,
-    ../src/traynim/transformations,
-    ../src/traynim/hdrimages,
-    ../src/traynim/imageTracer
+    traynim/cameras,
+    traynim/colors,
+    traynim/common,
+    traynim/geometry,
+    traynim/ray,
+    traynim/transformations,
+    traynim/hdrimages,
+    traynim/imageTracer
 
 proc testAreClose() =
     let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))

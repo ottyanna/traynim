@@ -18,9 +18,9 @@
 
 import unittest, streams
 import 
-    ../src/traynim/colors,
-    ../src/traynim/hdrimages,
-    ../src/traynim/common
+    traynim/colors,
+    traynim/hdrimages,
+    traynim/common
 
 
 # Tests on Colors.nim procedures

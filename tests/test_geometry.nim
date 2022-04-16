@@ -18,10 +18,10 @@
 
 
 import 
-    ../src/traynim/geometry,
-    ../src/traynim/common,
-    ../src/traynim/transformations
-    
+    traynim/geometry,
+    traynim/common,
+    traynim/transformations
+
 
 proc testCreation (a: Vec) =
     assert areClose(a.x, 1.0)
