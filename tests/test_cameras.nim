@@ -28,13 +28,13 @@ import ../src/traynim/imageTracer
 import sugar
 from math import PI
 
-proc testIsClose() =
+proc testAreClose() =
     let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
     let ray2 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
     let ray3 = newRay(origin = newPoint(5.0, 2.0, 4.0), dir = newVec(3.0, 9.0, 4.0))
 
-    assert ray1.isClose(ray2)
-    assert not ray1.isClose(ray3)
+    assert ray1.areClose(ray2)
+    assert not ray1.areClose(ray3)
 
 proc testAt() =
     let ray = newRay(origin = newPoint(1.0, 2.0, 4.0), dir = newVec(4.0, 2.0, 1.0))
@@ -112,7 +112,7 @@ proc testImageTracer() =
 
     let ray1 = tracer.fireRay(0, 0, u_pixel = 2.5, v_pixel = 1.5)
     let ray2 = tracer.fireRay(2, 1, u_pixel = 0.5, v_pixel = 0.5)
-    assert ray1.isClose(ray2)
+    assert ray1.areClose(ray2)
 
     tracer.fireAllRays(ray => newColor(1.0, 2.0, 3.0))
     for row in 0..<tracer.image.height:
@@ -123,7 +123,7 @@ proc testImageTracer() =
 
 
 when isMainModule:
-    testIsClose()
+    testAreClose()
     testAt()
     testTranform()
     testOrthogonalCamera()
