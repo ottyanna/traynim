@@ -38,7 +38,7 @@ type
 method fireRay*(c: Camera, u: float64, v: float64) : Ray {.base.} =
     quit "to override!"
 
-proc newPerspectiveCamera*(aspectRatio = 1.0, transformation = newTransformation(), distance = 1.0): PerspectiveCamera  =
+proc newPerspectiveCamera*(aspectRatio = 1.0, distance = 1.0, transformation = newTransformation()): PerspectiveCamera  =
     
     new(result)
 
