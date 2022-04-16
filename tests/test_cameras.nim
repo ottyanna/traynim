@@ -72,7 +72,7 @@ proc testOrthogonalCameraTransform() =
 
 proc testPerspectiveCamera() =
 
-    let cam = newPerspectiveCamera(distance = 1.0, aspectRatio = 2.0)
+    let cam = newPerspectiveCamera(screenDistance = 1.0, aspectRatio = 2.0)
 
     let ray1 = cam.fireRay(0.0, 0.0)
     let ray2 = cam.fireRay(1.0, 0.0)

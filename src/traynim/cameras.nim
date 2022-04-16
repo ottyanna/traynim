@@ -23,30 +23,59 @@ import transformations, ray, geometry
 
 
 type
-    Camera* = ref object of RootObj
+    Camera* = ref object of RootObj 
+
+        ## An abstract object representing an observer.
+        ## Concrete types are `OrthogographicCamera` and `PerspectiveCamera`.
+ 
         aspectRatio*: float64
         transformation*: Transformation
 
 type
     OrthogonalCamera* = ref object of Camera
+        ## A camera implementing an orthogonal 3D → 2D projection.
+        ## It implements an observer seeing the world through an orthogonal projection.
 
 type
     PerspectiveCamera* = ref object of Camera
-        distance*: float64
+        ## A camera implementing a perspective 3D → 2D projection.
+        ## It implements an observer seeing the world through a perspective projection.
+        screenDistance*: float64
 
 method fireRay*(c: Camera, u: float64, v: float64): Ray {.base.} =
+    ## base method, to be overrode by concrete `Camera` derived types methods.
     quit "to override!"
 
-proc newPerspectiveCamera*(aspectRatio = 1.0, distance = 1.0,
+proc newPerspectiveCamera*(aspectRatio = 1.0, screenDistance = 1.0,
         transformation = newTransformation()): PerspectiveCamera =
 
-    new(result)
+    ## Creates a new perspective camera.
+    ## 
+    ## The parameter `aspectRatio` defines the ratio between the width and the height of the image. 
+    ## For fullscreen images, set `aspectRatio` to 16/9.
+    ## 
+    ## The parameter `screenDistance` tells how much far from the eye of the observer is the screen,
+    ## and it influences the so-called «aperture» (the field-of-view angle along the horizontal direction).
+    ##
+    ## The `transformation` parameter is used to move the camera around and 
+    ## refers to an object of `Transformation` type.
 
+
+
+    new(result)
     result.aspectRatio = aspectRatio
     result.transformation = transformation
-    result.distance = distance
+    result.screenDistance = screenDistance
 
 proc newOrthogonalCamera*(aspectRatio = 1.0, transformation = newTransformation()): OrthogonalCamera =
+
+    ## Creates a new orthographic camera.
+    ## 
+    ## The parameter `aspectRatio` defines the ratio between the width and the height of the image. 
+    ## For fullscreen images, set `aspectRatio` to 16/9.
+    ## 
+    ## The `transformation` parameter is used to move the camera around and 
+    ## refers to an object of `Transformation` type.
 
     new(result)
     result.aspectRatio = aspectRatio
@@ -73,9 +102,9 @@ method fireRay*(c: PerspectiveCamera, u: float64, v: float64): Ray =
     ##       (0,0)  u --------------->          (0,1) 
     ## 
 
-    # for PerspectiveCamera the origin of the ray in in the eye of the observer
-    result.origin = newPoint(-c.distance, 0.0, 0.0) 
-    result.dir = newVec(c.distance, (1.0 - 2 * u) * c.aspectRatio, 2*v - 1)
+    # for PerspectiveCamera the origin of the ray is in the eye of the observer
+    result.origin = newPoint(-c.screenDistance, 0.0, 0.0) 
+    result.dir = newVec(c.screenDistance, (1.0 - 2 * u) * c.aspectRatio, 2*v - 1)
     result.tmin = 1.0
     return result.transform(c.transformation) 
     # The result is the transformed ray, which corresponds to the transformed ray
