@@ -17,10 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import 
-    traynim/geometry,
-    traynim/common,
-    traynim/transformations
+import geometry, common, transformations
 
 
 proc testCreation (a: Vec) =
