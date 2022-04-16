@@ -48,5 +48,3 @@ proc transform*(ray: Ray, transformation: Transformation): Ray=
         result.tmin=ray.tmin
         result.tmax=ray.tmax
         result.depth=ray.depth
-    
-

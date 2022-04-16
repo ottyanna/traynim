@@ -71,8 +71,7 @@ proc testTranform() =
 
 proc testOrthogonalCameraTransform() =
 
-    let cam = newOrthogonalCamera(transformation = translation(-2.0 * newVec(
-            0.0, 1.0, 0.0)) * rotationY(theta = 90))
+    let cam = newOrthogonalCamera(transformation = translation(2.0 * -vecY) * rotationY(theta = 90))
     let ray = cam.fireRay(0.5, 0.5)
 
     assert ray.at(1.0).areClose(newPoint(0.0, -2.0, 0.0))

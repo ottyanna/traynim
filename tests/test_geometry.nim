@@ -125,13 +125,9 @@ proc testRotations() =
     assert rotationY(0.1).isConsistent()
     assert rotationZ(0.1).isConsistent()
 
-    let vX = newVec(1.0, 0.0, 0.0)
-    let vY = newVec(0.0, 1.0, 0.0)
-    let vZ = newVec(0.0, 0.0, 1.0)
-
-    assert (rotationX(theta = 90) * vY).areClose(vZ)
-    assert (rotationY(theta = 90) * vZ).areClose(vX)
-    assert (rotationZ(theta = 90) * vX).areClose(vY)
+    assert (rotationX(theta = 90) * vecY).areClose(vecZ)
+    assert (rotationY(theta = 90) * vecZ).areClose(vecX)
+    assert (rotationZ(theta = 90) * vecX).areClose(vecY)
 
 
 

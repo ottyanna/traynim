@@ -45,6 +45,3 @@ proc fireAllRays*(imagetracer : var ImageTracer, fun: (Ray) -> Color) =
                 let ray = imagetracer.fireRay(col, row)
                 let color = fun(ray)
                 imagetracer.image.setPixel(col, row, color)
-    
-    
-
