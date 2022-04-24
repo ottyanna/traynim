@@ -22,24 +22,32 @@ from colors import Color
 
 type
     ImageTracer* = object
-        image* : HdrImage
-        camera* : Camera
+
+        ## Traces an image by shooting light rays through each of its pixels
+
+        image*: HdrImage
+        camera*: Camera
 
 proc newImageTracer*(image: HdrImage, camera: Camera): ImageTracer =
+
+    ## Creates an ImageTracer object.
+    ## The parameter `image` must be a `HdrImage` object that has already been initialized.
+    ## The parameter `camera` must be a descendeant of the `Camera` object.
 
     result.image = image
     result.camera = camera
 
-proc fireRay*(imagetracer: ImageTracer, col, row : int, uPixel = 0.5, vPixel = 0.5): Ray = 
+proc fireRay*(imagetracer: ImageTracer, col, row: int, uPixel = 0.5,
+        vPixel = 0.5): Ray =
     # There's a mistake in the following formula !!!!
     let u = (col.toFloat + uPixel) / (imagetracer.image.width - 1).toFloat
     let v = (row.toFloat + vPixel) / (imagetracer.image.height - 1).toFloat
 
-    return (imagetracer.camera.fireRay(u,v))
+    return (imagetracer.camera.fireRay(u, v))
 
-proc fireAllRays*(imagetracer : var ImageTracer, fun: (Ray) -> Color) =
-        for row in 0..<imagetracer.image.height:
-            for col in 0..<imagetracer.image.width:
-                let ray = imagetracer.fireRay(col, row)
-                let color = fun(ray)
-                imagetracer.image.setPixel(col, row, color)
+proc fireAllRays*(imagetracer: var ImageTracer, fun: (Ray) -> Color) =
+    for row in 0..<imagetracer.image.height:
+        for col in 0..<imagetracer.image.width:
+            let ray = imagetracer.fireRay(col, row)
+            let color = fun(ray)
+            imagetracer.image.setPixel(col, row, color)
