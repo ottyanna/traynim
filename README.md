@@ -7,7 +7,7 @@
 </br>
 
 <p align="center"> 
-  <img src="img/traynim_banner.gif" alt="Sample signal" width="60%" height="60%">
+  <img src="img/traynim_banner.gif" alt="Sample signal" width="80%" height="80%">
 </p>
 
 <!-- Add buttons here -->
