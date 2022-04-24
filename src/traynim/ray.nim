@@ -22,13 +22,24 @@
 import geometry, transformations
 
 type Ray* = object
+
+    ## A ray of light propagating in space.
+
     origin*: Point
     dir*: Vec
     tmin*: float64
     tmax*: float64
     depth*: int
 
-proc newRay*(origin: Point, dir: Vec, tmin = 1e5, tmax = Inf, depth = 0): Ray =
+proc newRay*(origin: Point, dir: Vec, tmin = 1e-5, tmax = Inf, depth = 0): Ray =
+
+    ## Creates a new Ray object with paramethers:
+    ## -   `origin` (``Point``): the 3D point where the ray originated
+    ## -   `dir` (``Vec``): the 3D direction along which this ray propagates
+    ## -   `tmin` (float): the minimum distance travelled by the ray is this number times `dir`
+    ## -   `tmax` (float): the maximum distance travelled by the ray is this number times `dir`
+    ## -   `depth` (int): number of times this ray was reflected/refracted
+
     result.origin = origin
     result.dir = dir
     result.tmin = tmin
