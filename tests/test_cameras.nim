@@ -102,7 +102,7 @@ proc testImageTracer() =
 
         setup:
             let image = newHdrImage(width = 4, height = 2)
-            let camera = newPerspectiveCamera(aspect_ratio = 2)
+            let camera = newPerspectiveCamera(aspectRatio = 2)
             var tracer = newImageTracer(image = image, camera = camera)
 
         test "test orientation":
