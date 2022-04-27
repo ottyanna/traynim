@@ -16,12 +16,14 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import geometry, ray, shapes
+
+import geometry, ray, shapes, options
 
 type 
     HitRecord* = object
     
         ## An object holding information about a ray-shape intersection.
+        ## 
         ## The parameters defined in this are the following:
         ## -   `worldPoint`: a `Point` object holding the world coordinates of the hit point
         ## -   `normal`: a `Normal` object holding the orientation of the normal to the surface where the hit happened
@@ -29,20 +31,34 @@ type
         ## -   `t`: a floating-point value specifying the distance from the origin of the ray where the hit happened
         ## -   `ray`: the ray that hit the surface
  
-        worldPoint: Point
-        normal: Normal
-        surfacePoint: Vec2d
-        t: float
-        ray: Ray
+        worldPoint*: Point
+        normal*: Normal
+        surfacePoint*: Vec2d
+        t*: float
+        ray*: Ray
 
-proc areClose*(self, other : HitRecord, epsilon = 1e-5) : bool =
 
-        ## Check whether two `HitRecord` represent the same hit event or not
+proc newHitRecord (worldPoint: Point, normal: Normal, surfacePoint: Vec2d, t: float, ray: Ray) : HitRecord =
+
+        ## Creates a `HitRecord`
+
+        result.worldPoint=worldPoint
+        result.normal=normal
+        result.surfacePoint=surfacePoint
+        result.t=t
+        result.ray=ray
+
+proc areClose*(self: HitRecord, other: Option[HitRecord], epsilon = 1e-5) : bool = 
+
+        ## Checks whether two `HitRecord` represent the same hit event or not
         
+        if other.isNone:
+                return false
+
         return (
-                self.world_point.areClose(other.world_point) and
-                self.normal.areClose(other.normal) and
-                self.surfacePoint.areClose(other.surface_point) and
-                (abs(self.t - other.t) < epsilon) and
-                self.ray.areClose(other.ray)
+                self.worldPoint.areClose(other.get.worldPoint) and
+                self.normal.areClose(other.get.normal) and
+                self.surfacePoint.areClose(other.get.surfacePoint) and
+                (abs(self.t - other.get.t) < epsilon) and
+                self.ray.areClose(other.get.ray)
         )
