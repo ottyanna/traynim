@@ -22,43 +22,45 @@
 
 from ray import Ray
 from hitRecord import HitRecord
-from shapes import Shape
-import options
+import options, shapes
 
 type
     World* = object
 
         ## An object holding a list of shapes, which makes a «world».
-        ## 
+        ##
         ## Shapes can be added to a world using `addShape` procedure. Typically, you call
         ## `rayIntersection` to check whether a light ray intersects any
         ## of the shapes in the world.
-        
-        shapes* : seq[Shape]
+
+        shapes*: seq[Shape]
 
 proc newWorld*(): World =
 
     ## Inizialises World object
-    
+
     result.shapes = @[]
 
 proc addShape*(shape: Shape, world: var World) =
 
-    ## Adds `Shape` object to inizialised `World`. 
+    ## Adds `Shape` object to inizialised `World`.
     ## Remember to inizialise `World` object with `newWorld`.
-    
+
     world.shapes.add(shape)
 
-proc rayIntersection*(world: World, ray: Ray) : Option[HitRecord]=
-        
+proc rayIntersection*(world: World, ray: Ray): Option[HitRecord] =
+
     ## Determines whether a ray intersects any of the objects in this world
+
     var closest = none(HitRecord) # "closest" should be a nullable type!
-    
+
     for shape in world.shapes:
-        var intersection: Option[HitRecord] = rayIntersection(ray, shape)
+
+        var intersection: Option[HitRecord] = rayIntersection(shape, ray)
+
         if intersection.isNone:
             continue
         if (closest.isNone) or (intersection.get.t < closest.get.t):
             closest = intersection
-    
+
     return closest

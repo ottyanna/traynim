@@ -16,20 +16,16 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import transformations, ray, geometry, options, hitRecord
+
+import transformations, ray, options, hitRecord
 
 type
-    Vec2d* = object
-        u*,v* : float64
-
-type 
     Shape* = ref object of RootObj
 
         transformation*: Transformation
 
-method rayIntersection(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
-    quit "Shape.ray_intersection is an abstract method and cannot be called directly"
+method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
+    quit "Shape.rayIntersection is an abstract method and cannot be called directly"
 
 
 
-    
