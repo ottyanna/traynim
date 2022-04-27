@@ -16,7 +16,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import sugar
+import sugar, unittest
 from math import PI
 import cameras, colors, common, geometry, ray, transformations, hdrimages, imageTracer
 
@@ -98,19 +98,32 @@ proc testPerspectiveCameraTransform()=
 
 proc testImageTracer() =
 
-    let image = newHdrImage(width = 4, height = 2)
-    let camera = newPerspectiveCamera(aspect_ratio = 2)
-    var tracer = newImageTracer(image = image, camera = camera)
+    suite "test for ImageTracer":
 
-    let ray1 = tracer.fireRay(0, 0, u_pixel = 2.5, v_pixel = 1.5)
-    let ray2 = tracer.fireRay(2, 1, u_pixel = 0.5, v_pixel = 0.5)
-    assert ray1.areClose(ray2)
+        setup:
+            let image = newHdrImage(width = 4, height = 2)
+            let camera = newPerspectiveCamera(aspect_ratio = 2)
+            var tracer = newImageTracer(image = image, camera = camera)
 
-    tracer.fireAllRays(ray => newColor(1.0, 2.0, 3.0))
-    for row in 0..<tracer.image.height:
-        for col in 0..<tracer.image.width:
-            assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
+        test "test orientation":
+            # Fire a ray against top-left corner of the screen
+            let topLeftRay = tracer.fireRay(0, 0, uPixel=0.0, vPixel=0.0)
+            assert newPoint(0.0, 2.0, 1.0).areClose(topLeftRay.at(1.0))
 
+            # Fire a ray against bottom-right corner of the screen
+            let bottomRightRay = tracer.fireRay(3, 1, uPixel=1.0, vPixel=1.0)
+            assert newPoint(0.0, -2.0, -1.0).areClose(bottomRightRay.at(1.0))
+
+        test "test uv submapping":
+            let ray1 = tracer.fireRay(0, 0, uPixel=2.5, vPixel=1.5)
+            let ray2 = tracer.fireRay(2, 1, uPixel=0.5, vPixel=0.5)
+            assert ray1.areClose(ray2)
+
+        test "test image coverage":
+            tracer.fireAllRays(ray => newColor(1.0, 2.0, 3.0))
+            for row in 0..<tracer.image.height:
+                for col in 0..<tracer.image.width:
+                    assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
 
 
 
