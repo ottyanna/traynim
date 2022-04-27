@@ -46,6 +46,13 @@ proc fireRay*(imagetracer: ImageTracer, col, row: int, uPixel = 0.5,
     return (imagetracer.camera.fireRay(u, v))
 
 proc fireAllRays*(imagetracer: var ImageTracer, fun: (Ray) -> Color) =
+
+    ## Shoots several light rays crossing each of the pixels in the image
+    ##
+    ## For each pixel in the HdrImage object fire one ray, and pass it to the function `fun`, which
+    ## must accept a `Ray` as its only parameter and must return a `Color` instance telling the
+    ## color to assign to that pixel in the image.
+
     for row in 0..<imagetracer.image.height:
         for col in 0..<imagetracer.image.width:
             let ray = imagetracer.fireRay(col, row)
