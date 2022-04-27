@@ -17,10 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import ./traynim/hdrimages
-import os
-import strutils
-import streams
+import os, strutils, streams, traynim/hdrimages
 
 type
     Parameters = object

@@ -17,9 +17,8 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import ../src/traynim/geometry
-import ../src/traynim/common
-import ../src/traynim/transformations
+import geometry, common, transformations
+
 
 proc testCreation (a: Vec) =
     assert areClose(a.x, 1.0)
@@ -125,13 +124,9 @@ proc testRotations() =
     assert rotationY(0.1).isConsistent()
     assert rotationZ(0.1).isConsistent()
 
-    let vX = newVec(1.0, 0.0, 0.0)
-    let vY = newVec(0.0, 1.0, 0.0)
-    let vZ = newVec(0.0, 0.0, 1.0)
-
-    assert (rotationX(theta = 90) * vY).areClose(vZ)
-    assert (rotationY(theta = 90) * vZ).areClose(vX)
-    assert (rotationZ(theta = 90) * vX).areClose(vY)
+    assert (rotationX(theta = 90) * vecY).areClose(vecZ)
+    assert (rotationY(theta = 90) * vecZ).areClose(vecX)
+    assert (rotationZ(theta = 90) * vecX).areClose(vecY)
 
 
 

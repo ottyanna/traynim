@@ -47,6 +47,9 @@ defineNew3dObj(newVec, Vec)
 defineNew3dObj(newPoint, Point)
 defineNew3dObj(newNormal, Normal)
 
+const vecX* = Vec(x: 1.0, y : 0.0, z: 0.0)
+const vecY* = Vec(x: 0.0, y : 1.0, z: 0.0)
+const vecZ* = Vec(x: 0.0, y : 0.0, z: 1.0)
 
 template define3dOp(fname: untyped, type1: typedesc, type2: typedesc,
         rettype: typedesc) =
@@ -143,12 +146,12 @@ definePrint3dObj(Point)
 definePrint3dObj(Normal)
 
 template defineAreClose3dObj(type1: typedesc) =
-    proc areClose*(a, b: type1): bool =
+    proc areClose*(a, b: type1, epsilon = 1e-5): bool =
 
         ## Determines if two 3d objects are equal (to use with floating points)
         
-        return areClose(a.x, b.x) and areClose(a.y, b.y) and
-                areClose(a.z, b.z)
+        return areClose(a.x, b.x, epsilon) and areClose(a.y, b.y, epsilon) and
+                areClose(a.z, b.z, epsilon)
 
 defineAreClose3dObj(Vec)
 defineAreClose3dObj(Point)
