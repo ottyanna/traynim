@@ -1,4 +1,4 @@
-#encoding: utf-8
+ #encoding: utf-8
 
 #traynim is a ray tracer program written in Nim
 #Copyright (C) 2022 Jacopo Fera, Anna Spanò
@@ -210,3 +210,9 @@ type
         ## from the usual 3D coordinates `x`, `y`, `z`.
 
         u*, v*: float64
+
+proc areClose*(a,b: Vec2d, epsilon = 1e-5): bool =
+
+    ## Determines whether 2D objects are equal or not (Floating point use only!!!)
+    
+    return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
