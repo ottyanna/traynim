@@ -23,10 +23,10 @@ from math import sqrt, arctan2, arccos, PI
 type
     Shape* = ref object of RootObj
 
-        transformation* : Transformation
+        transformation*: Transformation
 
-    
-    
+
+
 
 type
     Sphere* = ref object of Shape
@@ -36,45 +36,45 @@ method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
 
 
 proc newSphere*(transformation = newTransformation()): Sphere =
-    
+
     new(result)
     result.transformation = transformation
 
 proc spherePointToUV*(p: Point): Vec2d =
-    
+
     let u = arctan2(p.y, p.x) / (2.0 * PI)
 
     if u >= 0.0:
         result.u = u
     else:
         result.u = u * 1.0
-    
+
     result.v = arccos(p.z) / PI
 
-proc sphereNormal*(p: Point, rayDir: Vec): Normal = 
+proc sphereNormal*(p: Point, rayDir: Vec): Normal =
 
     if (p.parsePointToVec().dot(rayDir) < 0.0):
         result = newNormal(p.x, p.y, p.z)
     else:
-        result = - newNormal(p.x, p.y, p.z)    
+        result = - newNormal(p.x, p.y, p.z)
 
 
-method rayIntersection*(sphere: Sphere, ray: Ray): HitRecord or Option[HitRecord] =
-    
+method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
+
     let invRay = ray.transform(sphere.transformation.inverse())
     let originVec = invRay.origin.parsePointToVec()
     let a = invRay.dir.sqrNorm()
     let b = 2.0 * originVec.dot(invRay.dir)
     let c = originVec.sqrNorm() - 1.0
 
-    let delta = b*b - 4.0 * a * c 
+    let delta = b*b - 4.0 * a * c
     if delta <= 0.0:
         return none(HitRecord)
 
     let sqrtDelta = sqrt(delta)
     let tmin = (-b - sqrtDelta) / (2.0 * a)
     let tmax = (-b + sqrtDelta) / (2.0 * a)
-    var firstHitT : float64
+    var firstHitT: float64
 
     if (tmin > invRay.tmin) and (tmin < invRay.tmax):
         firstHitT = tmin
@@ -85,12 +85,15 @@ method rayIntersection*(sphere: Sphere, ray: Ray): HitRecord or Option[HitRecord
 
     let hitPoint = invRay.at(firstHitT)
 
-    return HitRecord(
-                    worldpoint: sphere.transformation * hitPoint, 
-                    normal: sphere.transformation * sphereNormal(hitPoint, invRay.dir), 
-                    surfacePoint: spherePointToUV(hitPoint), 
-                    t: firstHitT, 
+    let hitRecord = HitRecord(
+                    worldpoint: sphere.transformation * hitPoint,
+                    normal: sphere.transformation * sphereNormal(hitPoint,
+                            invRay.dir),
+                    surfacePoint: spherePointToUV(hitPoint),
+                    t: firstHitT,
                     ray: ray)
+
+    return some(hitRecord)
 
 
 
