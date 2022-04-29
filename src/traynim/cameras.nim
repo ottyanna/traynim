@@ -47,7 +47,7 @@ type
 
 method fireRay*(c: Camera, u: float64, v: float64): Ray {.base.} =
 
-    ## Base method, to be overrode by concrete `Camera` derived types methods.
+    ## Base method, to be overridden by concrete `Camera` derived types methods.
 
     quit "to override!"
 
