@@ -16,8 +16,22 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import unittest, streams, colors, hdrimages, common, cameras, imageTracer, geometry, ray, sugar, transformations
-from math import PI
+
+import 
+    unittest, 
+    streams,
+    sugar,
+    math
+
+import
+    colors, 
+    hdrimages, 
+    common, 
+    cameras, 
+    imageTracer, 
+    geometry, 
+    ray, 
+    transformations
 
 suite "test cameras.nim":
 
@@ -238,8 +252,6 @@ suite "test hdrImages.nim (operations for LDR image writing)":
         imgem.normalizeImage(0.2)
         imgem.clampImage()
         writeLdrImage(imgem, "tests/HdrImageReferences/output.png")
-
-
 
 
 suite "test imageTracer.nim":
