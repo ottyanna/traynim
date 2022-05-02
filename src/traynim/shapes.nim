@@ -22,7 +22,7 @@ from math import sqrt, arctan2, arccos, PI
 
 type
     Shape* = ref object of RootObj
-
+    
         transformation*: Transformation
 
 
