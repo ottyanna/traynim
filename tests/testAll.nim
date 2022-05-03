@@ -525,14 +525,14 @@ suite "test on shapes.nim (Spheres)":
 suite "test on transformations.nim":
 
     setup:
-        let m = [
+        let m {.used.} = [
             [1.0, 2.0, 3.0, 4.0],
             [5.0, 6.0, 7.0, 8.0],
             [9.0, 9.0, 8.0, 7.0],
             [6.0, 5.0, 4.0, 1.0],
         ]
 
-        let invm = [
+        let invm {.used.} = [
                     [-3.75, 2.75, -1, 0],
                     [4.375, -3.875, 2.0, -0.5],
                     [0.5, 0.5, -1.0, 1.0],
