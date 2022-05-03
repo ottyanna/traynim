@@ -26,8 +26,6 @@ type
         transformation*: Transformation
 
 
-
-
 type
     Sphere* = ref object of Shape
 
@@ -99,7 +97,7 @@ type
     Plane* = ref object of Shape
         ## A 3D infinite plane parallel to the x and y axis and passing through the origin.
 
-proc newPlane*(transformation = Transformation()): Plane =
+proc newPlane*(transformation = newTransformation()): Plane =
 
     ## Creates a xy plane, potentially associating a transformation to it
 
@@ -112,7 +110,6 @@ proc rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
     ## Returns a `none(HitRecord)`if no intersection was found.
 
     let invRay = ray.transform(plane.transformation.inverse())
-    echo invRay
     if abs(invRay.dir.z) < 1e-5:
         return none(HitRecord)
 

@@ -319,10 +319,10 @@ suite "test on shapes.nim (Plane)":
         let plane = newPlane()
 
     test "test Hit":
-        let ray1 = newRay(origin = newPoint(0.1, 0.1, 1.0), dir = -vecZ)
-        echo "ray1 ", ray1
+        let ray1 = newRay(origin = newPoint(0, 0, 1), dir = -vecZ)
         let intersection1 = plane.rayIntersection(ray1)
         assert intersection1.isSome
+        echo intersection1.get
         assert newHitRecord(
             worldPoint=newPoint(0.0, 0.0, 0.0),
             normal=newNormal(0.0, 0.0, 1.0),
@@ -547,7 +547,6 @@ suite "test world.nim":
 
     test "test on ray intersection":
         let intersection1 = world.rayIntersection(newRay(origin=newPoint(0.0, 0.0, 0.0), dir = vecX))
-        echo intersection1
         assert intersection1.isSome
         assert intersection1.get.worldPoint.areClose(newPoint(1.0, 0.0, 0.0))
 
