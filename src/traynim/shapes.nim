@@ -18,11 +18,11 @@
 
 
 import transformations, ray, options, hitRecord, geometry
-from math import sqrt, arctan2, arccos, PI
+from math import sqrt, arctan2, arccos, PI, floor
 
 type
     Shape* = ref object of RootObj
-    
+
         transformation*: Transformation
 
 
@@ -85,16 +85,54 @@ method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
 
     let hitPoint = invRay.at(firstHitT)
 
-    let hitRecord = HitRecord(
-                    worldpoint: sphere.transformation * hitPoint,
-                    normal: sphere.transformation * sphereNormal(hitPoint,
+    let hitRecord = newHitRecord(
+                    worldpoint = sphere.transformation * hitPoint,
+                    normal = sphere.transformation * sphereNormal(hitPoint,
                             invRay.dir),
-                    surfacePoint: spherePointToUV(hitPoint),
-                    t: firstHitT,
-                    ray: ray)
+                    surfacePoint = spherePointToUV(hitPoint),
+                    t = firstHitT,
+                    ray = ray)
 
     return some(hitRecord)
 
+type
+    Plane* = ref object of Shape
+        ## A 3D infinite plane parallel to the x and y axis and passing through the origin.
+
+proc newPlane*(transformation = Transformation()): Plane =
+
+    ## Creates a xy plane, potentially associating a transformation to it
+
+    new(result)
+    result.transformation = transformation
+
+proc rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
+
+    ## Checks if a ray intersects the plane
+    ## Returns a `none(HitRecord)`if no intersection was found.
+
+    let invRay = ray.transform(plane.transformation.inverse())
+    if abs(invRay.dir.z) < 1e-5:
+        return none(HitRecord)
+
+    let t = -invRay.origin.z / invRay.dir.z
+
+    if (t <= inv_ray.tmin) or (t >= inv_ray.tmax):
+        return none(HitRecord)
+
+    let hitPoint = invRay.at(t)
+
+    let hitRecord = newHitRecord(
+        worldPoint = plane.transformation * hitPoint,
+        normal = plane.transformation * newNormal(0.0, 0.0, if invRay.dir.z <
+                0.0: 1.0 else: -1.0),
+        surfacePoint = newVec2d(hitPoint.x - floor(hitPoint.x), hitPoint.y -
+                floor(hitPoint.y)),
+        t = t,
+        ray = ray
+    )
+
+    return some(hitRecord)
 
 
 

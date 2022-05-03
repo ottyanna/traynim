@@ -1,4 +1,4 @@
- #encoding: utf-8
+#encoding: utf-8
 
 #traynim is a ray tracer program written in Nim
 #Copyright (C) 2022 Jacopo Fera, Anna Spanò
@@ -211,8 +211,15 @@ type
 
         u*, v*: float64
 
-proc areClose*(a,b: Vec2d, epsilon = 1e-5): bool =
+proc newVec2d*(u, v: float64): Vec2d =
+
+    ## Creates a new `Vec2d` with paramether u and v
+
+    result.u = u
+    result.v = v
+
+proc areClose*(a, b: Vec2d, epsilon = 1e-5): bool =
 
     ## Determines whether 2D objects are equal or not (Floating point use only!!!)
-    
+
     return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
