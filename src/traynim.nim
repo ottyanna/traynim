@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import os, strutils, streams, traynim/hdrimages
+import os, strutils, streams, traynim/hdrimages, cligen
 
 type
     Parameters = object
@@ -52,10 +52,9 @@ proc parseCommandLine(parameters: var Parameters, argv: seq[string]) =
 
     parameters.outputFileName = argv[3]
 
+proc pfm2format()=
 
-when isMainModule:
-
-    var parameters = Parameters()
+    var parameters= Parameters()
 
     try:
         parseCommandLine(parameters, commandLineParams()) #CommandLineParams returns just the parameters
@@ -75,3 +74,7 @@ when isMainModule:
 
     echo ("File " & parameters.outputFileName & " has been written to disk")
 
+
+when isMainModule:
+
+    dispatchMulti([pfm2format])
