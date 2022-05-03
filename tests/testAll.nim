@@ -316,13 +316,12 @@ suite "test on rays.nim":
 suite "test on shapes.nim (Plane)":
 
     setup:
-        let plane = newPlane()
+        var plane = newPlane()
 
     test "test Hit":
         let ray1 = newRay(origin = newPoint(0, 0, 1), dir = -vecZ)
         let intersection1 = plane.rayIntersection(ray1)
         assert intersection1.isSome
-        echo intersection1.get
         assert newHitRecord(
             worldPoint=newPoint(0.0, 0.0, 0.0),
             normal=newNormal(0.0, 0.0, 1.0),
@@ -331,60 +330,58 @@ suite "test on shapes.nim (Plane)":
             ray=ray1,
         ).areClose(intersection1)
 
-#[        ray2 = Ray(origin=Point(0, 0, 1), dir=VEC_Z)
-        intersection2 = plane.ray_intersection(ray2)
-        assert not intersection2
+        let ray2 = newRay(origin=newPoint(0, 0, 1), dir=vecZ)
+        let intersection2 = plane.rayIntersection(ray2)
+        assert intersection2.isNone
 
-        ray3 = Ray(origin=Point(0, 0, 1), dir=VEC_X)
-        intersection3 = plane.ray_intersection(ray3)
-        assert not intersection3
+        let ray3 = newRay(origin=newPoint(0, 0, 1), dir=vecX)
+        let intersection3 = plane.rayIntersection(ray3)
+        assert not intersection3.isSome
 
-        ray4 = Ray(origin=Point(0, 0, 1), dir=VEC_Y)
-        intersection4 = plane.ray_intersection(ray4)
-        assert not intersection4
+        let ray4 = newRay(origin=newPoint(0, 0, 1), dir=vecY)
+        let intersection4 = plane.rayIntersection(ray4)
+        assert intersection4.isNone
 
-    def testTransformation(self):
-        plane = Plane(transformation=rotation_y(angle_deg=90.0))
+    test "test on tranformations":
+        plane = newPlane(transformation=rotationY(90.0))
 
-        ray1 = Ray(origin=Point(1, 0, 0), dir=-VEC_X)
-        intersection1 = plane.ray_intersection(ray1)
-        assert intersection1
-        assert HitRecord(
-            world_point=Point(0.0, 0.0, 0.0),
-            normal=Normal(1.0, 0.0, 0.0),
-            surface_point=Vec2d(0.0, 0.0),
+        let ray1 = newRay(origin=newPoint(1, 0, 0), dir = -vecX)
+        let intersection1 = plane.rayIntersection(ray1)
+        assert intersection1.isSome
+        assert newHitRecord(
+            worldPoint=newPoint(0.0, 0.0, 0.0),
+            normal=newNormal(1.0, 0.0, 0.0),
+            surfacePoint=newVec2d(0.0, 0.0),
             t=1.0,
-            ray=ray1,
-            material=plane.material,
-        ).is_close(intersection1)
+            ray=ray1
+        ).areClose(intersection1)
 
-        ray2 = Ray(origin=Point(0, 0, 1), dir=VEC_Z)
-        intersection2 = plane.ray_intersection(ray2)
-        assert not intersection2
+        let ray2 = newRay(origin=newPoint(0, 0, 1), dir=vecZ)
+        let intersection2 = plane.rayIntersection(ray2)
+        assert not intersection2.isSome
 
-        ray3 = Ray(origin=Point(0, 0, 1), dir=VEC_X)
-        intersection3 = plane.ray_intersection(ray3)
-        assert not intersection3
+        let ray3 = newRay(origin=newPoint(0, 0, 1), dir=vecX)
+        let intersection3 = plane.rayIntersection(ray3)
+        assert intersection3.isNone
 
-        ray4 = Ray(origin=Point(0, 0, 1), dir=VEC_Y)
-        intersection4 = plane.ray_intersection(ray4)
-        assert not intersection4
+        let ray4 = newRay(origin=newPoint(0, 0, 1), dir=vecY)
+        let intersection4 = plane.rayIntersection(ray4)
+        assert not intersection4.isSome
 
-    def testUVCoordinates(self):
-        plane = Plane()
+    test "test UVCoordinates":
+        
+        let ray1 = newRay(origin=newPoint(0, 0, 1), dir= -vecZ)
+        let intersection1 = plane.rayIntersection(ray1)
+        assert intersection1.get.surfacePoint.areClose(newVec2d(0.0, 0.0))
 
-        ray1 = Ray(origin=Point(0, 0, 1), dir=-VEC_Z)
-        intersection1 = plane.ray_intersection(ray1)
-        assert intersection1.surface_point.is_close(Vec2d(0.0, 0.0))
+        let ray2 = newRay(origin=newPoint(0.25, 0.75, 1), dir= -vecZ)
+        let intersection2 = plane.rayIntersection(ray2)
+        assert intersection2.get.surfacePoint.areClose(newVec2d(0.25, 0.75))
 
-        ray2 = Ray(origin=Point(0.25, 0.75, 1), dir=-VEC_Z)
-        intersection2 = plane.ray_intersection(ray2)
-        assert intersection2.surface_point.is_close(Vec2d(0.25, 0.75))
+        let ray3 = newRay(origin=newPoint(4.25, 7.75, 1), dir = -vecZ)
+        let intersection3 = plane.rayIntersection(ray3)
+        assert intersection3.get.surfacePoint.areClose(newVec2d(0.25, 0.75))
 
-        ray3 = Ray(origin=Point(4.25, 7.75, 1), dir=-VEC_Z)
-        intersection3 = plane.ray_intersection(ray3)
-        assert intersection3.surface_point.is_close(Vec2d(0.25, 0.75))
-]#
 
 suite "test on transformations.nim":
 
@@ -514,9 +511,9 @@ suite "test on transformations.nim":
         let tr1 = translation(newVec(1.0, 2.0, 3.0))
         assert tr1.isConsistent()
         let tr2 = translation(newVec(4.0, 6.0, 8.0))
-        assert tr1.is_consistent()
+        assert tr1.isConsistent()
         let prod = tr1 * tr2
-        assert prod.is_consistent()
+        assert prod.isConsistent()
         let expected = translation(newVec(5.0, 8.0, 11.0))
         assert prod.areClose(expected)
 
