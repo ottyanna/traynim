@@ -382,6 +382,145 @@ suite "test on shapes.nim (Plane)":
         let intersection3 = plane.rayIntersection(ray3)
         assert intersection3.get.surfacePoint.areClose(newVec2d(0.25, 0.75))
 
+suite "test on shapes.nim (Spheres)":
+
+    setup:
+        var sphere = newSphere()
+    
+    test "test Hit":
+        
+        let ray1 = newRay(origin=newPoint(0,0,2), dir= -vecZ)
+        let intersection1 = sphere.rayIntersection(ray1)
+        assert intersection1.isSome
+        assert newHitRecord(
+            worldPoint=newPoint(0.0, 0.0, 1.0),
+            normal=newNormal(0.0, 0.0, 1.0),
+            surfacePoint=newVec2d(0.0, 0.0),
+            t=1.0,
+            ray=ray1 
+        ).areClose(intersection1)
+
+        let ray2 = newRay(origin=newPoint(3,0,0), dir= -vecX)
+        let intersection2 = sphere.rayIntersection(ray2)
+        assert intersection2.isSome
+        assert newHitRecord( 
+            worldPoint=newPoint(1.0,0.0,0.0),
+            normal=newNormal(1.0,0.0,0.0),
+            surfacePoint=newVec2d(0.0,0.5),
+            t=2.0,
+            ray=ray2
+        ).areClose(intersection2)
+
+        assert not sphere.rayIntersection(newRay(origin = newPoint(0, 10, 2), dir= -vecZ)).isSome
+
+    test "test Inner Hit":
+
+        let ray = newRay(origin=newPoint(0,0,0), dir=vecX)
+        let intersection = sphere.rayIntersection(ray)
+        assert intersection.isSome
+        assert newHitRecord(
+            worldPoint=newPoint(1.0,0.0,0.0),
+            normal=newNormal(-1.0,0.0,0.0),
+            surfacePoint=newVec2d(0.0,0.5),
+            t=1.0,
+            ray=ray
+        ).areClose(intersection)
+    
+    test "test transformation":
+
+        sphere = newSphere(transformation=translation(newVec(10.0,0.0,0.0)))
+
+        let ray1 = newRay(origin=newPoint(10,0,2), dir= -vecZ)
+        let intersection1 = sphere.rayIntersection(ray1)
+        assert intersection1.isSome
+        assert newHitRecord(
+            worldPoint=newPoint(10.0,0.0,1.0),
+            normal=newNormal(0.0,0.0,1.0),
+            surfacePoint=newVec2d(0.0,0.0),
+            t=1.0,
+            ray=ray1
+        ).areClose(intersection1)
+
+        let ray2 = newRay(origin=newPoint(13, 0, 0), dir= -vecX)
+        let intersection2 = sphere.rayIntersection(ray2)
+        assert intersection2.isSome
+        assert newHitRecord(
+            worldPoint=newPoint(11.0, 0.0, 0.0),
+            normal=newNormal(1.0, 0.0, 0.0),
+            surfacePoint=newVec2d(0.0, 0.5),
+            t=2.0,
+            ray=ray2
+        ).areClose(intersection2)
+
+        # Check if the sphre failed to move by trying to hit the untranformed shape 
+        assert not sphere.rayIntersection(newRay(origin=newPoint(0, 0, 2), dir= -vecZ)).isSome
+
+        # Check if the *inverse* transformation was wrongly applied
+        assert not sphere.rayIntersection(newRay(origin=newPoint(-10, 0, 0), dir= -vecZ)).isSome
+    
+    test "test on normals":
+
+        sphere = newSphere(transformation=scaling(newVec(2.0, 1.0, 1.0)))
+
+        let ray = newRay(origin=newPoint(1.0, 1.0, 0.0), dir=newVec(-1.0, -1.0, 0.0))
+        let intersection = sphere.rayIntersection(ray)
+        # We normalize "intersection.normal", as we are not interested in its lenght
+        assert intersection.get.normal.normalize().areClose(newNormal(1.0, 4.0, 0.0).normalize())
+    
+    
+    test "test normal direction":
+        ## Scaling a sphere by -1 keeps the sphere the same but reverses its
+        ## reference frame
+
+        sphere = newSphere(transformation=scaling(newVec(-1.0, -1.0, -1.0)))
+
+        let ray = newRay(origin=newPoint(0.0, 2.0, 0.0), dir = -vecY)
+        let intersection = sphere.rayIntersection(ray)
+        # We normaize "intersection.normal", as we are not interested in its lenght
+        assert intersection.get.normal.normalize().areClose(newNormal(0.0, 1.0, 0.0).normalize())
+
+    test "test UV coordinates":
+
+        # The first four rays hit the unit sphere at the
+        # points P1, P2, P3, and P4.
+        #
+        #                    ^ y
+        #                    | P2
+        #              , - ~ * ~ - ,
+        #          , '       |       ' ,
+        #        ,           |           ,
+        #       ,            |            ,
+        #      ,             |             , P1
+        # -----*-------------+-------------*---------> x
+        #   P3 ,             |             ,
+        #       ,            |            ,
+        #        ,           |           ,
+        #          ,         |        , '
+        #            ' - , _ * _ ,  '
+        #                    | P4
+        #
+        # P5 and P6 are aligned along the x axis and are displaced
+        # along z (ray5 in the positive direction, ray6 in the negative
+        # direction).
+
+        let ray1 = newRay(origin=newPoint(2.0, 0.0, 0.0), dir= -vecX)
+        assert sphere.rayIntersection(ray1).get.surfacePoint.areClose(newVec2d(0.0, 0.5))
+
+        let ray2 = newRay(origin=newPoint(0.0, 2.0, 0.0), dir= -vecY)
+        assert sphere.rayIntersection(ray2).get.surfacePoint.areClose(newVec2d(0.25, 0.5))
+
+        let ray3 = newRay(origin=newPoint(-2.0, 0.0, 0.0), dir= vecX)
+        assert sphere.rayIntersection(ray3).get.surfacePoint.areClose(newVec2d(0.5, 0.5))
+
+        #[let ray4 = newRay(origin=newPoint(0.0, -2.0, 0.0), dir= vecY)
+        assert sphere.rayIntersection(ray4).get.surfacePoint.areClose(newVec2d(0.75, 0.5))]#
+
+        let ray5 = newRay(origin=newPoint(2.0, 0.0, 0.5), dir= -vecX)
+        assert sphere.rayIntersection(ray5).get.surfacePoint.areClose(newVec2d(0.0, 1/3))
+
+        let ray6 = newRay(origin=newPoint(2.0, 0.0, -0.5), dir= -vecX)
+        assert sphere.rayIntersection(ray6).get.surfacePoint.areClose(newVec2d(0.0, 2/3))
+
 
 suite "test on transformations.nim":
 

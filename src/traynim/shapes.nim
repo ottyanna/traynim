@@ -50,7 +50,7 @@ proc spherePointToUV*(p: Point): Vec2d =
     result.v = arccos(p.z) / PI
 
 proc sphereNormal*(p: Point, rayDir: Vec): Normal =
-
+    
     if (p.parsePointToVec().dot(rayDir) < 0.0):
         result = newNormal(p.x, p.y, p.z)
     else:
@@ -104,7 +104,7 @@ proc newPlane*(transformation = newTransformation()): Plane =
     new(result)
     result.transformation = transformation
 
-proc rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
+method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
 
     ## Checks if a ray intersects the plane
     ## Returns a `none(HitRecord)`if no intersection was found.
