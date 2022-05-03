@@ -110,6 +110,7 @@ suite "test colors.nim":
         assert areClose(luminosity(col1), 2.0)
         assert areClose(luminosity(col2), 7.0)
 
+
 suite "test geometry.nim":
 
     setup:
@@ -136,7 +137,6 @@ suite "test geometry.nim":
         assert areClose(a.sqrNorm(), 14.0)
         assert areClose(a.norm()*a.norm(), 14.0)
         
-
 
 suite "test hdrImages.nim (HDRimage type)":
 
@@ -285,6 +285,7 @@ suite "test imageTracer.nim":
                 for col in 0..<tracer.image.width:
                     assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
 
+
 suite "test on rays.nim":
 
     test "test on ray.areClose":
@@ -292,6 +293,7 @@ suite "test on rays.nim":
         let ray2 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
         let ray3 = newRay(origin = newPoint(5.0, 2.0, 4.0), dir = newVec(3.0, 9.0, 4.0))
 
+        assert ray1.tmax == Inf
         assert ray1.areClose(ray2)
         assert not ray1.areClose(ray3)
         
@@ -309,6 +311,80 @@ suite "test on rays.nim":
 
         assert transformed.origin.areclose(newPoint(11.0, 8.0, 14.0))
         assert transformed.dir.areclose(newVec(6.0, -4.0, 5.0))
+
+
+suite "test on shapes.nim (Plane)":
+
+    setup:
+        let plane = newPlane()
+
+    test "test Hit":
+        let ray1 = newRay(origin = newPoint(0.1, 0.1, 1.0), dir = -vecZ)
+        echo "ray1 ", ray1
+        let intersection1 = plane.rayIntersection(ray1)
+        assert intersection1.isSome
+        assert newHitRecord(
+            worldPoint=newPoint(0.0, 0.0, 0.0),
+            normal=newNormal(0.0, 0.0, 1.0),
+            surfacePoint=newVec2d(0.0, 0.0),
+            t=1.0,
+            ray=ray1,
+        ).areClose(intersection1)
+
+#[        ray2 = Ray(origin=Point(0, 0, 1), dir=VEC_Z)
+        intersection2 = plane.ray_intersection(ray2)
+        assert not intersection2
+
+        ray3 = Ray(origin=Point(0, 0, 1), dir=VEC_X)
+        intersection3 = plane.ray_intersection(ray3)
+        assert not intersection3
+
+        ray4 = Ray(origin=Point(0, 0, 1), dir=VEC_Y)
+        intersection4 = plane.ray_intersection(ray4)
+        assert not intersection4
+
+    def testTransformation(self):
+        plane = Plane(transformation=rotation_y(angle_deg=90.0))
+
+        ray1 = Ray(origin=Point(1, 0, 0), dir=-VEC_X)
+        intersection1 = plane.ray_intersection(ray1)
+        assert intersection1
+        assert HitRecord(
+            world_point=Point(0.0, 0.0, 0.0),
+            normal=Normal(1.0, 0.0, 0.0),
+            surface_point=Vec2d(0.0, 0.0),
+            t=1.0,
+            ray=ray1,
+            material=plane.material,
+        ).is_close(intersection1)
+
+        ray2 = Ray(origin=Point(0, 0, 1), dir=VEC_Z)
+        intersection2 = plane.ray_intersection(ray2)
+        assert not intersection2
+
+        ray3 = Ray(origin=Point(0, 0, 1), dir=VEC_X)
+        intersection3 = plane.ray_intersection(ray3)
+        assert not intersection3
+
+        ray4 = Ray(origin=Point(0, 0, 1), dir=VEC_Y)
+        intersection4 = plane.ray_intersection(ray4)
+        assert not intersection4
+
+    def testUVCoordinates(self):
+        plane = Plane()
+
+        ray1 = Ray(origin=Point(0, 0, 1), dir=-VEC_Z)
+        intersection1 = plane.ray_intersection(ray1)
+        assert intersection1.surface_point.is_close(Vec2d(0.0, 0.0))
+
+        ray2 = Ray(origin=Point(0.25, 0.75, 1), dir=-VEC_Z)
+        intersection2 = plane.ray_intersection(ray2)
+        assert intersection2.surface_point.is_close(Vec2d(0.25, 0.75))
+
+        ray3 = Ray(origin=Point(4.25, 7.75, 1), dir=-VEC_Z)
+        intersection3 = plane.ray_intersection(ray3)
+        assert intersection3.surface_point.is_close(Vec2d(0.25, 0.75))
+]#
 
 suite "test on transformations.nim":
 
@@ -470,8 +546,6 @@ suite "test world.nim":
         assert not areClose(world.shapes[1].transformation, translation(vecX * 6)) 
 
     test "test on ray intersection":
-        
-
         let intersection1 = world.rayIntersection(newRay(origin=newPoint(0.0, 0.0, 0.0), dir = vecX))
         echo intersection1
         assert intersection1.isSome
@@ -481,6 +555,3 @@ suite "test world.nim":
 
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
-
-
-

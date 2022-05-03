@@ -43,6 +43,7 @@ proc newRay*(origin: Point, dir: Vec, tmin = 1e-5, tmax = Inf, depth = 0): Ray =
     result.origin = origin
     result.dir = dir
     result.tmin = tmin
+    result.tmax = tmax
     result.depth = depth
 
 proc areClose*(a, b: Ray, epsilon = 1e-5): bool =

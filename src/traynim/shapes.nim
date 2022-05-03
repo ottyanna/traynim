@@ -112,6 +112,7 @@ proc rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
     ## Returns a `none(HitRecord)`if no intersection was found.
 
     let invRay = ray.transform(plane.transformation.inverse())
+    echo invRay
     if abs(invRay.dir.z) < 1e-5:
         return none(HitRecord)
 
