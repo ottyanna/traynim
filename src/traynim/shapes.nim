@@ -133,6 +133,3 @@ proc rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
     )
 
     return some(hitRecord)
-
-
-

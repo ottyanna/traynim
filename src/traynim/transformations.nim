@@ -45,13 +45,13 @@ proc matrixProd*(m1, m2: Matrix4x4): Matrix4x4 =
             for k in 0..high(m1):
                 result[i][j] += m1[i][k] * m2[k][j]
 
-proc areMatrClose*(m1, m2: Matrix4x4): bool=
+proc areClose*(m1, m2: Matrix4x4, epsilon = 1e-5): bool=
 
     ## Checks if two matrices are the same
     
     for i in 0..high(m1):
         for j in 0..high(m1):
-            if not are_close(m1[i][j], m2[i][j]):
+            if not areClose(m1[i][j], m2[i][j], epsilon):
                 return false
 
     return true
@@ -84,13 +84,13 @@ proc isConsistent*(t : Transformation): bool =
     ## This method is useful when writing tests.
     
     let prod = matrixProd(t.m, t.invm)
-    return areMatrClose(prod, IdentityMatrix4x4)
+    return areClose(prod, IdentityMatrix4x4)
 
-proc areTranClose*(t1, t2 :Transformation):bool=
+proc areClose*(t1, t2 :Transformation, epsilon = 1e-5):bool=
         
     ## Checks if two tranformations represent the same transformation.
     
-    return areMatrClose(t1.m, t2.m) and areMatrClose(t1.invm, t2.invm)
+    return areClose(t1.m, t2.m, epsilon) and areClose(t1.invm, t2.invm, epsilon)
 
 proc inverse*(t :Transformation): Transformation=
         

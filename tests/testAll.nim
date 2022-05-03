@@ -18,20 +18,24 @@
 
 
 import 
-    unittest, 
+    math,
+    options, 
     streams,
     sugar,
-    math
+    unittest
 
 import
-    colors, 
-    hdrimages, 
-    common, 
     cameras, 
-    imageTracer, 
-    geometry, 
+    colors, 
+    common, 
+    geometry,
+    hdrimages, 
+    hitRecord,
+    imageTracer,  
     ray, 
-    transformations
+    shapes,
+    transformations,
+    world
 
 suite "test cameras.nim":
 
@@ -96,10 +100,10 @@ suite "test colors.nim":
         let col2 = newColor(5.0, 7.0, 9.0)
 
     test "test Color Operations":
-        assert (col1 + col2).areColorsClose(Color(r: 6.0, g: 9.0, b: 12.0))
-        assert (col1 - col2).areColorsClose(Color(r: -4.0, g: -5.0, b: -6.0))
-        assert (col1 * col2).areColorsClose(Color(r: 5.0, g: 14.0, b: 27.0))
-        assert not (col1 + col2).areColorsClose(Color(r: 3.0, g: 9.0, b: 12.0))
+        assert (col1 + col2).areClose(Color(r: 6.0, g: 9.0, b: 12.0))
+        assert (col1 - col2).areClose(Color(r: -4.0, g: -5.0, b: -6.0))
+        assert (col1 * col2).areClose(Color(r: 5.0, g: 14.0, b: 27.0))
+        assert not (col1 + col2).areClose(Color(r: 3.0, g: 9.0, b: 12.0))
         assert ($col1) == "<r: 1.0 , g: 2.0, b: 3.0>" #test on Color print
 
     test "test on Color Luminosity":
@@ -160,7 +164,7 @@ suite "test hdrImages.nim (HDRimage type)":
     test "test on set pixel":
         let col = newColor(1.0, 2.0, 3.0)
         img.setPixel(3, 2, col)
-        assert areColorsClose(col, img.getPixel(3, 2))
+        assert areClose(col, img.getPixel(3, 2))
 
 
 suite "test hdrImages.nim (read and write Pfm files)":
@@ -193,7 +197,7 @@ suite "test hdrImages.nim (read and write Pfm files)":
         let imgR = readPfmImage(strm)
         assert imgR.width == 3
         assert imgR.height == 2
-        assert imgR.getPixel(0, 0).areColorsClose(Color(r: 1.0e1, g: 2.0e1, b: 3.0e1))
+        assert imgR.getPixel(0, 0).areClose(Color(r: 1.0e1, g: 2.0e1, b: 3.0e1))
 
     test "integration test on read and write Pfm image":
         var img = newHdrImage(3, 2)
@@ -231,13 +235,13 @@ suite "test hdrImages.nim (operations for LDR image writing)":
 
     test "test on normalize image with arguments":
         normalizeImage(img, 1000.0, 100.0)
-        assert areColorsClose(img.getPixel(0, 0), newColor(0.5e2, 1.0e2, 1.5e2))
-        assert areColorsClose(img.getPixel(1, 0), newColor(0.5e4, 1.0e4, 1.5e4))
+        assert areClose(img.getPixel(0, 0), newColor(0.5e2, 1.0e2, 1.5e2))
+        assert areClose(img.getPixel(1, 0), newColor(0.5e4, 1.0e4, 1.5e4))
 
     test "test on normalize image without arguments":
         normalizeImage(img, 1000.0)
-        assert areColorsClose(img.getPixel(0, 0), newColor(0.5e2, 1.0e2, 1.5e2))
-        assert areColorsClose(img.getPixel(1, 0), newColor(0.5e4, 1.0e4, 1.5e4))
+        assert areClose(img.getPixel(0, 0), newColor(0.5e2, 1.0e2, 1.5e2))
+        assert areClose(img.getPixel(1, 0), newColor(0.5e4, 1.0e4, 1.5e4))
 
     test "test on clamp image":
         img.clampImage()
@@ -331,16 +335,16 @@ suite "test on transformations.nim":
         assert t1.isConsistent
 
         let t2 = newTransformation(m,invm)
-        assert t1.areTranClose(t2)
+        assert t1.areClose(t2)
 
         var t3 = newTransformation(m,invm)
         t3.m[2][2] += 1.0
         assert not t3.isConsistent
-        assert not t3.areTranClose(t2)
+        assert not t3.areClose(t2)
 
         var t4 = newTransformation(m,invm)
         t4.invm[2][3] += 1.0
-        assert not t4.areTranClose(t1)
+        assert not t4.areClose(t1)
 
     test "test on inverse transformation":
         let m1 = newTransformation(m=[
@@ -360,7 +364,7 @@ suite "test on transformations.nim":
 
         let prod = m1 * m2
         assert prod.isConsistent()
-        assert areTranClose(prod, newTransformation())
+        assert areClose(prod, newTransformation())
 
     test "test on multiplication":
         let m1= [[3.0, 5.0, 2.0, 4.0],
@@ -395,7 +399,7 @@ suite "test on transformations.nim":
 
         assert expected.isConsistent()
 
-        assert expected.areTranClose(t*t1)
+        assert expected.areClose(t*t1)
 
     test "test on rotations":
         assert rotationX(0.1).isConsistent()
@@ -438,7 +442,7 @@ suite "test on transformations.nim":
         let prod = tr1 * tr2
         assert prod.is_consistent()
         let expected = translation(newVec(5.0, 8.0, 11.0))
-        assert prod.areTranClose(expected)
+        assert prod.areClose(expected)
 
     test "test on scalings":
         let tr1 = scaling(newVec(2.0, 5.0, 10.0))
@@ -448,8 +452,35 @@ suite "test on transformations.nim":
         assert tr2.isConsistent()
     
         let expected = scaling(newVec(6.0, 10.0, 40.0))
-        assert expected.areTranClose(tr1 * tr2)
+        assert expected.areClose(tr1 * tr2)
 
+suite "test world.nim":
+
+    setup:
+        var world = newWorld()
+
+        let sphere1 = newSphere(transformation = translation(vecX * 2))
+        let sphere2 = newSphere(transformation = translation(vecX * 8))
+        world.addShape(sphere1)
+        world.addShape(sphere2)
+    
+    test "test on World creation":
+        assert world.shapes.len == 2
+        assert areClose(world.shapes[0].transformation, translation(vecX * 2))
+        assert not areClose(world.shapes[1].transformation, translation(vecX * 6)) 
+
+    test "test on ray intersection":
+        
+
+        let intersection1 = world.rayIntersection(newRay(origin=newPoint(0.0, 0.0, 0.0), dir = vecX))
+        echo intersection1
+        assert intersection1.isSome
+        assert intersection1.get.worldPoint.areClose(newPoint(1.0, 0.0, 0.0))
+
+        let intersection2 = world.rayIntersection(newRay(origin=newPoint(10.0, 0.0, 0.0), dir = -vecX))
+
+        assert intersection2.isSome
+        assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
 
 
 

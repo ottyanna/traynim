@@ -60,9 +60,9 @@ proc areClose*(self: HitRecord, other: Option[HitRecord],
         return false
 
     return (
-            self.worldPoint.areClose(other.get.worldPoint) and
-            self.normal.areClose(other.get.normal) and
-            self.surfacePoint.areClose(other.get.surfacePoint) and
+            self.worldPoint.areClose(other.get.worldPoint, epsilon) and
+            self.normal.areClose(other.get.normal, epsilon) and
+            self.surfacePoint.areClose(other.get.surfacePoint, epsilon) and
             areClose(self.t, other.get.t, epsilon) and
-            self.ray.areClose(other.get.ray)
+            self.ray.areClose(other.get.ray, epsilon)
         )
