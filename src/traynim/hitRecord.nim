@@ -52,7 +52,9 @@ proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
 proc areClose*(self: HitRecord, other: Option[HitRecord],
         epsilon = 1e-5): bool =
 
-    ## Checks whether two `HitRecord` represent the same hit event or not
+    ## Checks whether two `HitRecord` represent the same hit event or not.
+    ## The paramether `other` is a `Option[HitRecord], in order to call it using `HitRecord`
+    ## object, use `some()`.
 
     if other.isNone:
         return false
