@@ -41,7 +41,7 @@ proc newWorld*(): World =
 
     result.shapes = @[]
 
-proc addShape*(shape: Shape, world: var World) =
+proc addShape*(world: var World, shape: Shape) =
 
     ## Adds `Shape` object to inizialised `World`.
     ## Remember to inizialise `World` object with `newWorld`.
