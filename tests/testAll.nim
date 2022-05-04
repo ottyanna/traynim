@@ -512,8 +512,8 @@ suite "test on shapes.nim (Spheres)":
         let ray3 = newRay(origin=newPoint(-2.0, 0.0, 0.0), dir= vecX)
         assert sphere.rayIntersection(ray3).get.surfacePoint.areClose(newVec2d(0.5, 0.5))
 
-        #[let ray4 = newRay(origin=newPoint(0.0, -2.0, 0.0), dir= vecY)
-        assert sphere.rayIntersection(ray4).get.surfacePoint.areClose(newVec2d(0.75, 0.5))]#
+        let ray4 = newRay(origin=newPoint(0.0, -2.0, 0.0), dir= vecY)
+        assert sphere.rayIntersection(ray4).get.surfacePoint.areClose(newVec2d(0.75, 0.5))
 
         let ray5 = newRay(origin=newPoint(2.0, 0.0, 0.5), dir= -vecX)
         assert sphere.rayIntersection(ray5).get.surfacePoint.areClose(newVec2d(0.0, 1/3))
