@@ -17,35 +17,87 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import strutils, streams, traynim/hdrimages, cligen
+import strutils, streams, hdrimages, cligen, world, cameras, imageTracer, shapes, transformations,
+    geometry, colors, options, ray, sugar
 
-type
-    Parameters = object
-        inPfmFileName: string
-        factor: float32
-        gamma: float32
-        outputFileName: string
+proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0, outputFileName: string)=
 
-type RuntimeError = object of CatchableError
-
-proc pfm2format(inPfmFileName: string, factor: float32 = 0.2, gamma: float32 = 1.0, outFileName: string)=
-
-    let parameters = Parameters(inPfmFileName: inPfmFileName, factor : 1.0, gamma : 1.0, outputFileName : outFileName)
-
-    let inPfm = newFileStream(parameters.inPfmFileName, fmRead)
+    let inPfm = newFileStream( inPfmFileName, fmRead)
     var img = readPfmImage(inPfm)
     inPfm.close()
 
-    echo ("File " & parameters.inPfmFileName & " has been read from disk")
+    echo ("File " & inPfmFileName & " has been read from disk")
 
-    img.normalizeImage(parameters.factor)
+    img.normalizeImage( factor)
     img.clampImage()
 
-    img.writeLdrImage(parameters.outputFileName, parameters.gamma)
+    img.writeLdrImage( outputFileName,  gamma)
 
-    echo ("File " & parameters.outputFileName & " has been written to disk")
+    echo ("File " &  outputFileName & " has been written to disk")
+
+
+proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
+
+    var image= newHDRImage(width,height)
+
+    var world=newWorld()
+
+    world.addShape(newSphere(transformation=translation(newVec(-0.5, -0.5, 0.5))*scaling(newVec(0.1, 0.1, 0.1))))
+
+#[
+    for x in [-0.5,0.5]:
+        for y in [-0.5,0.5]:
+            for z in [-0.5,0.5]:
+                world.addShape(
+                    newSphere(
+                        transformation=translation(newVec(x, y, z))*scaling(newVec(0.1, 0.1, 0.1))
+                    )
+                )
+]#
+
+    let cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
+
+    var camera: Camera
+
+    if orthogonal:
+        camera = newOrthogonalCamera(aspectRatio=width / height, transformation=cameraTr)
+    else:
+        camera = newPerspectiveCamera(aspectRatio=width / height, transformation=cameraTr)
+
+    var tracer= newImageTracer(image,camera)
+
+    echo tracer.fireRay(240,480-160)
+
+    #[proc computeColor(ray: Ray): Color=
+        if world.rayIntersection(ray).isSome:
+            echo "whity white"
+            return white
+        else:
+            return black]#
+
+    #let ray = fireRay(camera,240/640,1.0-160/480)
+    #echo ray
+    #echo world.rayIntersection(ray).isSome
+    tracer.fireAllRays(ray => (if world.rayIntersection(ray).isSome: white else: black))
+
+    let outPfm = newFileStream( "demo.pfm", fmWrite)
+    image.writePfmImage(outPfm)
+    echo "HDR demo image written to demo.pfm"
+    outPfm.close()
+
+    # Apply tone-mapping to the image
+    image.normalizeImage(factor=1.0)
+    image.clampImage()
+
+    # Save the LDR image
+    image.writeLdrImage("demo.png")
+    echo "PNG demo image written to demo.png"
+
+    
+
+
 
 
 when isMainModule:
 
-    dispatch(pfm2format)
+    dispatchMulti([pfm2format],[demo])
