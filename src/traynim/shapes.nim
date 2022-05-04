@@ -23,11 +23,16 @@ from math import sqrt, arctan2, arccos, PI, floor
 type
     Shape* = ref object of RootObj
 
+        ## A generic 3D shape 
+        ## It's an abstract object
+        ## Make sure to derive *real* object from it
+        
         transformation*: Transformation
 
 
 type
     Sphere* = ref object of Shape
+    ## A 3D unit sphere centered at origin
 
 method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
     quit "Shape.rayIntersection is an abstract method and cannot be called directly"
