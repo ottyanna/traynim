@@ -50,7 +50,7 @@ proc spherePointToUV*(p: Point): Vec2d =
     if u >= 0.0:
         result.u = u
     else:
-        result.u = u * 1.0
+        result.u = u + 1.0
 
     result.v = arccos(p.z) / PI
 
