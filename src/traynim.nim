@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import os, strutils, streams, traynim/hdrimages, cligen
+import strutils, streams, traynim/hdrimages, cligen
 
 type
     Parameters = object
@@ -28,38 +28,9 @@ type
 
 type RuntimeError = object of CatchableError
 
-proc parseCommandLine(parameters: var Parameters, argv: seq[string]) =
+proc pfm2format(inPfmFileName: string, factor: float32 = 0.2, gamma: float32 = 1.0, outFileName: string)=
 
-    if argv.len != 4:
-        raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT")
-        #available formats from pixie are ppm, png, bmp, qoi
-
-    parameters.inPfmFileName = argv[0]
-
-    try:
-        parameters.factor = argv[1].parseFloat
-
-    except ValueError:
-        let msg = "Invalid factor (" & argv[1] & "), it must be a floating-point number."
-        raise newException(ValueError, msg)
-
-    try:
-        parameters.gamma = argv[2].parseFloat
-
-    except ValueError:
-        let msg = "Invalid gamma (" & argv[2] & "), it must be a floating-point number."
-        raise newException(ValueError, msg)
-
-    parameters.outputFileName = argv[3]
-
-proc pfm2format()=
-
-    var parameters= Parameters()
-
-    try:
-        parseCommandLine(parameters, commandLineParams()) #CommandLineParams returns just the parameters
-    except RuntimeError:
-        echo ("Error: " & getCurrentExceptionMsg())
+    let parameters = Parameters(inPfmFileName: inPfmFileName, factor : 1.0, gamma : 1.0, outputFileName : outFileName)
 
     let inPfm = newFileStream(parameters.inPfmFileName, fmRead)
     var img = readPfmImage(inPfm)
@@ -77,4 +48,4 @@ proc pfm2format()=
 
 when isMainModule:
 
-    dispatchMulti([pfm2format])
+    dispatch(pfm2format)
