@@ -18,7 +18,7 @@
 
 
 import strutils, streams, hdrimages, cligen, world, cameras, imageTracer, shapes, transformations,
-    geometry, colors, options, ray, sugar
+    geometry, colors, options, sugar
 
 proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0, outputFileName: string)=
 
@@ -42,9 +42,6 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
 
     var world=newWorld()
 
-    world.addShape(newSphere(transformation=translation(newVec(-0.5, -0.5, 0.5))*scaling(newVec(0.1, 0.1, 0.1))))
-
-#[
     for x in [-0.5,0.5]:
         for y in [-0.5,0.5]:
             for z in [-0.5,0.5]:
@@ -53,7 +50,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
                         transformation=translation(newVec(x, y, z))*scaling(newVec(0.1, 0.1, 0.1))
                     )
                 )
-]#
+
 
     let cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
 
@@ -66,31 +63,19 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
 
     var tracer= newImageTracer(image,camera)
 
-    echo tracer.fireRay(240,480-160)
-
-    #[proc computeColor(ray: Ray): Color=
-        if world.rayIntersection(ray).isSome:
-            echo "whity white"
-            return white
-        else:
-            return black]#
-
-    #let ray = fireRay(camera,240/640,1.0-160/480)
-    #echo ray
-    #echo world.rayIntersection(ray).isSome
     tracer.fireAllRays(ray => (if world.rayIntersection(ray).isSome: white else: black))
 
     let outPfm = newFileStream( "demo.pfm", fmWrite)
-    image.writePfmImage(outPfm)
+    tracer.image.writePfmImage(outPfm)
     echo "HDR demo image written to demo.pfm"
     outPfm.close()
 
     # Apply tone-mapping to the image
-    image.normalizeImage(factor=1.0)
-    image.clampImage()
+    tracer.image.normalizeImage(factor=1.0)
+    tracer.image.clampImage()
 
     # Save the LDR image
-    image.writeLdrImage("demo.png")
+    tracer.image.writeLdrImage("demo.png")
     echo "PNG demo image written to demo.png"
 
     
