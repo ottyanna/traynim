@@ -666,6 +666,7 @@ suite "test on transformations.nim":
         let expected = scaling(newVec(6.0, 10.0, 40.0))
         assert expected.areClose(tr1 * tr2)
 
+
 suite "test world.nim":
 
     setup:

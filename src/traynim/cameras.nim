@@ -109,7 +109,8 @@ method fireRay*(c: PerspectiveCamera, u: float64, v: float64): Ray =
     result.origin = newPoint(-c.screenDistance, 0.0, 0.0)
     # The direction of the ray is given by
     result.dir = newVec(c.screenDistance, (1.0 - 2 * u) * c.aspectRatio, 2*v - 1)
-    result.tmin = 1.0
+    result.tmin = 1e-5
+    result.tmax = Inf
     return result.transform(c.transformation)
     # The result is the transformed camera, which corresponds to the transformed ray
 
@@ -138,6 +139,7 @@ method fireRay*(c: OrthogonalCamera, u: float64, v: float64): Ray =
     result.origin = newPoint(-1.0, (1.0 - 2 * u) * c.aspectRatio, 2 * v - 1)
     # The direction of the ray is orthogonal to the screen
     result.dir = vecX
-    result.tmin = 1.0
+    result.tmin = 1e-5
+    result.tmax = Inf
     return result.transform(c.transformation)
     # The result is the transformed camera, which corresponds to the transformed ray

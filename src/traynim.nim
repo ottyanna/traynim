@@ -17,61 +17,87 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import os, strutils, streams, traynim/hdrimages
+import strutils, streams, hdrimages, cligen, world, cameras, imageTracer, shapes, transformations,
+    geometry, colors, options, ray, sugar
 
-type
-    Parameters = object
-        inPfmFileName: string
-        factor: float32
-        gamma: float32
-        outputFileName: string
+proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0, outputFileName: string)=
 
-type RuntimeError = object of CatchableError
+    let inPfm = newFileStream( inPfmFileName, fmRead)
+    var img = readPfmImage(inPfm)
+    inPfm.close()
 
-proc parseCommandLine(parameters: var Parameters, argv: seq[string]) =
+    echo ("File " & inPfmFileName & " has been read from disk")
 
-    if argv.len != 4:
-        raise newException(RuntimeError, "Usage: traynim.nim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT")
-        #available formats from pixie are ppm, png, bmp, qoi
+    img.normalizeImage( factor)
+    img.clampImage()
 
-    parameters.inPfmFileName = argv[0]
+    img.writeLdrImage( outputFileName,  gamma)
 
-    try:
-        parameters.factor = argv[1].parseFloat
+    echo ("File " &  outputFileName & " has been written to disk")
 
-    except ValueError:
-        let msg = "Invalid factor (" & argv[1] & "), it must be a floating-point number."
-        raise newException(ValueError, msg)
 
-    try:
-        parameters.gamma = argv[2].parseFloat
+proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
 
-    except ValueError:
-        let msg = "Invalid gamma (" & argv[2] & "), it must be a floating-point number."
-        raise newException(ValueError, msg)
+    var image= newHDRImage(width,height)
 
-    parameters.outputFileName = argv[3]
+    var world=newWorld()
+
+    world.addShape(newSphere(transformation=translation(newVec(-0.5, -0.5, 0.5))*scaling(newVec(0.1, 0.1, 0.1))))
+
+#[
+    for x in [-0.5,0.5]:
+        for y in [-0.5,0.5]:
+            for z in [-0.5,0.5]:
+                world.addShape(
+                    newSphere(
+                        transformation=translation(newVec(x, y, z))*scaling(newVec(0.1, 0.1, 0.1))
+                    )
+                )
+]#
+
+    let cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
+
+    var camera: Camera
+
+    if orthogonal:
+        camera = newOrthogonalCamera(aspectRatio=width / height, transformation=cameraTr)
+    else:
+        camera = newPerspectiveCamera(aspectRatio=width / height, transformation=cameraTr)
+
+    var tracer= newImageTracer(image,camera)
+
+    echo tracer.fireRay(240,480-160)
+
+    #[proc computeColor(ray: Ray): Color=
+        if world.rayIntersection(ray).isSome:
+            echo "whity white"
+            return white
+        else:
+            return black]#
+
+    #let ray = fireRay(camera,240/640,1.0-160/480)
+    #echo ray
+    #echo world.rayIntersection(ray).isSome
+    tracer.fireAllRays(ray => (if world.rayIntersection(ray).isSome: white else: black))
+
+    let outPfm = newFileStream( "demo.pfm", fmWrite)
+    image.writePfmImage(outPfm)
+    echo "HDR demo image written to demo.pfm"
+    outPfm.close()
+
+    # Apply tone-mapping to the image
+    image.normalizeImage(factor=1.0)
+    image.clampImage()
+
+    # Save the LDR image
+    image.writeLdrImage("demo.png")
+    echo "PNG demo image written to demo.png"
+
+    
+
+
 
 
 when isMainModule:
 
-    var parameters = Parameters()
-
-    try:
-        parseCommandLine(parameters, commandLineParams()) #CommandLineParams returns just the parameters
-    except RuntimeError:
-        echo ("Error: " & getCurrentExceptionMsg())
-
-    let inPfm = newFileStream(parameters.inPfmFileName, fmRead)
-    var img = readPfmImage(inPfm)
-    inPfm.close()
-
-    echo ("File " & parameters.inPfmFileName & " has been read from disk")
-
-    img.normalizeImage(parameters.factor)
-    img.clampImage()
-
-    img.writeLdrImage(parameters.outputFileName, parameters.gamma)
-
-    echo ("File " & parameters.outputFileName & " has been written to disk")
-
+    dispatchMulti([pfm2format],[demo])

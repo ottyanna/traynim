@@ -34,6 +34,9 @@ proc newColor*(r, g, b: float32): Color =
     result.g = g
     result.b = b
 
+const white* = Color(r: 1.0, g: 1.0, b:1.0 )
+const black* = Color(r: 0.0, g: 0.0, b:0.0 )
+
 # Implementation of simple operations on Color type
 
 proc `+`*(color1, color2: Color): Color =
