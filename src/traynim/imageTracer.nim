@@ -39,6 +39,7 @@ proc newImageTracer*(image: HdrImage, camera: Camera): ImageTracer =
 
 proc fireRay*(imagetracer: ImageTracer, col, row: int, uPixel = 0.5,
         vPixel = 0.5): Ray =
+    
     let u = (col.toFloat + uPixel) / (imagetracer.image.width ).toFloat
     let v = 1.0 - (row.toFloat + vPixel) / (imagetracer.image.height ).toFloat
 
