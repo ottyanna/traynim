@@ -20,24 +20,69 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ottyanna/traynim/BuildAndTest)
 ![GitHub status](https://img.shields.io/badge/status-WIP-informational)
 
+# Table of contents
+
+- [Demo-Preview](#demo-preview)
+- [Table of contents](#table-of-contents)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Development](#development)
+- [Contribute](#contribute)
+    - [Sponsor](#sponsor)
+    - [Adding new features or fixing bugs](#adding-new-features-or-fixing-bugs)
+- [License](#license)
+- [Footer](#footer)
+
+
+## Installation
+[(Back to top)](#table-of-contents)
+
+<!--- ### Dependencies
+- nim >= 1.6.4
+- nimble -->
+
+
+
+### Download and building
+You can download the latest stable release [here](https://github.com/ottyanna/traynim/releases), and unpack it
+   ``` sh
+   $ tar -xvf /path/to/tar #or zip file -C /path/to/your/directory
+   ```
+or if you want, you can clone this repository
+   ``` sh
+   $ git clone https://github.com/ottyanna/traynim.git
+   ```
+
+### Testing
+You can test if the code works fine by running the following command:
+``` sh
+   $ nimble test
+   ```
+
+<!--  
 Functionalities implemented:
 - Read from PFM files
 - Tone mapping
 - Gamma correction
 - Save files in PNG, PPM, BMP and QOI formats
-
+-->
 ## Usage
 
-```console
-~$ nimble run traynim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT
+```sh
+$ nimble run traynim
+```
+If you need help with the commands just run
+
+```sh
+$ nimble run traynim --help
 ```
 
-Example:
+To generate the demo file shown in [Demo-Preview](#demo-preview) run:
 
-```console
-~$ nimble run traynim tests/HdrImageReferences/memorial.pfm 0.2 1.0 tests/HdrImageReferences/output_test.png
+```sh
+$ nimble run traynim demo
 ```
-
+You can change the size of the image or to change the angle view, by running `-help`
 
 ## License
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
