@@ -20,18 +20,21 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ottyanna/traynim/BuildAndTest)
 ![GitHub status](https://img.shields.io/badge/status-WIP-informational)
 
+
+## Demo-Preview
+
+
+
+
 # Table of contents
 
 - [Demo-Preview](#demo-preview)
 - [Table of contents](#table-of-contents)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Development](#development)
 - [Contribute](#contribute)
-    - [Sponsor](#sponsor)
-    - [Adding new features or fixing bugs](#adding-new-features-or-fixing-bugs)
+- [Release History](#release-history)
 - [License](#license)
-- [Footer](#footer)
 
 
 ## Installation
@@ -67,22 +70,37 @@ Functionalities implemented:
 - Save files in PNG, PPM, BMP and QOI formats
 -->
 ## Usage
+[(Back to top)](#table-of-contents)
 
 ```sh
 $ nimble run traynim
 ```
-If you need help with the commands just run
+If you need help you can run
 
 ```sh
 $ nimble run traynim --help
 ```
 
-To generate the demo file shown in [Demo-Preview](#demo-preview) run:
+To generate the demo file shown in [Demo-Preview](#demo-preview):
 
 ```sh
 $ nimble run traynim demo
 ```
-You can change the size of the image or to change the angle view, by running `-help`
+You can change the size of the image, the angle view or the camera type by running `--help`.
+
+To just use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BMP and QOI formats are supported.
+
+## Contribute
+[(Back to top)](#table-of-contents)
+
+If you wish to contribute or you have just found any bug, feel free to open an issue or a pull request on the GitHub repository.
+
+## Release History
+[(Back to top)](#table-of-contents)
+
+See the [CHANGELOG.md](https://github.com/ottyanna/traynim/blob/master/CHANGELOG.md) file.
 
 ## License
+[(Back to top)](#table-of-contents)
+
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
