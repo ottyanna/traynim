@@ -78,7 +78,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
     tracer.image.writeLdrImage("demo.png")
     echo "PNG demo image written to demo.png"
 
-    
+
 
 
 
