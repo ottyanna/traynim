@@ -36,7 +36,7 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0, outputFileName
     echo ("File " &  outputFileName & " has been written to disk")
 
 
-proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
+proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480, fileName = "demo", format = "png")=
 
     var image= newHDRImage(width,height)
 
@@ -84,7 +84,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
 
     tracer.fireAllRays(ray => (if world.rayIntersection(ray).isSome: white else: black))
 
-    let outPfm = newFileStream( "demo.pfm", fmWrite)
+    let outPfm = newFileStream( fileName , fmWrite)
     tracer.image.writePfmImage(outPfm)
     echo "HDR demo image written to demo.pfm"
     outPfm.close()
@@ -94,7 +94,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480)=
     tracer.image.clampImage()
 
     # Save the LDR image
-    tracer.image.writeLdrImage("demo.png")
+    tracer.image.writeLdrImage(fileName & "." & format)
     echo "PNG demo image written to demo.png"
 
 
