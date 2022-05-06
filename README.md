@@ -40,9 +40,10 @@
 ## Installation
 [(Back to top)](#table-of-contents)
 
-<!--- ### Dependencies
+### Dependencies
 - nim >= 1.6.4
-- nimble -->
+- nimble
+- ffmpeg for the animations
 
 
 
@@ -81,11 +82,18 @@ If you need help you can run
 $ nimble run traynim --help
 ```
 
-To generate the demo file shown in [Demo-Preview](#demo-preview):
+To generate the demo animation shown in [Demo-Preview](#demo-preview):
+
+```sh
+$ ./animation.sh >/dev/null
+```
+
+To generate just one image:
 
 ```sh
 $ nimble run traynim demo
 ```
+
 You can change the size of the image, the angle view or the camera type by running `--help`.
 
 To just use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BMP and QOI formats are supported.
