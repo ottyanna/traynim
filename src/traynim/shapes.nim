@@ -35,16 +35,23 @@ type
     ## A 3D unit sphere centered at origin
 
 method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
+
+    ## Computes the intersection between a ray and a this shape
+
     quit "Shape.rayIntersection is an abstract method and cannot be called directly"
 
 
 proc newSphere*(transformation = newTransformation()): Sphere =
+
+    ## Creates a unit sphere, potentially associating a transformation to it
 
     new(result)
     result.transformation = transformation
 
 proc spherePointToUV*(p: Point): Vec2d =
 
+    ## Converts a 3D point of the unit sphere into a (u,v) 2D point on its surface 
+    
     let u = arctan2(p.y, p.x) / (2.0 * PI)
 
     if u >= 0.0:
@@ -55,6 +62,11 @@ proc spherePointToUV*(p: Point): Vec2d =
     result.v = arccos(p.z) / PI
 
 proc sphereNormal*(p: Point, rayDir: Vec): Normal =
+
+    ## Computes the normal of the unit sphere 
+    ## The normal is computed for `point` (a point of the sphere) and
+    ## it is chosen as it is always in the oppisite direction with respect 
+    ## to `rayDir` 
     
     if (p.parsePointToVec().dot(rayDir) < 0.0):
         result = newNormal(p.x, p.y, p.z)
@@ -63,6 +75,9 @@ proc sphereNormal*(p: Point, rayDir: Vec): Normal =
 
 
 method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
+
+    ## Checks if a ray intersects the sphere and 
+    ## returns `none(HitRecord)` if no intersection was found  
 
     let invRay = ray.transform(sphere.transformation.inverse())
     let originVec = invRay.origin.parsePointToVec()
@@ -112,7 +127,7 @@ proc newPlane*(transformation = newTransformation()): Plane =
 method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
 
     ## Checks if a ray intersects the plane
-    ## Returns a `none(HitRecord)`if no intersection was found.
+    ## Returns a `none(HitRecord)` if no intersection was found.
 
     let invRay = ray.transform(plane.transformation.inverse())
     if abs(invRay.dir.z) < 1e-5:
