@@ -17,6 +17,9 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+## This module implements shapes and their interaction with the `rays`
+
+
 import transformations, ray, options, hitRecord, geometry
 from math import sqrt, arctan2, arccos, PI, floor
 
@@ -36,7 +39,7 @@ type
 
 method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
 
-    ## Computes the intersection between a ray and a this shape
+    ## Computes the intersection between a ray and a shape
 
     quit "Shape.rayIntersection is an abstract method and cannot be called directly"
 
@@ -50,7 +53,7 @@ proc newSphere*(transformation = newTransformation()): Sphere =
 
 proc spherePointToUV*(p: Point): Vec2d =
 
-    ## Converts a 3D point of the unit sphere into a (u,v) 2D point on its surface 
+    ## Converts a 3D point of the unit sphere into a  `(u,v)` 2D point on its surface 
     
     let u = arctan2(p.y, p.x) / (2.0 * PI)
 
@@ -65,7 +68,7 @@ proc sphereNormal*(p: Point, rayDir: Vec): Normal =
 
     ## Computes the normal of the unit sphere 
     ## The normal is computed for `point` (a point of the sphere) and
-    ## it is chosen as it is always in the oppisite direction with respect 
+    ## it is always chosen is in the opposite direction with respect 
     ## to `rayDir` 
     
     if (p.parsePointToVec().dot(rayDir) < 0.0):
@@ -76,8 +79,9 @@ proc sphereNormal*(p: Point, rayDir: Vec): Normal =
 
 method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
 
-    ## Checks if a ray intersects the sphere and 
-    ## returns `none(HitRecord)` if no intersection was found  
+    ## Checks if a ray intersects the sphere.
+    ## 
+    ## It returns `none(HitRecord)` if no intersection was found.  
 
     let invRay = ray.transform(sphere.transformation.inverse())
     let originVec = invRay.origin.parsePointToVec()
@@ -126,7 +130,8 @@ proc newPlane*(transformation = newTransformation()): Plane =
 
 method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
 
-    ## Checks if a ray intersects the plane
+    ## Checks if a ray intersects the plane.
+    ## 
     ## Returns a `none(HitRecord)` if no intersection was found.
 
     let invRay = ray.transform(plane.transformation.inverse())
