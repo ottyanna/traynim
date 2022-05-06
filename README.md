@@ -20,24 +20,95 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ottyanna/traynim/BuildAndTest)
 ![GitHub status](https://img.shields.io/badge/status-WIP-informational)
 
+
+## Demo-Preview
+<p align="center"> 
+  <img src="img/demo/spheres-perspective.mp4" alt="Sample signal" width="80%" height="80%">
+</p>
+
+# Table of contents
+
+- [Demo-Preview](#demo-preview)
+- [Table of contents](#table-of-contents)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contribute](#contribute)
+- [Release History](#release-history)
+- [License](#license)
+
+
+## Installation
+[(Back to top)](#table-of-contents)
+
+### Dependencies
+- nim >= 1.6.4
+- nimble
+- ffmpeg for the animations
+
+
+
+### Download and building
+You can download the latest stable release [here](https://github.com/ottyanna/traynim/releases), and unpack it
+   ``` sh
+   $ tar -xvf /path/to/tar #or zip file -C /path/to/your/directory
+   ```
+or if you want, you can clone this repository
+   ``` sh
+   $ git clone https://github.com/ottyanna/traynim.git
+   ```
+
+### Testing
+You can test if the code works fine by running the following command:
+``` sh
+   $ nimble test
+   ```
+
+<!--  
 Functionalities implemented:
 - Read from PFM files
 - Tone mapping
 - Gamma correction
 - Save files in PNG, PPM, BMP and QOI formats
-
+-->
 ## Usage
+[(Back to top)](#table-of-contents)
 
-```console
-~$ nimble run traynim INPUT_PFM_FILE FACTOR GAMMA OUTPUT_FILE.FORMAT
+```sh
+$ nimble run traynim
+```
+If you need help you can run
+
+```sh
+$ nimble run traynim --help
 ```
 
-Example:
+To generate the demo animation shown in [Demo-Preview](#demo-preview):
 
-```console
-~$ nimble run traynim tests/HdrImageReferences/memorial.pfm 0.2 1.0 tests/HdrImageReferences/output_test.png
+```sh
+$ ./animation.sh >/dev/null
 ```
 
+To generate just one image:
+
+```sh
+$ nimble run traynim demo
+```
+
+You can change the size of the image, the angle view or the camera type by running `--help`.
+
+To just use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BMP and QOI formats are supported.
+
+## Contribute
+[(Back to top)](#table-of-contents)
+
+If you wish to contribute or you have just found any bug, feel free to open an issue or a pull request on the GitHub repository.
+
+## Release History
+[(Back to top)](#table-of-contents)
+
+See the [CHANGELOG.md](https://github.com/ottyanna/traynim/blob/master/CHANGELOG.md) file.
 
 ## License
+[(Back to top)](#table-of-contents)
+
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
