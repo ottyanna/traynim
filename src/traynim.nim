@@ -17,8 +17,16 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import strutils, streams, hdrimages, cligen, world, cameras, imageTracer, shapes, transformations,
-    geometry, colors, options, sugar
+import strutils, streams, cligen, sugar, options
+import
+    cameras, 
+    colors, 
+    geometry,
+    hdrimages, 
+    imageTracer,
+    shapes,
+    transformations,
+    world
 
 proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0, outputFileName: string)=
 
@@ -84,7 +92,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480, fileName= "d
 
     tracer.fireAllRays(ray => (if world.rayIntersection(ray).isSome: white else: black))
 
-    let outPfm = newFileStream( fileName , fmWrite)
+    let outPfm = newFileStream( fileName & ".pfm", fmWrite)
     tracer.image.writePfmImage(outPfm)
     echo "HDR demo image written to " & fileName & ".pfm"
     outPfm.close()
