@@ -36,7 +36,7 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0, outputFileName
     echo ("File " &  outputFileName & " has been written to disk")
 
 
-proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480, fileName = "demo", format = "png")=
+proc demo(angleDeg = 0.0, orthogonal=true, width =640, height=480, fileName= "demo", format = "png")=
 
     var image= newHDRImage(width,height)
 
@@ -86,7 +86,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480, fileName = "
 
     let outPfm = newFileStream( fileName , fmWrite)
     tracer.image.writePfmImage(outPfm)
-    echo "HDR demo image written to demo.pfm"
+    echo "HDR demo image written to " & fileName & ".pfm"
     outPfm.close()
 
     # Apply tone-mapping to the image
@@ -95,7 +95,7 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480, fileName = "
 
     # Save the LDR image
     tracer.image.writeLdrImage(fileName & "." & format)
-    echo "PNG demo image written to demo.png"
+    echo "PNG demo image written to " & fileName & ".png"
 
 
 when isMainModule:
