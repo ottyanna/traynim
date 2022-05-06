@@ -1,18 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## HEAD
 
-# Unreleased
+## [0.1.1] - 27/04/2022
 
+### Fixed
+-   Fixed an issue with the vertical order of the images [#4](https://github.com/ottyanna/traynim/pull/4)
 
+## [0.1.0] - 30/03/2022
+First release of the code
+
+### Added
+- Reading from PFM files;
+- Tone mapping;
+- Gamma correction;
+- Saving files in PNG, PPM, BMP formats.
+
+## Unreleased
+
+### Added
+- New shapes and ray tracing features 
+
+### Changed 
 - Changed CLI
 
-# HEAD
+### Removed
+- Removed old CLI
 
-# Version 0.1.1
-
--   Fix an issue with the vertical order of the images [#4](https://github.com/ottyanna/traynim/pull/4)
-
-# Version 0.1.0
-
--   First release of the code
+[0.1.0]: https://github.com/ottyanna/traynim/releases/tag/v0.1.0
+[0.1.1]: https://github.com/ottyanna/traynim/releases/tag/v0.1.1

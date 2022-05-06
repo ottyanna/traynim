@@ -22,9 +22,9 @@
 
 
 ## Demo-Preview
-
-
-
+<p align="center"> 
+  <img src="img/demo/spheres-perspective.mp4" alt="Sample signal" width="80%" height="80%">
+</p>
 
 # Table of contents
 
