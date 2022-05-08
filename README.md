@@ -78,22 +78,24 @@ Functionalities implemented:
 ```sh
 $ nimble run traynim
 ```
-If you need help you can run
+will generate the executable.
+
+To display the help, you can run
 
 ```sh
-$ nimble run traynim --help
+$ ./traynim --help
 ```
 
-To generate the demo animation shown in [Demo-Preview](#demo-preview):
+To generate the demo animation shown in [Demo-Preview](#demo-preview), just run
 
 ```sh
 $ ./animation.sh >/dev/null
 ```
 
-To generate just one image:
+To generate just one image with default paramethers use instead
 
 ```sh
-$ nimble run traynim demo
+$ ./traynim demo
 ```
 
 You can change the size of the image, the angle view or the camera type by running `--help`.
