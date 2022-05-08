@@ -20,6 +20,8 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/ottyanna/traynim/BuildAndTest)
 ![GitHub status](https://img.shields.io/badge/status-WIP-informational)
 
+Traynim is a CLI program written in Nim that lets you create photorealistic images using spheres and planes. 
+It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 
 ## Demo-Preview
 <p align="center"> 
