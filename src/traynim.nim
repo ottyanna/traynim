@@ -18,6 +18,7 @@
 
 
 import strutils, streams, cligen, sugar, options
+
 import
     cameras, 
     colors, 
@@ -107,5 +108,19 @@ proc demo(angleDeg = 0.0, orthogonal=false, width =640, height=480, fileName= "d
 
 
 when isMainModule:
+
+    const traynim = """
+ 
+                     _______*             _   _ _           
+                    |__   __ *           | \ | (_)          
+                       | |_ *__ __ _ _   |  \| |_ _ __ ___  
+                       | | '__/ _` | | | | . ` | | '_ ` _ \ 
+                       | | | | (_| | |_| | |\  | | | | | | |
+                       |_|_|  \__,_|\__, |_| \_|_|_| |_| |_|
+                                     __/ |                  
+                                    |___/                   
+                    """
+
+    echo traynim
 
     dispatchMulti([pfm2format, help={"outputFileName": "Formats allowed are PNG, PPM, BMP and QOI"}],[demo])
