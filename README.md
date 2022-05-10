@@ -38,7 +38,7 @@ It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 - [Contribute](#contribute)
 - [Release History](#release-history)
 - [License](#license)
-
+- [Footnotes](#footnotes)
 
 ## Installation
 [(Back to top)](#table-of-contents)
@@ -137,4 +137,5 @@ See the [CHANGELOG.md](https://github.com/ottyanna/traynim/blob/master/CHANGELOG
 
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
 
+## Footnotes
 <b id="f1">1</b> The sample image was taken from [here](https://filesamples.com/formats/pfm). [↩](#a1) 
