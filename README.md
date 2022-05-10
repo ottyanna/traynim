@@ -34,6 +34,7 @@ It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 - [Table of contents](#table-of-contents)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Examples](#examples)
 - [Contribute](#contribute)
 - [Release History](#release-history)
 - [License](#license)
@@ -65,13 +66,6 @@ You can test if the code works fine by running the following command:
    $ nimble test
    ```
 
-<!--  
-Functionalities implemented:
-- Read from PFM files
-- Tone mapping
-- Gamma correction
-- Save files in PNG, PPM, BMP and QOI formats
--->
 ## Usage
 [(Back to top)](#table-of-contents)
 
@@ -80,7 +74,7 @@ $ nimble run traynim
 ```
 will generate the executable.
 
-To display a comprehensive command-line help, you can use
+To display the command-line help, you can use
 
 ```sh
 $ ./traynim --help
@@ -112,7 +106,21 @@ $ ./traynim demo
 
 You can change the size of the image, the angle view or the camera type by running `--help`.
 
-To just use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BMP and QOI formats are supported.
+To use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BMP and [QOI](https://en.wikipedia.org/wiki/QOI_(image_format)) formats are supported.
+
+
+## Examples
+
+### `--gamma` and `--factor` variation in `pfm2format` feature:
+
+<!---maybe we need to write the site of the image--->
+
+|    options     | `-f=0.15`             |  `-f=0.30` | `-f=0.50`
+:---------:|:-------------------------:|:-------------------------:|:-------------------------: 
+`-g=1.0` | ![](img/pfm2formatExamples/sample1.00.15.png)  |  ![](img/pfm2formatExamples/sample1.00.30.png) | ![](img/pfm2formatExamples/sample1.00.50.png) 
+`-g=2.2` | ![](img/pfm2formatExamples/sample2.20.15.png) | ![](img/pfm2formatExamples/sample2.20.30.png)  |  ![](img/pfm2formatExamples/sample2.20.50.png)
+
+You can compare different values for `gamma` and `factor` tweaking the bash script in [img/pfm2formatExamples](img/pfm2formatExamples/) folder.
 
 ## Contribute
 [(Back to top)](#table-of-contents)
