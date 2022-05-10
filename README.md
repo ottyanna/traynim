@@ -43,9 +43,9 @@ It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 [(Back to top)](#table-of-contents)
 
 ### Dependencies
-- nim >= 1.6.4
-- nimble
-- ffmpeg for the animations
+- [nim](https://github.com/nim-lang) >= 1.6.4
+- [nimble](https://github.com/nim-lang/nimble)
+- [ffmpeg](https://www.ffmpeg.org/) for the animations
 
 
 
@@ -80,19 +80,31 @@ $ nimble run traynim
 ```
 will generate the executable.
 
-To display the help, you can run
+To display a comprehensive command-line help, you can use
 
 ```sh
 $ ./traynim --help
+
+Usage:
+  traynim {SUBCMD}  [sub-command options & parameters]
+where {SUBCMD} is one of:
+  help        print comprehensive or per-cmd help
+  pfm2format  
+  demo        
+
+traynim {-h|--help} or with no args at all prints this message.
+traynim --help-syntax gives general cligen syntax help.
+Run "traynim {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
+Run "traynim help" to get *comprehensive* help.
 ```
 
-To generate the demo animation shown in [Demo-Preview](#demo-preview), just run
+To generate the demo animation shown in [Demo-Preview](#demo-preview), in UNIX systems just run
 
 ```sh
 $ ./animation.sh >/dev/null
 ```
 
-To generate just one image with default paramethers use instead
+To generate one demo image with default parameters use instead
 
 ```sh
 $ ./traynim demo
