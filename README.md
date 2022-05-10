@@ -120,7 +120,7 @@ To use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BM
 `-g=1.0` | ![](img/pfm2formatExamples/sample1.00.15.png)  |  ![](img/pfm2formatExamples/sample1.00.30.png) | ![](img/pfm2formatExamples/sample1.00.50.png) 
 `-g=2.2` | ![](img/pfm2formatExamples/sample2.20.15.png) | ![](img/pfm2formatExamples/sample2.20.30.png)  |  ![](img/pfm2formatExamples/sample2.20.50.png)
 
-You can compare different values for `gamma` and `factor` tweaking the bash script in [img/pfm2formatExamples](img/pfm2formatExamples/) folder.
+You can compare different values for `gamma` and `factor` tweaking the bash script in [img/pfm2formatExamples](img/pfm2formatExamples/) folder<sup id="a1">[1](#f1)</sup>
 
 ## Contribute
 [(Back to top)](#table-of-contents)
@@ -136,3 +136,5 @@ See the [CHANGELOG.md](https://github.com/ottyanna/traynim/blob/master/CHANGELOG
 [(Back to top)](#table-of-contents)
 
 [GNU GPLv3](https://choosealicense.com/licenses/gpl-3.0/)
+
+<b id="f1">1</b> The sample image was taken from [here](https://filesamples.com/formats/pfm). [↩](#a1) 
