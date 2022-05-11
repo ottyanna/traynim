@@ -15,3 +15,17 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+import geometry
+from colors import Color
+
+type 
+    BRDF = ref object of RootObj
+        ## A generic BRDF
+        
+method eval(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec, uv: Vec2d): Color =
+    ## Abstract method to override
+    quit "to override"
+
+
+    
