@@ -16,12 +16,14 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from bitops import bitnot
 
 type 
     PCG* = object
         ##
         state*, incr* : uint64
+
+proc `-`(rot: uint32): uint32=
+    result = not(rot)+1
 
 proc random*(pcg : var PCG): uint32 =
     ##
@@ -32,11 +34,9 @@ proc random*(pcg : var PCG): uint32 =
     let xorShifted = (((oldState shr 18) xor oldState) shr 27).uint32
 
     # 32-bit variable 
-    let rot = oldState.uint32 shr 59
+    let rot = (oldState shr 59).uint32
 
-    result = ((xorShifted shr rot) or (xorShifted shl ((bitnot(rot)) and 31)))
-
-
+    result = (xorShifted shr rot) or (xorShifted shl (-rot and 31))
 
 
 proc newPCG*(initState:uint64 = 42, initSeq:uint64 = 54): PCG =
@@ -48,4 +48,6 @@ proc newPCG*(initState:uint64 = 42, initSeq:uint64 = 54): PCG =
     result.state += initState
     discard result.random()
 
+proc randomFloat*(pcg: var PCG) : float=
+    result = random(pcg).float / 0xffffffff.float
     

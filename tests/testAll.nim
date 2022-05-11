@@ -705,5 +705,5 @@ suite "test pcg.nim":
         for expected in [2707161783.uint32, 2068313097.uint32, 
                         3122475824.uint32, 2211639955.uint32,
                         3215226955.uint32, 3421331566.uint32]:
-                            echo(pcg.random())
-                            #assert expected == pcg.random()
+                            #echo "print: ", (pcg.random())
+                            assert expected == pcg.random()
