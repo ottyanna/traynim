@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 0.2.0
+## [0.2.0](https://github.com/ottyanna/traynim/releases/tag/v0.2.0)
 
 ### Added
 - **Major update**: new `demo` command
