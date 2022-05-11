@@ -22,10 +22,23 @@ from colors import Color
 type 
     BRDF = ref object of RootObj
         ## A generic BRDF
-        
-method eval(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec, uv: Vec2d): Color =
+     
+type
+    Pigment* = ref object of RootObj
+
+method eval*(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec, uv: Vec2d): Color {.base.}=
     ## Abstract method to override
     quit "to override"
 
 
-    
+method getColor*(pigment: Pigment, vec2d: Vec2d) : Color {.base}=
+    quit "to override!"
+
+type
+    UniformPigment* = ref object of Pigment
+
+type
+    CheckeredPigment* = ref object of Pigment
+
+type
+    ImagePigment* = ref object of Pigment
