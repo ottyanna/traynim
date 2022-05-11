@@ -10,4 +10,4 @@ bin           = @["traynim"]
 
 # Dependencies
 
-requires "nim >= 1.6.4", "pixie"
+requires "nim >= 1.6.4", "pixie", "cligen"

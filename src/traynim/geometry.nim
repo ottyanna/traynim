@@ -47,9 +47,9 @@ defineNew3dObj(newVec, Vec)
 defineNew3dObj(newPoint, Point)
 defineNew3dObj(newNormal, Normal)
 
-const vecX* = Vec(x: 1.0, y : 0.0, z: 0.0)
-const vecY* = Vec(x: 0.0, y : 1.0, z: 0.0)
-const vecZ* = Vec(x: 0.0, y : 0.0, z: 1.0)
+const vecX* = Vec(x: 1.0, y: 0.0, z: 0.0)
+const vecY* = Vec(x: 0.0, y: 1.0, z: 0.0)
+const vecZ* = Vec(x: 0.0, y: 0.0, z: 1.0)
 
 template define3dOp(fname: untyped, type1: typedesc, type2: typedesc,
         rettype: typedesc) =
@@ -149,7 +149,7 @@ template defineAreClose3dObj(type1: typedesc) =
     proc areClose*(a, b: type1, epsilon = 1e-5): bool =
 
         ## Determines if two 3d objects are equal (to use with floating points)
-        
+
         return areClose(a.x, b.x, epsilon) and areClose(a.y, b.y, epsilon) and
                 areClose(a.z, b.z, epsilon)
 
@@ -161,7 +161,7 @@ template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
     proc fname*(a: type1): rettype =
 
         ## Convertion between 3d objects
-        
+
         result.x = a.x
         result.y = a.y
         result.z = a.z
@@ -191,7 +191,7 @@ defineNorm(Normal)
 
 template defineNormalize(type1) =
     proc normalize*(a: type1): type1 =
-        
+
         ## A 3d Vector/Normal normalize procedure
 
         result.x = a.x / a.norm()
@@ -200,3 +200,26 @@ template defineNormalize(type1) =
 
 defineNormalize(Vec)
 defineNormalize(Normal)
+
+
+type
+    Vec2d* = object
+
+        ## A 2D vector used to represent a point on a surface
+        ## The fields are named `u` and `v` to distinguish them
+        ## from the usual 3D coordinates `x`, `y`, `z`.
+
+        u*, v*: float64
+
+proc newVec2d*(u, v: float64): Vec2d =
+
+    ## Creates a new `Vec2d` with paramether u and v
+
+    result.u = u
+    result.v = v
+
+proc areClose*(a, b: Vec2d, epsilon = 1e-5): bool =
+
+    ## Determines whether 2D objects are equal or not (Floating point use only!!!)
+
+    return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
