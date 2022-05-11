@@ -35,7 +35,8 @@ import
     ray, 
     shapes,
     transformations,
-    world
+    world,
+    pcg
 
 suite "test cameras.nim":
 
@@ -691,3 +692,18 @@ suite "test world.nim":
 
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
+
+suite "test pcg.nim":
+    test "test on random":
+        var pcg = newPCG()
+
+        ##
+
+        assert pcg.state == 1753877967969059832.uint64
+        assert pcg.incr == 109
+
+        for expected in [2707161783.uint32, 2068313097.uint32, 
+                        3122475824.uint32, 2211639955.uint32,
+                        3215226955.uint32, 3421331566.uint32]:
+                            echo(pcg.random())
+                            #assert expected == pcg.random()

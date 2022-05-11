@@ -15,3 +15,37 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+from bitops import bitnot
+
+type 
+    PCG* = object
+        ##
+        state*, incr* : uint64
+
+proc random*(pcg : var PCG): uint32 =
+    ##
+    let oldState = pcg.state
+
+    pcg.state = oldState * 6364136223846793005.uint64 + pcg.incr
+
+    let xorShifted = (((oldState shr 18) xor oldState) shr 27).uint32
+
+    # 32-bit variable 
+    let rot = oldState.uint32 shr 59
+
+    result = ((xorShifted shr rot) or (xorShifted shl ((bitnot(rot)) and 31)))
+
+
+
+
+proc newPCG*(initState:uint64 = 42, initSeq:uint64 = 54): PCG =
+    ##
+    
+    result.state = 0
+    result.incr = (initSeq shl 1) or 1
+    discard result.random()
+    result.state += initState
+    discard result.random()
+
+    
