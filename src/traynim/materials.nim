@@ -15,3 +15,21 @@
 
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
+import colors, geometry
+
+type
+    Pigment* = ref object of RootObj
+
+method getColor*(pigment: Pigment, vec2d: Vec2d) : Color {.base}=
+    quit "to override!"
+
+type
+    UniformPigment* = ref object of Pigment
+
+type
+    CheckeredPigment* = ref object of Pigment
+
+type
+    ImagePigment* = ref object of Pigment
