@@ -25,6 +25,7 @@ import
     geometry,
     hdrimages,
     imageTracer,
+    render,
     shapes,
     transformations,
     world
