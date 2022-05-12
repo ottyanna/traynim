@@ -49,6 +49,7 @@ type
         color: Color
 
 proc newUniformPigment*(color: Color) : UniformPigment =
+    new(result)
     result.color = color
 
 method getColor*(pigment: UniformPigment, vec2d: Vec2d) : Color =
@@ -67,6 +68,7 @@ type
 
 proc newCheckeredPigment*(color1, color2: Color, stepsNum = 10) : CheckeredPigment =
     
+    new(result)
     result.color1 = color1
     result.color2 = color2
     result.stepsNum = stepsNum
@@ -89,6 +91,7 @@ type
 
 proc newImagePigment*(image : HdrImage) : ImagePigment =
     
+    new(result)
     result.image = image
 
 method getColor*(pigment: ImagePigment, vec2d: Vec2d) : Color =
