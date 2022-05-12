@@ -31,12 +31,12 @@ import
     geometry,
     hdrimages, 
     hitRecord,
-    imageTracer,  
+    imageTracer,
+    pcg,  
     ray, 
     shapes,
     transformations,
-    world,
-    pcg
+    world
 
 suite "test cameras.nim":
 
@@ -287,7 +287,22 @@ suite "test imageTracer.nim":
                     assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
 
 
-suite "test on rays.nim":
+suite "test pcg.nim":
+    test "test on random":
+        var pcg = newPCG()
+
+        ##
+
+        assert pcg.state == 1753877967969059832.uint64
+        assert pcg.incr == 109
+
+        for expected in [2707161783.uint32, 2068313097.uint32, 
+                        3122475824.uint32, 2211639955.uint32,
+                        3215226955.uint32, 3421331566.uint32]:
+                            assert expected == pcg.random()
+
+
+suite "test rays.nim":
 
     test "test on ray.areClose":
         let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
@@ -314,7 +329,7 @@ suite "test on rays.nim":
         assert transformed.dir.areclose(newVec(6.0, -4.0, 5.0))
 
 
-suite "test on shapes.nim (Plane)":
+suite "test shapes.nim (Plane)":
 
     setup:
         var plane = newPlane()
@@ -383,7 +398,8 @@ suite "test on shapes.nim (Plane)":
         let intersection3 = plane.rayIntersection(ray3)
         assert intersection3.get.surfacePoint.areClose(newVec2d(0.25, 0.75))
 
-suite "test on shapes.nim (Spheres)":
+
+suite "test shapes.nim (Spheres)":
 
     setup:
         var sphere = newSphere()
@@ -523,7 +539,7 @@ suite "test on shapes.nim (Spheres)":
         assert sphere.rayIntersection(ray6).get.surfacePoint.areClose(newVec2d(0.0, 2/3))
 
 
-suite "test on transformations.nim":
+suite "test transformations.nim":
 
     setup:
         let m {.used.} = [
@@ -692,18 +708,3 @@ suite "test world.nim":
 
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
-
-suite "test pcg.nim":
-    test "test on random":
-        var pcg = newPCG()
-
-        ##
-
-        assert pcg.state == 1753877967969059832.uint64
-        assert pcg.incr == 109
-
-        for expected in [2707161783.uint32, 2068313097.uint32, 
-                        3122475824.uint32, 2211639955.uint32,
-                        3215226955.uint32, 3421331566.uint32]:
-                            #echo "print: ", (pcg.random())
-                            assert expected == pcg.random()
