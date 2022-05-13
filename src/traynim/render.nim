@@ -23,30 +23,32 @@ import colors, ray, world
 import options
 
 type Renderer* = ref object of RootObj
-        ## generic renderer
-        world*: World
-        backgroundColor* : Color
+    ## generic renderer
+    world*: World
+    backgroundColor*: Color
 
-method newBaseRenderer*(renderer: Renderer,world: World, backgroundColor = black) {.base.}=
-    renderer.backgroundColor=backgroundColor
+method newBaseRenderer*(renderer: Renderer, world: World,
+        backgroundColor = black) {.base.} =
+    renderer.backgroundColor = backgroundColor
     renderer.world = world
-    
-method call*(renderer : Renderer, ray :Ray): Color {.base.}=
+
+method call*(renderer: Renderer, ray: Ray): Color {.base.} =
     quit "to override!"
 
 type OnOffRenderer* = ref object of Renderer
-    ## A on/off renderer: everything is of two colors (`backgroundColor` and `color`). 
+    ## A on/off renderer: everything is of two colors (`backgroundColor` and `color`).
     color*: Color
 
-proc newOnOffRenderer*(world: World, backgroundColor = black, color = white): OnOffRenderer=
+proc newOnOffRenderer*(world: World, backgroundColor = black,
+        color = white): OnOffRenderer =
     new(result)
     result.newBaseRenderer(world, backgroundColor)
     result.color = color
 
-method call*(renderer: OnOffRenderer, ray: Ray) : Color=
+method call*(renderer: OnOffRenderer, ray: Ray): Color =
     ## Calls the image rendering where the shapes are in solid color `color`.
     if renderer.world.rayIntersection(ray).isSome:
-        return renderer.color 
+        return renderer.color
     else: return renderer.backgroundColor
 
 
@@ -55,11 +57,11 @@ type FlatRenderer* = ref object of Renderer
     ## This renderer estimates the solution of the rendering equation by neglecting any contribution of the light.
     ## It just uses the pigment of each surface to determine how to compute the final radiance.
 
-proc newFlatRenderer*(world: World, backgroundColor = black) : FlatRenderer =
+proc newFlatRenderer*(world: World, backgroundColor = black): FlatRenderer =
     new(result)
-    result.newBaseRenderer(world,backgroundColor)
+    result.newBaseRenderer(world, backgroundColor)
 
-    
+
 #[
 method call*(renderer: FlatRenderer, ray: Ray) : Color=
         let hit = renderer.world.rayIntersection(ray)
