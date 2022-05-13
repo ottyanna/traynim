@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import strutils, streams, cligen, sugar, options
+import strutils, streams, cligen, sugar
 
 import
     cameras,
@@ -48,7 +48,7 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
-        fileName = "demo", format = "png") =
+        fileName = "demo", format = "png", algorithm = "on/off", luminosity : float = 0.0 ) =
 
     var image = newHDRImage(width, height)
 
@@ -98,9 +98,14 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
 
     var tracer = newImageTracer(image, camera)
 
-    # Run ray tracer with "on/off" renderer
-    tracer.fireAllRays(ray => (if world.rayIntersection(
-            ray).isSome: white else: black))
+    var renderer: Renderer
+
+    if algorithm == "on/off":
+        renderer = newOnOffRenderer(world,white,black)
+    else:
+        renderer = newFlatRenderer(world)
+
+    tracer.fireAllRays(ray => call(renderer,ray))
 
     # Save the HDR image
     let outPfm = newFileStream(fileName & ".pfm", fmWrite)
@@ -109,12 +114,17 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     outPfm.close()
 
     # Apply tone-mapping to the image
-    tracer.image.normalizeImage(factor = 1.0)
+    if luminosity == 0.0:    
+        tracer.image.normalizeImage(factor = 1.0) #use average luminosity
+    else:
+        tracer.image.normalizeImage(factor = 1.0, luminosity)
+    
     tracer.image.clampImage()
 
     # Save the LDR image
     tracer.image.writeLdrImage(fileName & "." & format)
     echo "PNG demo image written to " & fileName & ".png"
+
 
 
 when isMainModule:
@@ -146,5 +156,7 @@ when isMainModule:
                     "width" : "Width of the image",
                     "height" : "Height of the image",
                     "fileName" : "Path to output file without format",
-                    "format": "PNG, PPM, BMP or QOI formats"}
+                    "format": "PNG, PPM, BMP or QOI formats",
+                    "algorithm": "options are on/off or flat renderer",
+                    "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity"}
         ])
