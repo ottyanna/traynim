@@ -20,7 +20,7 @@
 ## This module implements shapes and their interaction with the `rays`
 
 
-import transformations, ray, options, hitRecord, geometry
+import transformations, ray, options, hitRecord, geometry, materials
 from math import sqrt, arctan2, arccos, PI, floor
 
 type
@@ -31,7 +31,7 @@ type
         ## Make sure to derive *real* object from it
         
         transformation*: Transformation
-
+        material*: Material
 
 type
     Sphere* = ref object of Shape
@@ -44,12 +44,13 @@ method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
     quit "Shape.rayIntersection is an abstract method and cannot be called directly"
 
 
-proc newSphere*(transformation = newTransformation()): Sphere =
+proc newSphere*(transformation = newTransformation(), material: Material = newMaterial()): Sphere =
 
     ## Creates a unit sphere, potentially associating a transformation to it
 
     new(result)
     result.transformation = transformation
+    result.material = material
 
 proc spherePointToUV*(p: Point): Vec2d =
 
@@ -121,12 +122,13 @@ type
     Plane* = ref object of Shape
         ## A 3D infinite plane parallel to the x and y axis and passing through the origin.
 
-proc newPlane*(transformation = newTransformation()): Plane =
+proc newPlane*(transformation = newTransformation(), material: Material = newMaterial()): Plane =
 
     ## Creates a xy plane, potentially associating a transformation to it
 
     new(result)
     result.transformation = transformation
+    result.material = material
 
 method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
 

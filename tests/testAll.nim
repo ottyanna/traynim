@@ -32,6 +32,7 @@ import
     hdrimages, 
     hitRecord,
     imageTracer,
+    materials,
     pcg,  
     ray, 
     shapes,
@@ -708,3 +709,53 @@ suite "test world.nim":
 
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
+
+
+suite "test materials.nim":
+
+    test "test Uniform Pigment":
+        let color = newColor(1.0, 2.0, 3.0)
+        let pigment = newUniformPigment(color)
+
+        assert pigment.getColor(newVec2d(0.0, 0.0)).areClose(color)
+        assert pigment.getColor(newVec2d(1.0, 0.0)).areClose(color)
+        assert pigment.getColor(newVec2d(0.0, 1.0)).areClose(color)
+        assert pigment.getColor(newVec2d(1.0, 1.0)).areClose(color)
+    
+    test "test Image Pigment":
+        var image = newHDRImage(2, 2)
+        image.setPixel(0, 0, newColor(1.0, 2.0, 3.0))
+        image.setPixel(1, 0, newColor(2.0, 3.0, 1.0))
+        image.setPixel(0, 1, newColor(2.0, 1.0, 3.0))
+        image.setPixel(1, 1, newColor(3.0, 2.0, 1.0))
+
+        let pigment = newImagePigment(image)
+        assert pigment.getColor(newVec2d(0.0, 0.0)).areClose(newColor(1.0, 2.0, 3.0))
+        assert pigment.getColor(newVec2d(1.0, 0.0)).areClose(newColor(2.0, 3.0, 1.0))
+        assert pigment.getColor(newVec2d(0.0, 1.0)).areClose(newColor(2.0, 1.0, 3.0))
+        assert pigment.getColor(newVec2d(1.0, 1.0)).areClose(newColor(3.0, 2.0, 1.0))
+    
+    test "test Checkered Pigment":
+        let color1 = newColor(1.0, 2.0, 3.0)
+        let color2 = newColor(10.0, 20.0, 30.0)
+
+        let pigment = newCheckeredPigment(color1, color2, 2)
+
+        # With num_of_steps == 2, the pattern should be the following:
+        #
+        #              (0.5, 0)
+        #   (0, 0) +------+------+ (1, 0)
+        #          |      |      |
+        #          | col1 | col2 |
+        #          |      |      |
+        # (0, 0.5) +------+------+ (1, 0.5)
+        #          |      |      |
+        #          | col2 | col1 |
+        #          |      |      |
+        #   (0, 1) +------+------+ (1, 1)
+        #              (0.5, 1)
+
+        assert pigment.getColor(newVec2d(0.25, 0.25)).areClose(color1)
+        assert pigment.getColor(newVec2d(0.75, 0.25)).areClose(color2)
+        assert pigment.getColor(newVec2d(0.25, 0.75)).areClose(color2)
+        assert pigment.getColor(newVec2d(0.75, 0.75)).areClose(color1)

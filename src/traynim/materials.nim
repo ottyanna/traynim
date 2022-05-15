@@ -17,17 +17,9 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from geometry import Normal, Vec, Vec2d
-from colors import Color
-from math import floor
+from colors import Color, black, white, `*`
+from math import floor, PI
 from hdrimages import HDRimage, getPixel
-
-type 
-    BRDF = ref object of RootObj
-        ## A generic BRDF
-     
-method eval*(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec, uv: Vec2d): Color {.base.}=
-    ## Abstract method to override
-    quit "to override"
 
 type
     Pigment* = ref object of RootObj
@@ -46,7 +38,7 @@ type
     UniformPigment* = ref object of Pigment
         ## A "pigment" of one chosen color.
         ## Initialise with `Pigment.newUniformPigment`.
-        color: Color
+        color*: Color
 
 proc newUniformPigment*(color: Color) : UniformPigment =
     new(result)
@@ -87,7 +79,7 @@ type
     ImagePigment* = ref object of Pigment
         ## A textured pigment.
         ## The texture is given through a PFM image.
-        image : HDRimage
+        image* : HDRimage
 
 proc newImagePigment*(image : HdrImage) : ImagePigment =
     
@@ -108,3 +100,44 @@ method getColor*(pigment: ImagePigment, vec2d: Vec2d) : Color =
         # A nicer solution would implement bilinear interpolation to reduce pixelization artifacts
         # See https://en.wikipedia.org/wiki/Bilinear_interpolation
         return pigment.image.getPixel(col, row)
+
+type 
+    BRDF* = ref object of RootObj
+        ## An abstract class representing a Bidirectional Reflectance Distribution Function
+        pigment*: Pigment
+
+      
+proc newBRDF*(pigment: Pigment = newUniformPigment(white) ): BRDF =
+    new(result)
+    result.pigment = pigment
+     
+method eval*(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec, uv: Vec2d): Color {.base.}=
+    ## Abstract method to override
+    result = black
+
+type 
+    DiffuseBRDF* = ref object of BRDF
+        ## An ideal diffuse BRDF (also called "Lambertian")
+        reflectance*: float64
+
+
+proc newDiffuseBRDF*(pigment: Pigment = newUniformPigment(white), reflectance = 1.0 ): DiffuseBRDF =
+    
+    new(result)
+    result.pigment = pigment
+    result.reflectance = reflectance
+
+method eval*(brdf:DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec, uv: Vec2d): Color =
+        
+    result = brdf.pigment.getColor(uv) * (brdf.reflectance / PI) 
+
+type 
+    Material* = object
+        ## A material
+        brdf*: DiffuseBRDF 
+        emittedRadiance*: Pigment 
+
+proc newMaterial*(brdf:DiffuseBRDF = newDiffuseBRDF(), emittedRadiance: Pigment = newUniformPigment(black) ): Material =
+    
+    result.brdf = brdf
+    result.emittedRadiance = emittedRadiance 

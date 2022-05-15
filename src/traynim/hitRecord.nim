@@ -19,6 +19,8 @@
 
 import geometry, ray, options, common
 
+
+
 type
     HitRecord* = object
 
@@ -36,6 +38,8 @@ type
         surfacePoint*: Vec2d
         t*: float
         ray*: Ray
+     
+
 
 
 proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
@@ -48,7 +52,7 @@ proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
     result.surfacePoint = surfacePoint
     result.t = t
     result.ray = ray
-
+    
 proc areClose*(self: HitRecord, other: Option[HitRecord],
         epsilon = 1e-5): bool =
 
