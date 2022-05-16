@@ -114,7 +114,8 @@ method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
                             invRay.dir),
                     surfacePoint = spherePointToUV(hitPoint),
                     t = firstHitT,
-                    ray = ray)
+                    ray = ray,
+                    material = sphere.material)
 
     return some(hitRecord)
 
@@ -154,7 +155,8 @@ method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
         surfacePoint = newVec2d(hitPoint.x - floor(hitPoint.x), hitPoint.y -
                 floor(hitPoint.y)),
         t = t,
-        ray = ray
+        ray = ray,
+        material = plane.material
     )
 
     return some(hitRecord)

@@ -35,6 +35,7 @@ import
     materials,
     pcg,  
     ray, 
+    render,
     shapes,
     transformations,
     world
@@ -330,6 +331,56 @@ suite "test rays.nim":
         assert transformed.dir.areclose(newVec(6.0, -4.0, 5.0))
 
 
+suite "test render.nim":
+
+    test "test on OnOffRenderer":
+        let sphere = newSphere(transformation=translation(newVec(2, 0, 0))*scaling(newVec(0.2, 0.2, 0.2)),
+                        material=newMaterial(brdf=newDiffuseBRDF(pigment=newUniformPigment(white))))
+        let image = newHdrImage(width=3, height=3)
+        let camera = newOrthogonalCamera()
+        var tracer = newImageTracer(image, camera)
+        var world = newWorld()
+        world.addShape(sphere)
+        let renderer = newOnOffRenderer(world)
+        tracer.fireAllRays(ray => call(renderer,ray))
+
+        assert tracer.image.getPixel(0, 0).areClose(black)
+        assert tracer.image.getPixel(1, 0).areClose(black)
+        assert tracer.image.getPixel(2, 0).areClose(black)
+
+        assert tracer.image.getPixel(0, 1).areClose(black)
+        assert tracer.image.getPixel(1, 1).areClose(white)
+        assert tracer.image.getPixel(2, 1).areClose(black)
+
+        assert tracer.image.getPixel(0, 2).areClose(black)
+        assert tracer.image.getPixel(1, 2).areClose(black)
+        assert tracer.image.getPixel(2, 2).areClose(black)
+
+    #[test "test on FlatRenderer":
+        let sphereColor = newColor(1.0, 2.0, 3.0)
+        let sphere = newSphere(transformation=translation(newVec(2, 0, 0))*scaling(newVec(0.2, 0.2, 0.2)),
+                        material=newMaterial(brdf=newDiffuseBRDF(pigment=newUniformPigment(sphereColor))))
+        let image = newHdrImage(width=3, height=3)
+        let camera = newOrthogonalCamera()
+        var tracer = newImageTracer(image=image, camera=camera)
+        var world = newWorld()
+        world.addShape(sphere)
+        var renderer = newFlatRenderer(world=world)
+        tracer.fireAllRays(ray => call(renderer,ray))
+
+        assert tracer.image.getPixel(0, 0).areClose(black)
+        assert tracer.image.getPixel(1, 0).areClose(black)
+        assert tracer.image.getPixel(2, 0).areClose(black)
+
+        assert tracer.image.get_pixel(0, 1).areClose(black)
+        assert tracer.image.get_pixel(1, 1).areClose(sphereColor)
+        assert tracer.image.get_pixel(2, 1).areClose(black)
+
+        assert tracer.image.get_pixel(0, 2).areClose(black)
+        assert tracer.image.get_pixel(1, 2).areClose(black)
+        assert tracer.image.get_pixel(2, 2).areClose(black)
+
+ ]#
 suite "test shapes.nim (Plane)":
 
     setup:
