@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import geometry, ray, options, common, materials
+import geometry, ray, options, common, shapesDef
 
 
 
@@ -38,13 +38,13 @@ type
         surfacePoint*: Vec2d
         t*: float
         ray*: Ray
-        material*: Material
+        shape*: Shape
      
 
 
 
 proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
-        t: float, ray: Ray, material = newMaterial()): HitRecord =
+        t: float, ray: Ray, shape = Shape()): HitRecord =
 
     ## Creates a `HitRecord`
 
@@ -53,7 +53,7 @@ proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
     result.surfacePoint = surfacePoint
     result.t = t
     result.ray = ray
-    result.material = material
+    result.shape = shape
     
 proc areClose*(self: HitRecord, other: Option[HitRecord],
         epsilon = 1e-5): bool =

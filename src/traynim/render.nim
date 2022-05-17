@@ -19,7 +19,7 @@
 
 ## This module implements different algorithms for rendering
 
-import colors, ray, world, materials
+import colors, ray, world, materials, shapesDef
 import options
 
 type Renderer* = ref object of RootObj
@@ -68,7 +68,7 @@ method call*(renderer: FlatRenderer, ray: Ray) : Color=
         if hit.isNone:
             return renderer.backgroundColor
 
-        let material = (hit.get).material
+        let material = (hit.get).shape.material
 
         result= (material.brdf.pigment.getColor((hit.get).surfacePoint) +
                 material.emittedRadiance.getColor((hit.get).surfacePoint))

@@ -20,18 +20,8 @@
 ## This module implements shapes and their interaction with the `rays`
 
 
-import transformations, ray, options, hitRecord, geometry, materials
+import transformations, ray, options, hitRecord, geometry, materials, shapesDef
 from math import sqrt, arctan2, arccos, PI, floor
-
-type
-    Shape* = ref object of RootObj
-
-        ## A generic 3D shape 
-        ## It's an abstract object
-        ## Make sure to derive *real* object from it
-        
-        transformation*: Transformation
-        material*: Material
 
 type
     Sphere* = ref object of Shape
@@ -115,7 +105,7 @@ method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
                     surfacePoint = spherePointToUV(hitPoint),
                     t = firstHitT,
                     ray = ray,
-                    material = sphere.material)
+                    shape = sphere)
 
     return some(hitRecord)
 
@@ -156,7 +146,7 @@ method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
                 floor(hitPoint.y)),
         t = t,
         ray = ray,
-        material = plane.material
+        shape = plane
     )
 
     return some(hitRecord)

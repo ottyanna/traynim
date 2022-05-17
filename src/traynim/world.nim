@@ -22,7 +22,7 @@
 
 from ray import Ray
 from hitRecord import HitRecord
-import options, shapes
+import options, shapes, shapesDef
 
 type
     World* = object

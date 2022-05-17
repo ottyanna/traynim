@@ -36,6 +36,7 @@ import
     pcg,  
     ray, 
     render,
+    shapesDef,
     shapes,
     transformations,
     world
