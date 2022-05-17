@@ -8,3 +8,6 @@
 
 # Unignore all dirs
 !*/
+
+# Ignore demo folder
+demo/
