@@ -19,7 +19,7 @@
 
 ## This module implements different algorithms for rendering
 
-import colors, ray, world
+import colors, ray, world, materials
 import options
 
 type Renderer* = ref object of RootObj
@@ -62,13 +62,13 @@ proc newFlatRenderer*(world: World, backgroundColor = black): FlatRenderer =
     result.newBaseRenderer(world, backgroundColor)
 
 
-#[
+
 method call*(renderer: FlatRenderer, ray: Ray) : Color=
         let hit = renderer.world.rayIntersection(ray)
         if hit.isNone:
             return renderer.backgroundColor
 
-        let material = (hit.get).shape.material
+        let material = (hit.get).material
 
-        return (material.brdf.pigment.getColor((hit.get).surfacePoint) +
-                material.emittedRadiance.getColor((hit.get).surfacePoint))]#
+        result= (material.brdf.pigment.getColor((hit.get).surfacePoint) +
+                material.emittedRadiance.getColor((hit.get).surfacePoint))
