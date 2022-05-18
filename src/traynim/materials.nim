@@ -145,10 +145,10 @@ method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
     
     let onb:ONB = createONBfromZ(normal)
     let cosThetaSq = pcg.randomFloat()
-    let cosTheta, sinTheta = (sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq))
+    let (cosTheta, sinTheta) = (sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq))
     let phi = 2.0 * PI * pcg.randomFloat()
     let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) + onb.e3 * sinTheta
-    return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=inf, depth=depth)
+    return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=Inf , depth=depth)
 #[
 type
     SpecularBRDF* = ref object of BRDF
