@@ -17,10 +17,11 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from colors import Color, black, white, `*`
-from math import floor, PI, sqrt, cos, sin
+from colors import Color, black, white, `*`, newColor
+#from math import floor, PI, sqrt, cos, sin
 from hdrimages import HDRimage, getPixel
 import pcg, ray, geometry
+import math
 
 type
     Pigment* = ref object of RootObj
@@ -139,7 +140,7 @@ method eval*(brdf: DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec,
         uv: Vec2d): Color =
 
     result = brdf.pigment.getColor(uv) * (brdf.reflectance / PI)
-
+#[
 method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
     
@@ -149,11 +150,31 @@ method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
     let phi = 2.0 * PI * pcg.randomFloat()
     let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) + onb.e3 * sinTheta
     return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=Inf , depth=depth)
-#[
+]#
+
 type
     SpecularBRDF* = ref object of BRDF
+        thresholdAngleRad: float
 
+proc newSpecularBRDF*(pigment: Pigment = newUniformPigment(white),
+        thresholdAngleRad=PI / 1800.0): SpecularBRDF =
+    
+    new(result)
+    result.pigment = pigment
+    result.thresholdAngleRad = thresholdAngleRad
 
+method eval*(brdf: SpecularBRDF, normal: Normal, inDir: Vec, outDir: Vec,
+        uv: Vec2d): Color =
+
+    let thetaIn = arccos(normal.parseNormalToVec().dot(inDir))
+    let thetaOut = arccos(normal.parseNormalToVec().dot(outDir))
+
+    if abs(thetaIn - thetaOut) < brdf.thresholdAngleRad:
+        return brdf.pigment.getColor(uv)
+    else:
+        return newColor(0.0, 0.0, 0.0)
+
+#[
 method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
     let rayDir = newVec(incomingDir.x, incomingDir.y, incomingDir.z).normalize()
@@ -164,7 +185,7 @@ method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
                tmax=inf,
                depth=depth)
     
-
+]#
 type
     Material* = object
         ## A material
@@ -176,4 +197,3 @@ proc newMaterial*(brdf: DiffuseBRDF = newDiffuseBRDF(),
 
     result.brdf = brdf
     result.emittedRadiance = emittedRadiance
-]#
