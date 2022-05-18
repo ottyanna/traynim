@@ -811,3 +811,12 @@ suite "test world.nim":
 
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
+
+suite "test geometry.nim (createONB)":
+
+    test "test ONB creation":
+        var normal : Vec
+        var pcg = newPCG()
+        for i in 0 ..< 10000:
+            normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
+            let e = createONBfromZ(normal)
