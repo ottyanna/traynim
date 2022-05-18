@@ -225,7 +225,13 @@ proc areClose*(a, b: Vec2d, epsilon = 1e-5): bool =
 
     return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
 
-proc createONBfromZ*(normal: Vec or Normal): array[3, Vec] =
+
+type 
+    ONB* = object
+        e1*, e2*, e3* : Vec
+
+
+proc createONBfromZ*(normal: Vec or Normal): ONB =
     let sign = copySign(1.0, normal.z)
     let a = -1.0 / (sign + normal.z)
     let b = normal.x * normal.y * a
@@ -234,8 +240,8 @@ proc createONBfromZ*(normal: Vec or Normal): array[3, Vec] =
     let e2 = newVec(b, sign + normal.y *normal.y *a, -normal.y)
 
     #result = [e1, e2, newVec(normal.x, normal.y, normal.z)]
-    result[0] = e1
-    result[1] = e2
-    result[2] = newVec(normal.x, normal.y, normal.z)
+    result.e1 = e1
+    result.e2 = e2
+    result.e3 = newVec(normal.x, normal.y, normal.z)
 
     

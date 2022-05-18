@@ -18,7 +18,7 @@
 
 
 from colors import Color, black, white, `*`
-from math import floor, PI
+from math import floor, PI, sqrt, cos, sin
 from hdrimages import HDRimage, getPixel
 import pcg, ray, geometry
 
@@ -140,18 +140,16 @@ method eval*(brdf: DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec,
 
     result = brdf.pigment.getColor(uv) * (brdf.reflectance / PI)
 
-method scatterRay*(brdf: DiffuseBRDF, pcg: PCG, incomingDir: Vec,
+method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
-    let e1, e2, e3 = createONBfromZ(normal)
+    
+    let onb:ONB = createONBfromZ(normal)
     let cosThetaSq = pcg.randomFloat()
-    let cosTheta, sinTheta = sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq)
+    let cosTheta, sinTheta = (sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq))
     let phi = 2.0 * PI * pcg.randomFloat()
-    result = newRay(origin=interactionPoint,
-               dir=e1 * cos(phi) * cosTheta + e2 * sin(phi) * cosTheta + e3 * sinTheta,
-               tmin=1.0e-3,   # Be generous here
-               tmax=inf,
-               depth=depth)
-
+    let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) + onb.e3 * sinTheta
+    return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=inf, depth=depth)
+#[
 type
     SpecularBRDF* = ref object of BRDF
 
@@ -159,7 +157,7 @@ type
 method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
     let rayDir = newVec(incomingDir.x, incomingDir.y, incomingDir.z).normalize()
-    let normal = normal.parseVecToNormal().normalize()
+    let normal = normal.parseNormalToVec().normalize()
     return newRay(origin=interactionPoint,
                dir=rayDir - normal * 2 * normal.dot(rayDir),
                tmin=1e-3,
@@ -178,3 +176,4 @@ proc newMaterial*(brdf: DiffuseBRDF = newDiffuseBRDF(),
 
     result.brdf = brdf
     result.emittedRadiance = emittedRadiance
+]#
