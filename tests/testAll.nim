@@ -430,6 +430,37 @@ suite "test render.nim":
         assert tracer.image.getPixel(0, 2).areClose(black)
         assert tracer.image.getPixel(1, 2).areClose(black)
         assert tracer.image.getPixel(2, 2).areClose(black)
+    
+    test "test Pathtracer":
+
+        var pcg = newPCG()
+
+        for i in 0 ..< 5:
+            var world = newWorld()
+            
+            let emittedRadiance = pcg.randomFloat()
+            let reflectance = pcg.randomFloat() * 0.9
+            let enclosureMaterial = newMaterial(
+                brdf = newDiffuseBRDF(pigment=newUniformPigment(white*reflectance)),
+                emittedRadiance = newUniformPigment(white*emittedRadiance) 
+            )
+            
+            world.addShape(newSphere(material=enclosureMaterial))
+            
+            let pathTracer = newPathTracer(pcg = pcg, raysNum=1, world=world, maxDepth = 100, rouletteMax=101)
+
+            let ray = newRay(origin = newPoint(0,0,0), dir = newVec(1,0,0))
+            let color = pathTracer.call(ray)
+
+            let expected = emittedRadiance / (1.0 - reflectance)
+            echo(color.r, " ", expected )
+            
+
+            assert areClose(expected, color.r, epsilon=1e-3)
+            assert areClose(expected, color.g, epsilon=1e-3
+             )
+            assert areClose(expected, color.b, epsilon=1e-3              )
+        
 
 
 suite "test shapes.nim (Plane)":
@@ -838,4 +869,5 @@ suite "test geometry.nim (createONB)":
             assert areClose(1.0, onb.e1.sqrNorm())
             assert areClose(1.0, onb.e2.sqrNorm())
             assert areClose(1.0, onb.e3.sqrNorm())
+
 
