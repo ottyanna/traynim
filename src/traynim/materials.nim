@@ -140,7 +140,7 @@ method eval*(brdf: DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec,
 
     result = brdf.pigment.getColor(uv) * (brdf.reflectance / PI)
 
-method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
+#[method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
     
     let onb:ONB = createONBfromZ(normal)
@@ -148,7 +148,7 @@ method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
     let cosTheta, sinTheta = (sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq))
     let phi = 2.0 * PI * pcg.randomFloat()
     let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) + onb.e3 * sinTheta
-    return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=inf, depth=depth)
+    return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=inf, depth=depth)]#
 #[
 type
     SpecularBRDF* = ref object of BRDF
@@ -163,7 +163,7 @@ method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
                tmin=1e-3,
                tmax=inf,
                depth=depth)
-    
+    ]#
 
 type
     Material* = object
@@ -176,4 +176,3 @@ proc newMaterial*(brdf: DiffuseBRDF = newDiffuseBRDF(),
 
     result.brdf = brdf
     result.emittedRadiance = emittedRadiance
-]#
