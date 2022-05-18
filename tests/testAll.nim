@@ -480,8 +480,7 @@ suite "test render.nim":
                         
 
             assert areClose(expected, color.r, epsilon=1e-3)
-            assert areClose(expected, color.g, epsilon=1e-3
-             )
+            assert areClose(expected, color.g, epsilon=1e-3)
             assert areClose(expected, color.b, epsilon=1e-3)
         
 
