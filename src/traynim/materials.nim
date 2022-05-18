@@ -18,7 +18,6 @@
 
 
 from colors import Color, black, white, `*`, newColor
-#from math import floor, PI, sqrt, cos, sin
 from hdrimages import HDRimage, getPixel
 import pcg, ray, geometry
 import math
