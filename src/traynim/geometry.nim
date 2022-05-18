@@ -243,5 +243,5 @@ proc createONBfromZ*(normal: Vec or Normal): ONB =
     result.e1 = e1
     result.e2 = e2
     result.e3 = newVec(normal.x, normal.y, normal.z)
-
+    
     
