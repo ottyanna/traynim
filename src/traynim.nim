@@ -26,6 +26,9 @@ import
     geometry,
     hdrimages,
     imageTracer,
+    materials,
+    std/monotimes,
+    pcg,
     render,
     shapes,
     transformations,
@@ -49,39 +52,59 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
-        fileName = "demo", format = "png", algorithm = "on/off", luminosity : float = 0.0, samplePerPixel = 1 ) =
+        fileName = "demo", format = "png", algorithm = "pathtracing",
+        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54, samplePerPixel = 1,  
+        luminosity : float = 0.0 ) =
 
     var image = newHDRImage(width, height)
+    echo("Generating a ", width, "x", height, " image, with the camera tilted by ", angleDeg, "°")
 
     var world = newWorld()
 
-    # Add spheres as vertices of a 0.5 side cube
-    for x in [-0.5, 0.5]:
-        for y in [-0.5, 0.5]:
-            for z in [-0.5, 0.5]:
-                world.addShape(
-                    newSphere(
-                        transformation = translation(newVec(x, y, z))*scaling(
-                                newVec(0.1, 0.1, 0.1))
-                    )
-                )
+    let skyMaterial = newMaterial(
+        brdf = newDiffuseBRDF(pigment = newUniformPigment(newColor(0, 0, 0))),
+        emittedRadiance = newUniformPigment(newColor(1.0, 0.9, 0.5))
+    )
 
-    # Place two other spheres in the cube, in order to check whether
-    # there are issues with the orientation of the image
-
-    # First sphere at bottom
-    world.addShape(
-        newSphere(
-            transformation = translation(newVec(0.0, 0.0, -0.5)) *
-                scaling(newVec(0.1, 0.1, 0.1))
+    let groundMaterial = newMaterial(
+        brdf = newDiffuseBRDF(
+            pigment = newCheckeredPigment(
+                color1 = newColor(0.3, 0.5, 0.1),
+                color2 = newColor(0.1, 0.2, 0.5)
+            )
         )
     )
 
-    # Second sphere on the left face
+    let sphereMaterial = newMaterial(
+        brdf = newDiffuseBRDF(
+            pigment = newUniformPigment(newColor(0.3, 0.4, 0.8))
+        )
+    )
+
+    let mirrorMaterial = newMaterial(
+        brdf = newSpecularBRDF(
+            pigment = newUniformPigment(newColor(0.6, 0.2, 0.3))
+        )
+    )
+
+    world.addShape(
+        newSphere(material = skyMaterial,
+        transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0, 0, 0.4)))
+    )
+
+    world.addShape(newPlane(material = groundMaterial))
+
     world.addShape(
         newSphere(
-            transformation = translation(newVec(0.0, 0.5, 0.0)) *
-                scaling(newVec(0.1, 0.1, 0.1))
+            material = sphereMaterial,
+            transformation = translation(newVec(0, 0, 1))
+        )
+    )
+
+    world.addShape(
+        newSphere(
+            material = mirrorMaterial,
+            transformation = translation(newVec(1, 2.5, 0))
         )
     )
 
@@ -97,16 +120,34 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         camera = newPerspectiveCamera(aspectRatio = width / height,
                 transformation = cameraTr)
 
+    # Run the tracer
+
     var tracer = newImageTracer(image, camera)
 
     var renderer: Renderer
 
-    if algorithm == "on/off":
-        renderer = newOnOffRenderer(world,white,black)
-    else:
-        renderer = newFlatRenderer(world)
-
+    case algorithm:
+        of "on/off":
+            echo("Using on/off renderer")
+            renderer = newOnOffRenderer(world,white,black)
+        of "flat":
+            echo("Using flat renderer")
+            renderer = newFlatRenderer(world)
+        of "pathtracing":
+            echo("Using pathtracing")
+            var pcg = newPCG(initState = initState.uint64, initSeq = initSeq.uint64)
+            renderer = newPathTracer(
+                world = world,
+                pcg = pcg,
+                raysNum = raysNum,
+                maxDepth = maxDepth
+            )
+        else:
+            quit("Unknown renderer")
+    
+    let time = getMonoTime()
     tracer.fireAllRays(ray => call(renderer,ray))
+    echo "Time taken: ", getMonoTime() - time
 
     # Save the HDR image
     let outPfm = newFileStream(fileName & ".pfm", fmWrite)
@@ -160,5 +201,7 @@ when isMainModule:
                     "format": "PNG, PPM, BMP or QOI formats",
                     "algorithm": "options are on/off or flat renderer",
                     "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity",
-                    "samplePerPixel":"Number of samples per pixel (must be a perfect square, e.g., 16)"}
+                    "samplePerPixel":"Number of samples per pixel (must be a perfect square, e.g., 16)",
+                    "algorithm": "options on/off, flat, pathtracing renderer",
+                    "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity"}
         ])
