@@ -142,10 +142,10 @@ method eval*(brdf: DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec,
 
 method scatterRay*(brdf: DiffuseBRDF, pcg: PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
-    e1, e2, e3 = createOnbFromZ(normal)
-    cosThetaSq = pcg.randomFloat()
-    cosTheta, sinTheta = sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq)
-    phi = 2.0 * PI * pcg.randomFloat()
+    let e1, e2, e3 = createONBfromZ(normal)
+    let cosThetaSq = pcg.randomFloat()
+    let cosTheta, sinTheta = sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq)
+    let phi = 2.0 * PI * pcg.randomFloat()
     result = newRay(origin=interactionPoint,
                dir=e1 * cos(phi) * cosTheta + e2 * sin(phi) * cosTheta + e3 * sinTheta,
                tmin=1.0e-3,   # Be generous here
@@ -158,8 +158,8 @@ type
 
 method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
-    rayDir = newVec(incomingDir.x, incomingDir.y, incomingDir.z).normalize()
-    normal = normal.normalToVec().normalize()
+    let rayDir = newVec(incomingDir.x, incomingDir.y, incomingDir.z).normalize()
+    let normal = normal.parseVecToNormal().normalize()
     return newRay(origin=interactionPoint,
                dir=rayDir - normal * 2 * normal.dot(rayDir),
                tmin=1e-3,
