@@ -140,7 +140,7 @@ method eval*(brdf: DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec,
         uv: Vec2d): Color =
 
     result = brdf.pigment.getColor(uv) * (brdf.reflectance / PI)
-#[
+
 method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
     
@@ -150,7 +150,6 @@ method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
     let phi = 2.0 * PI * pcg.randomFloat()
     let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) + onb.e3 * sinTheta
     return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=Inf , depth=depth)
-]#
 
 type
     SpecularBRDF* = ref object of BRDF

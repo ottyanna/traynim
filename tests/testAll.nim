@@ -816,8 +816,34 @@ suite "test world.nim":
 suite "test geometry.nim (createONB)":
 
     test "test ONB creation":
-        var normal : Vec
+        
         var pcg = newPCG()
         for i in 0 ..< 10000:
+<<<<<<< HEAD
             normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
             let e = createONBfromZ(normal)
+||||||| 5c900a4
+            normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
+            let e = createONBfromZ(normal)
+=======
+            let normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
+            let onb = createONBfromZ(normal)
+
+            # Verify that the z axis is aligned with the normal
+            assert areClose(onb.e3, normal)
+
+            # Verify that the base is orthogonal
+            assert areClose(0.0, onb.e1.dot(onb.e2))
+            assert areClose(0.0, onb.e2.dot(onb.e3))
+            assert areClose(0.0, onb.e3.dot(onb.e1))
+
+            # Verify right-hand rule
+            assert areClose(onb.e3, onb.e1.cross(onb.e2))
+
+            # Verifiy that each component is normalized
+
+            assert areClose(1.0, onb.e1.sqrNorm())
+            assert areClose(1.0, onb.e2.sqrNorm())
+            assert areClose(1.0, onb.e3.sqrNorm())
+
+>>>>>>> d2d59463f091cbe99c15c99bd464624fbdec3f93
