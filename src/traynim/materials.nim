@@ -152,7 +152,7 @@ method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
 
 type
     SpecularBRDF* = ref object of BRDF
-        thresholdAngleRad: float
+        thresholdAngleRad*: float
 
 proc newSpecularBRDF*(pigment: Pigment = newUniformPigment(white),
         thresholdAngleRad=PI / 1800.0): SpecularBRDF =
@@ -186,10 +186,10 @@ method scatterRay*(brdf: SpecularBRDF, pcg: var PCG, incomingDir: Vec,
 type
     Material* = object
         ## A material
-        brdf*: DiffuseBRDF
+        brdf*: BRDF
         emittedRadiance*: Pigment
 
-proc newMaterial*(brdf: DiffuseBRDF = newDiffuseBRDF(),
+proc newMaterial*(brdf: BRDF = newBRDF(),
         emittedRadiance: Pigment = newUniformPigment(black)): Material =
 
     result.brdf = brdf
