@@ -56,6 +56,8 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54, samplePerPixel = 1,  
         luminosity : float = 0.0 ) =
 
+    let samplesPerSide = sqrt(samplePerPixel.float).int
+
     var image = newHDRImage(width, height)
     echo("Generating a ", width, "x", height, " image, with the camera tilted by ", angleDeg, "°")
 
@@ -91,7 +93,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         newSphere(material = skyMaterial,
         transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0, 0, 0.4)))
     )
-
+    
     world.addShape(newPlane(material = groundMaterial))
 
     world.addShape(
@@ -109,7 +111,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     )
 
     # Define transformation on camera
-    let cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
+    let cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
 
     var camera: Camera
 
@@ -122,7 +124,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
 
     # Run the tracer
 
-    var tracer = newImageTracer(image, camera)
+    var tracer = newImageTracer(image, camera,samplesPerSide=samplesPerSide)
 
     var renderer: Renderer
 
