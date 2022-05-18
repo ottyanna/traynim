@@ -812,6 +812,7 @@ suite "test world.nim":
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
 
+
 suite "test geometry.nim (createONB)":
 
     test "test ONB creation":

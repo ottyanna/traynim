@@ -186,6 +186,7 @@ method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
                depth=depth)
     
 ]#
+
 type
     Material* = object
         ## A material
