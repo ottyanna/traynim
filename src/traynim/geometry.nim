@@ -21,7 +21,7 @@
 ## such as `Point`, `Vec`, `Normal`.
 
 import common
-from math import sqrt
+from math import sqrt, copySign
 
 type
     Point* = object ## A point in 3d space with three floating-point fields: `x`, `y`, and `z`
@@ -223,3 +223,14 @@ proc areClose*(a, b: Vec2d, epsilon = 1e-5): bool =
     ## Determines whether 2D objects are equal or not (Floating point use only!!!)
 
     return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
+
+proc createONBfromZ*(normal: Vec or Normal): array[3, Vec] =
+    let sign = copySign(1.0, normal.z)
+    let a = -1.0 / (sign + normal.z)
+    let b = normal.x * normal.y * a
+
+    let e1 = newVec(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x)
+    let e2 = newVec(b, sign + normal.y *normal.y *a, -normal.y)
+
+    result = [e1, e2, newVec(normal.x, normal.y, normal.z)]
+    
