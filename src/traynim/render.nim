@@ -19,7 +19,7 @@
 
 ## This module implements different algorithms for rendering
 
-import colors, ray, world, materials, shapesDef
+import colors, ray, world, materials, shapesDef, pcg
 import options
 
 type Renderer* = ref object of RootObj
@@ -72,3 +72,59 @@ method call*(renderer: FlatRenderer, ray: Ray) : Color=
 
         result= (material.brdf.pigment.getColor((hit.get).surfacePoint) +
                 material.emittedRadiance.getColor((hit.get).surfacePoint))
+
+
+type
+    PathTracer* = ref object of Renderer
+        pcg* : PCG
+        raysNum* : int
+        maxDepth* : int
+        rouletteMax* : int
+
+proc newPathTracer*(world: World, backgroundColor = black, pcg: PCG, raysNum=10, maxDepth=2, rouletteMax=3): PathTracer =
+    new(result)
+    result.newBaseRenderer(world, backgroundColor)
+    result.pcg = pcg
+    result.raysNum = raysNum
+    result.maxDepth = maxDepth
+    result.rouletteMax = rouletteMax
+    
+method call*(renderer: PathTracer, ray: Ray) : Color=
+    if ray.depth > renderer.maxDepth:
+        return black 
+    
+    let hitRecord = renderer.world.rayIntersection(ray)
+    if hitRecord.isNone :
+        return renderer.backgroundColor
+
+    let hitMaterial = hitRecord.get.shape.material
+
+    var hitColor = hitMaterial.brdf.pigment.getColor(hitRecord.get.surfacePoint)
+
+    let emittedRadiance = hitMaterial.emittedRadiance.getColor(hitRecord.get.surfacePoint)
+
+    let hitColorLum = max(hitColor.r,max(hitColor.g,hitColor.b))
+
+    if ray.depth >= renderer.rouletteMax:
+        let q = max(0.05,1-hitColorLum)
+        if renderer.pcg.randomFloat > q:
+            hitColor = hitColor * (1.0/(1.0-q))
+        else:
+            return emittedRadiance
+    
+    var cumRadiance = black
+
+    if hitColorLum > 0.0:
+        for rayIndex in 0..<renderer.raysNum:
+            let newRay = hitMaterial.brdf.scatterRay(
+                pcg = renderer.pcg,
+                incomingDir = hitRecord.get.ray.dir,
+                interactionPoint = hitRecord.get.worldPoint,
+                normal = hitRecord.get.normal,
+                depth = ray.depth + 1
+                )
+            let newRadiance = renderer.call(newRay)
+            cumRadiance = cumRadiance + hitColor*newRadiance
+
+
+    return emittedRadiance + cumRadiance*(1.0/renderer.raysNum.float)
