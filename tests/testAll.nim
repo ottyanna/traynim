@@ -313,6 +313,31 @@ suite "test imageTracer.nim":
                 for col in 0..<tracer.image.width:
                     assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
 
+        test "test on antialiasing":
+            
+            var numOfRays = 0
+            let smallImage = newHdrImage(width=1, height=1)
+            let camera1 = newOrthogonalCamera(aspectRatio=1)
+            var tracer1 = newImageTracer(smallImage, camera1, samplesPerSide=10, pcg=newPCG())
+
+            proc traceRay(ray: Ray, numOfRays: var int) : Color=
+                let point = ray.at(1)
+
+                # Check that all the rays intersect the screen within the region [−1, 1] × [−1, 1]
+                assert areClose(0.0 , point.x)
+                assert -1.0 <= point.y and point.y <= 1.0
+                assert -1.0 <= point.z and point.z <= 1.0
+
+                numOfRays = numOfRays + 1
+
+                return newColor(0.0, 0.0, 0.0)
+
+            tracer1.fireAllRays(ray => traceRay(ray,numOfRays))
+
+            # Check that the number of rays that were fired is what we expect (10²)
+            assert numOfRays == 100
+
+
 
 suite "test materials.nim":
 

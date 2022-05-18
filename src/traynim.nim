@@ -18,6 +18,7 @@
 
 
 import strutils, streams, cligen, sugar
+from math import sqrt
 
 import
     cameras,
@@ -48,7 +49,7 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
-        fileName = "demo", format = "png", algorithm = "on/off", luminosity : float = 0.0 ) =
+        fileName = "demo", format = "png", algorithm = "on/off", luminosity : float = 0.0, samplePerPixel = 1 ) =
 
     var image = newHDRImage(width, height)
 
@@ -84,7 +85,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         )
     )
 
-    # DEfine transformation on camera
+    # Define transformation on camera
     let cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
 
     var camera: Camera
@@ -158,5 +159,6 @@ when isMainModule:
                     "fileName" : "Path to output file without format",
                     "format": "PNG, PPM, BMP or QOI formats",
                     "algorithm": "options are on/off or flat renderer",
-                    "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity"}
+                    "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity",
+                    "samplePerPixel":"Number of samples per pixel (must be a perfect square, e.g., 16)"}
         ])
