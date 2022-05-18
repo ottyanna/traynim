@@ -167,6 +167,7 @@ template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
         result.z = a.z
 
 define3dOpParsing(parsePointToVec, Point, Vec)
+define3dOpParsing(parseNormalToVec, Normal, Vec)
 define3dOpParsing(parseVecToNormal, Vec, Normal)
 
 template defineSqrNorm(type1: typedesc) =
