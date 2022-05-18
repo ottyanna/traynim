@@ -232,5 +232,9 @@ proc createONBfromZ*(normal: Vec or Normal): array[3, Vec] =
     let e1 = newVec(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x)
     let e2 = newVec(b, sign + normal.y *normal.y *a, -normal.y)
 
-    result = [e1, e2, newVec(normal.x, normal.y, normal.z)]
+    #result = [e1, e2, newVec(normal.x, normal.y, normal.z)]
+    result[0] = e1
+    result[1] = e2
+    result[2] = newVec(normal.x, normal.y, normal.z)
+
     
