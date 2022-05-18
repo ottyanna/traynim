@@ -118,7 +118,7 @@ suite "test colors.nim":
 suite "test geometry.nim":
 
     setup:
-        var a = newVec(1.0, 2.0, 3.0)
+        var a {.used.} = newVec(1.0, 2.0, 3.0) 
 
     test "test on areClose":
         assert areClose(a.x, 1.0)
@@ -140,6 +140,30 @@ suite "test geometry.nim":
         assert b.parseVecToNormal == newNormal(4.0, 6.0, 8.0)
         assert areClose(a.sqrNorm(), 14.0)
         assert areClose(a.norm()*a.norm(), 14.0)
+    
+    test "test ONB creation":
+        
+        var pcg = newPCG()
+        for i in 0 ..< 10000:
+            let normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
+            let onb = createONBfromZ(normal)
+
+            # Verify that the z axis is aligned with the normal
+            assert areClose(onb.e3, normal)
+
+            # Verify that the base is orthogonal
+            assert areClose(0.0, onb.e1.dot(onb.e2))
+            assert areClose(0.0, onb.e2.dot(onb.e3))
+            assert areClose(0.0, onb.e3.dot(onb.e1))
+
+            # Verify right-hand rule
+            assert areClose(onb.e3, onb.e1.cross(onb.e2))
+
+            # Verifiy that each component is normalized
+
+            assert areClose(1.0, onb.e1.sqrNorm())
+            assert areClose(1.0, onb.e2.sqrNorm())
+            assert areClose(1.0, onb.e3.sqrNorm())
         
 
 suite "test hdrImages.nim (HDRimage type)":
@@ -169,7 +193,7 @@ suite "test hdrImages.nim (HDRimage type)":
         let col = newColor(1.0, 2.0, 3.0)
         img.setPixel(3, 2, col)
         assert areClose(col, img.getPixel(3, 2))
-
+    
 
 suite "test hdrImages.nim (read and write Pfm files)":
     
@@ -435,7 +459,7 @@ suite "test render.nim":
 
         var pcg = newPCG()
 
-        for i in 0 ..< 5:
+        for i in 0 ..< 10:
             var world = newWorld()
             
             let emittedRadiance = pcg.randomFloat()
@@ -453,13 +477,12 @@ suite "test render.nim":
             let color = pathTracer.call(ray)
 
             let expected = emittedRadiance / (1.0 - reflectance)
-            echo(color.r, " ", expected )
-            
+                        
 
             assert areClose(expected, color.r, epsilon=1e-3)
             assert areClose(expected, color.g, epsilon=1e-3
              )
-            assert areClose(expected, color.b, epsilon=1e-3              )
+            assert areClose(expected, color.b, epsilon=1e-3)
         
 
 
@@ -841,33 +864,5 @@ suite "test world.nim":
         let intersection2 = world.rayIntersection(newRay(origin=newPoint(10.0, 0.0, 0.0), dir = -vecX))
 
         assert intersection2.isSome
-        assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
-
-
-suite "test geometry.nim (createONB)":
-
-    test "test ONB creation":
-        
-        var pcg = newPCG()
-        for i in 0 ..< 10000:
-            let normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
-            let onb = createONBfromZ(normal)
-
-            # Verify that the z axis is aligned with the normal
-            assert areClose(onb.e3, normal)
-
-            # Verify that the base is orthogonal
-            assert areClose(0.0, onb.e1.dot(onb.e2))
-            assert areClose(0.0, onb.e2.dot(onb.e3))
-            assert areClose(0.0, onb.e3.dot(onb.e1))
-
-            # Verify right-hand rule
-            assert areClose(onb.e3, onb.e1.cross(onb.e2))
-
-            # Verifiy that each component is normalized
-
-            assert areClose(1.0, onb.e1.sqrNorm())
-            assert areClose(1.0, onb.e2.sqrNorm())
-            assert areClose(1.0, onb.e3.sqrNorm())
-
+        assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))    
 
