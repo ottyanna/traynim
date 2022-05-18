@@ -89,7 +89,7 @@ proc newPathTracer*(world: World, backgroundColor = black, pcg: PCG, raysNum=10,
     result.maxDepth = maxDepth
     result.rouletteMax = rouletteMax
     
-method call*(renderer: PathTracer, ray: Ray) : Color= 
+method call*(renderer: PathTracer, ray: Ray) : Color = 
     {.warning[LockLevel]:off.}
     if ray.depth > renderer.maxDepth:
         return black 
