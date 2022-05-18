@@ -119,7 +119,7 @@ method eval*(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec,
     ## Abstract method to override
     result = black
 
-method scatterRay*(brdf: BRDF, pcg: PCG, incomingDir: Vec,
+method scatterRay*(brdf: BRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray {.base.} =
     quit "to override!"
 
@@ -173,18 +173,16 @@ method eval*(brdf: SpecularBRDF, normal: Normal, inDir: Vec, outDir: Vec,
     else:
         return newColor(0.0, 0.0, 0.0)
 
-#[
-method scatterRay*(brdf: SpecularBRDF, pcg: PCG, incomingDir: Vec,
+
+method scatterRay*(brdf: SpecularBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
     let rayDir = newVec(incomingDir.x, incomingDir.y, incomingDir.z).normalize()
     let normal = normal.parseNormalToVec().normalize()
     return newRay(origin=interactionPoint,
                dir=rayDir - normal * 2 * normal.dot(rayDir),
                tmin=1e-3,
-               tmax=inf,
+               tmax=Inf,
                depth=depth)
-    
-]#
 
 type
     Material* = object

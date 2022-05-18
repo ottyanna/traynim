@@ -819,13 +819,6 @@ suite "test geometry.nim (createONB)":
         
         var pcg = newPCG()
         for i in 0 ..< 10000:
-<<<<<<< HEAD
-            normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
-            let e = createONBfromZ(normal)
-||||||| 5c900a4
-            normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
-            let e = createONBfromZ(normal)
-=======
             let normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
             let onb = createONBfromZ(normal)
 
@@ -846,4 +839,3 @@ suite "test geometry.nim (createONB)":
             assert areClose(1.0, onb.e2.sqrNorm())
             assert areClose(1.0, onb.e3.sqrNorm())
 
->>>>>>> d2d59463f091cbe99c15c99bd464624fbdec3f93
