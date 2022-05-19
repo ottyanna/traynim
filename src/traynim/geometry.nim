@@ -66,6 +66,7 @@ define3dOp(`-`, Vec, Vec, Vec)
 define3dOp(`+`, Vec, Point, Point)
 define3dOp(`+`, Point, Vec, Point)
 define3dOp(`-`, Point, Vec, Point)
+define3dOp(`-`, Point, Point, Vec)
 define3dOp(`+`, Normal, Normal, Normal)
 define3dOp(`-`, Normal, Normal, Normal)
 
@@ -201,6 +202,22 @@ template defineNormalize(type1) =
 
 defineNormalize(Vec)
 defineNormalize(Normal)
+
+template defineNormalizedDot(type1: typedesc, type2: typedesc) =
+    proc normalizedDot*(a: type1, b: type2) : float64 = 
+
+        ## Apply the dot product to the two arguments after having normalized them.
+        ## The result is the cosine of the angle between the two vectors/normals.
+        
+        let v1 = newVec(a.x, a.y, a.z).normalize()
+        let v2 = newVec(b.x, b.y, b.z).normalize()
+
+        result = v1.dot(v2)
+
+defineNormalizedDot(Vec, Vec)
+defineNormalizedDot(Vec, Normal)
+defineNormalizedDot(Normal, Vec)
+defineNormalizedDot(Normal, Normal)
 
 
 type

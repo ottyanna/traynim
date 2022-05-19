@@ -26,6 +26,7 @@ import
     geometry,
     hdrimages,
     imageTracer,
+    lights,
     materials,
     std/monotimes,
     pcg,
@@ -62,7 +63,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     echo("Generating a ", width, "x", height, " image, with the camera tilted by ", angleDeg, "°")
 
     var world = newWorld()
-
+    
     let skyMaterial = newMaterial(
         brdf = newDiffuseBRDF(pigment = newUniformPigment(newColor(0, 0, 0))),
         emittedRadiance = newUniformPigment(newColor(1.0, 0.9, 0.5))
@@ -110,6 +111,8 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         )
     )
 
+    world.addLight(newPointLight(position= newPoint(-30, -30, -30), color= newColor(1.0, 1.0, 1.0)))
+
     # Define transformation on camera
     let cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
 
@@ -144,6 +147,9 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
                 raysNum = raysNum,
                 maxDepth = maxDepth
             )
+        of "pointlight":
+            echo("Using point-light tracer")
+            renderer = newPointLightRenderer(world=world, backgroundColor = black)
         else:
             quit("Unknown renderer")
     

@@ -150,3 +150,48 @@ method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
     )
 
     return some(hitRecord)
+
+method quickRayIntersection*(shape: Shape, ray: Ray): bool {.base.} =
+    
+    ## Determine whether a ray hits the shape or not
+    quit "quickRayIntersection is an abstract method and cannot be called directly"
+
+method quickRayIntersection*(sphere: Sphere, ray: Ray): bool = 
+    
+    ## Quickly checks if a ray intersects the sphere
+    
+    let invRay = ray.transform(sphere.transformation.inverse())
+
+    let originVec = invRay.origin.parsePointToVec()
+
+    let a = invRay.dir.sqrNorm()
+    let b = 2.0 * originVec.dot(invRay.dir)
+    let c = originVec.sqrNorm() - 1.0
+
+    let delta = b * b - 4.0 * a * c
+    if delta <= 0.0:
+        return false
+
+    let sqrtDelta = sqrt(delta)
+    let tmin = (-b - sqrtDelta) / (2.0 * a)
+    let tmax = (-b + sqrtDelta) / (2.0 * a)
+
+    result = ((invRay.tmin < tmin) and ( tmin < invRay.tmax)) or 
+                ((invRay.tmin < tmax) and (tmax < invRay.tmax))
+
+method quickRayIntersection*(plane: Plane, ray: Ray): bool =
+
+    ## Quickly checks if a ray intersects the plane
+    
+    let invRay = ray.transform(plane.transformation.inverse())
+
+    if abs(invRay.dir.z) < 1e-5:
+        return false
+
+    let t = -invRay.origin.z / invRay.dir.z
+
+    result = (invRay.tmin < t) and (t < invRay.tmax)
+    
+    
+
+    

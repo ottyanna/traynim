@@ -20,6 +20,7 @@
 ## This module implements different algorithms for rendering
 
 import colors, ray, world, materials, shapesDef, pcg
+from geometry import normalizedDot, `-`, `*`, norm
 import options
 
 type Renderer* = ref object of RootObj
@@ -90,7 +91,7 @@ proc newPathTracer*(world: World, backgroundColor = black, pcg: PCG, raysNum=10,
     result.rouletteMax = rouletteMax
     
 method call*(renderer: PathTracer, ray: Ray) : Color = 
-    {.warning[LockLevel]:off.}
+    {.warning[LockLevel]:off.} # essential to avoid a useless warning
     if ray.depth > renderer.maxDepth:
         return black 
     
@@ -129,3 +130,57 @@ method call*(renderer: PathTracer, ray: Ray) : Color =
 
 
     return emittedRadiance + cumRadiance*(1.0/renderer.raysNum.float)
+
+type 
+    PointLightRenderer* = ref object of Renderer
+
+        ## A simple point-light renderer
+        ## This renderer is similar to what POV-Ray provides by default
+        
+        ambientColor*: Color
+
+proc newPointLightRenderer*(world: World, backgroundColor: Color = black, 
+            ambientColor: Color = newColor(0.1, 0.1, 0.1)): PointLightRenderer = 
+            
+            new(result)
+            
+            result.world = world
+            result.backgroundColor = backgroundColor
+            result.ambientColor = ambientColor
+
+method call*(renderer: PointLightRenderer, ray: Ray) : Color = 
+
+    let hitRecord = renderer.world.rayIntersection(ray)
+
+    if hitRecord.isNone:
+        return renderer.backgroundColor
+
+    let hitMaterial = hitRecord.get.shape.material
+
+    var resultColor = renderer.ambientColor
+    for curLights in renderer.world.pointLights:
+        if renderer.world.isPointVisible(point = curLights.position, observerPos = hitRecord.get.worldPoint):
+            let distanceVec = hitRecord.get.worldPoint - curLights.position
+            let distance = distanceVec.norm()
+            let inDir = distanceVec * (1.0 / distance)
+            let cosTheta = max(0.0, normalizedDot(-ray.dir, hitRecord.get.normal))
+
+            let distanceFactor =  (if curLights.linearRadius > 0: (curLights.linearRadius * curLights.linearRadius) / distance else: 1.0)
+
+            
+            let emittedColor = hitMaterial.emittedRadiance.getColor(hitRecord.get.surfacePoint)
+            let brdfColor = hitMaterial.brdf.eval(
+                normal = hitRecord.get.normal,
+                inDir = inDir,
+                outDir = -ray.dir,
+                uv = hitRecord.get.surfacePoint
+            )
+
+            resultColor = resultColor + (emittedColor + brdfColor) * curLights.color * cosTheta * distanceFactor
+
+    result = resultColor
+
+
+
+
+     
