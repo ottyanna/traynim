@@ -890,3 +890,16 @@ suite "test world.nim":
         assert intersection2.isSome
         assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))    
 
+    test "test on quick ray intersection":
+        assert not world.isPointVisible(point=newPoint(10.0, 0.0, 0.0),
+                                          observerPos=newPoint(0.0, 0.0, 0.0))
+        assert not world.isPointVisible(point=newPoint(5.0, 0.0, 0.0),
+                                          observerPos=newPoint(0.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(5.0, 0.0, 0.0),
+                                      observerPos=newPoint(4.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(0.5, 0.0, 0.0),
+                                      observerPos=newPoint(0.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(0.0, 10.0, 0.0),
+                                      observerPos=newPoint(0.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(0.0, 0.0, 10.0),
+                                      observerPos=newPoint(0.0, 0.0, 0.0))
