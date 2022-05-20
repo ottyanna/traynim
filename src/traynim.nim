@@ -18,7 +18,7 @@
 
 
 import strutils, streams, cligen, sugar
-from math import sqrt
+from math import sqrt, pow
 
 import
     cameras,
@@ -54,10 +54,12 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         fileName = "demo", format = "png", algorithm = "pathtracing",
-        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54, samplePerPixel = 1,  
+        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54, samplePerPixel = 1.0,  
         luminosity : float = 0.0 ) =
 
-    let samplesPerSide = sqrt(samplePerPixel.float).int
+    let samplesPerSide = sqrt(samplePerPixel).int
+    if pow(samplesPerSide.float,2.float) != samplePerPixel:
+        quit("Error, the number of samples per pixel ({samplePerPixel}) must be a perfect square")
 
     var image = newHDRImage(width, height)
     echo("Generating a ", width, "x", height, " image, with the camera tilted by ", angleDeg, "°")
@@ -111,7 +113,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         )
     )
 
-    world.addLight(newPointLight(position= newPoint(-30, -30, -30), color= newColor(1.0, 1.0, 1.0)))
+    world.addLight(newPointLight(position= newPoint(-30, 30, 30), color= white))
 
     # Define transformation on camera
     let cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
