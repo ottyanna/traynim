@@ -143,9 +143,8 @@ proc newPointLightRenderer*(world: World, backgroundColor: Color = black,
             ambientColor: Color = newColor(0.1, 0.1, 0.1)): PointLightRenderer = 
             
             new(result)
-            
-            result.world = world
-            result.backgroundColor = backgroundColor
+
+            result.newBaseRenderer(world, backgroundColor)
             result.ambientColor = ambientColor
 
 method call*(renderer: PointLightRenderer, ray: Ray) : Color = 
@@ -165,7 +164,7 @@ method call*(renderer: PointLightRenderer, ray: Ray) : Color =
             let inDir = distanceVec * (1.0 / distance)
             let cosTheta = max(0.0, normalizedDot(-ray.dir, hitRecord.get.normal))
 
-            let distanceFactor =  (if curLights.linearRadius > 0: (curLights.linearRadius * curLights.linearRadius) / distance else: 1.0)
+            let distanceFactor =  (if curLights.linearRadius > 0: ((curLights.linearRadius / distance)*(curLights.linearRadius / distance)) else: 1.0)
 
             
             let emittedColor = hitMaterial.emittedRadiance.getColor(hitRecord.get.surfacePoint)
