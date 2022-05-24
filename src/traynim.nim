@@ -19,6 +19,7 @@
 
 import strutils, streams, cligen, sugar
 from math import sqrt, pow
+import nimprof
 
 import
     cameras,
@@ -54,18 +55,20 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         fileName = "demo", format = "png", algorithm = "pathtracing",
-        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54, samplePerPixel = 1.0,  
-        luminosity : float = 0.0 ) =
+        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54,
+                samplePerPixel = 1.0,
+        luminosity: float = 0.0) =
 
     let samplesPerSide = sqrt(samplePerPixel).int
-    if pow(samplesPerSide.float,2.float) != samplePerPixel:
+    if pow(samplesPerSide.float, 2.float) != samplePerPixel:
         quit("Error, the number of samples per pixel ({samplePerPixel}) must be a perfect square")
 
     var image = newHDRImage(width, height)
-    echo("Generating a ", width, "x", height, " image, with the camera tilted by ", angleDeg, "°")
+    echo("Generating a ", width, "x", height,
+            " image, with the camera tilted by ", angleDeg, "°")
 
     var world = newWorld()
-    
+
     let skyMaterial = newMaterial(
         brdf = newDiffuseBRDF(pigment = newUniformPigment(newColor(0, 0, 0))),
         emittedRadiance = newUniformPigment(newColor(1.0, 0.9, 0.5))
@@ -76,8 +79,8 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
             pigment = newCheckeredPigment(
                 color1 = newColor(0.3, 0.5, 0.1),
                 color2 = newColor(0.1, 0.2, 0.5)
-            )
         )
+    )
     )
 
     let sphereMaterial = newMaterial(
@@ -94,9 +97,10 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
 
     world.addShape(
         newSphere(material = skyMaterial,
-        transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0, 0, 0.4)))
+        transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0,
+                0, 0.4)))
     )
-    
+
     world.addShape(newPlane(material = groundMaterial))
 
     world.addShape(
@@ -113,7 +117,8 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         )
     )
 
-    world.addLight(newPointLight(position= newPoint(-30, 30, 30), color= white))
+    world.addLight(newPointLight(position = newPoint(-50, 30, 30),
+            color = white))
 
     # Define transformation on camera
     let cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
@@ -129,20 +134,21 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
 
     # Run the tracer
 
-    var tracer = newImageTracer(image, camera,samplesPerSide=samplesPerSide)
+    var tracer = newImageTracer(image, camera, samplesPerSide = samplesPerSide)
 
     var renderer: Renderer
 
     case algorithm:
         of "on/off":
             echo("Using on/off renderer")
-            renderer = newOnOffRenderer(world,white,black)
+            renderer = newOnOffRenderer(world, white, black)
         of "flat":
             echo("Using flat renderer")
             renderer = newFlatRenderer(world)
         of "pathtracing":
             echo("Using pathtracing")
-            var pcg = newPCG(initState = initState.uint64, initSeq = initSeq.uint64)
+            var pcg = newPCG(initState = initState.uint64,
+                    initSeq = initSeq.uint64)
             renderer = newPathTracer(
                 world = world,
                 pcg = pcg,
@@ -151,12 +157,13 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
             )
         of "pointlight":
             echo("Using point-light tracer")
-            renderer = newPointLightRenderer(world=world, backgroundColor = black)
+            renderer = newPointLightRenderer(world = world,
+                    backgroundColor = black)
         else:
             quit("Unknown renderer")
-    
+
     let time = getMonoTime()
-    tracer.fireAllRays(ray => call(renderer,ray))
+    tracer.fireAllRays(ray => call(renderer, ray))
     echo "Time taken: ", getMonoTime() - time
 
     # Save the HDR image
@@ -166,11 +173,11 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     outPfm.close()
 
     # Apply tone-mapping to the image
-    if luminosity == 0.0:    
+    if luminosity == 0.0:
         tracer.image.normalizeImage(factor = 1.0) #use average luminosity
     else:
         tracer.image.normalizeImage(factor = 1.0, luminosity)
-    
+
     tracer.image.clampImage()
 
     # Save the LDR image
@@ -196,22 +203,20 @@ when isMainModule:
     echo traynim
 
     dispatchMulti(
-        [pfm2format, 
-            help = {"outputFileName":" Path to output file (PNG, PPM, BMP or QOI formats)", 
-                    "factor":"Multiplicative factor",
-                    "gamma":"Exponent for gamma-correction",
-                    "inPfmFileName":"Path to input file (PFM)" }
+        [pfm2format,
+            help = {"outputFileName": " Path to output file (PNG, PPM, BMP or QOI formats)",
+                    "factor": "Multiplicative factor",
+                    "gamma": "Exponent for gamma-correction",
+                    "inPfmFileName": "Path to input file (PFM)"}
         ],
         [demo,
             help = {"angleDeg": "Angle rotation of the camera (Degrees)",
-                    "orthogonal" : "Perspective or orthogonal camera (DefaultPerspective)",
-                    "width" : "Width of the image",
-                    "height" : "Height of the image",
-                    "fileName" : "Path to output file without format",
+                    "orthogonal": "Perspective or orthogonal camera (fefault is perspective)",
+                    "width": "Width of the image",
+                    "height": "Height of the image",
+                    "fileName": "Path to output file without format",
                     "format": "PNG, PPM, BMP or QOI formats",
-                    "algorithm": "options are on/off or flat renderer",
-                    "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity",
-                    "samplePerPixel":"Number of samples per pixel (must be a perfect square, e.g., 16)",
+                    "samplePerPixel": "Number of samples per pixel (must be a perfect square, e.g., 16)",
                     "algorithm": "options on/off, flat, pathtracing renderer",
                     "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity"}
         ])
