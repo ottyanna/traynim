@@ -11,3 +11,9 @@
 
 # Ignore demo folder
 demo/
+
+# Ignore demo files
+demo*.*
+
+# Ignore profiling files
+profile_results.txt
