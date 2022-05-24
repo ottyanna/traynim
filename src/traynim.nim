@@ -19,7 +19,8 @@
 
 import strutils, streams, cligen, sugar
 from math import sqrt, pow
-import nimprof
+when compileOption("profiler"):
+  import nimprof
 
 import
     cameras,
@@ -35,6 +36,8 @@ import
     shapes,
     transformations,
     world
+
+# --------------PFM2FORMAT--------------
 
 proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
         outputFileName: string) =
@@ -52,6 +55,7 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
     echo ("File " & outputFileName & " has been written to disk")
 
+# --------------DEMO--------------
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         fileName = "demo", format = "png", algorithm = "pathtracing",
@@ -68,60 +72,109 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
             " image, with the camera tilted by ", angleDeg, "°")
 
     var world = newWorld()
+    var cameraTr : Transformation
 
-    let skyMaterial = newMaterial(
-        brdf = newDiffuseBRDF(pigment = newUniformPigment(newColor(0, 0, 0))),
-        emittedRadiance = newUniformPigment(newColor(1.0, 0.9, 0.5))
-    )
+    if (algorithm != "on/off"):
+        let skyMaterial = newMaterial(
+            brdf = newDiffuseBRDF(pigment = newUniformPigment(newColor(0.7, 0.7, 0.7))),
+            emittedRadiance = newUniformPigment(newColor(0.7, 0.7, 0.7))
+            )
 
-    let groundMaterial = newMaterial(
-        brdf = newDiffuseBRDF(
-            pigment = newCheckeredPigment(
-                color1 = newColor(0.3, 0.5, 0.1),
-                color2 = newColor(0.1, 0.2, 0.5)
+        let groundMaterial = newMaterial(
+            brdf = newDiffuseBRDF(
+                pigment = newCheckeredPigment(
+                    color1 = newColor(0.3, 0.5, 0.1),
+                    color2 = newColor(0.1, 0.2, 0.5)))
+            )
+        
+
+        let bigSphereMaterial = newMaterial(
+            brdf = newDiffuseBRDF(
+                pigment = newUniformPigment(newColor(0.3, 0.4, 0.8))
+            )
         )
-    )
-    )
 
-    let sphereMaterial = newMaterial(
-        brdf = newDiffuseBRDF(
-            pigment = newUniformPigment(newColor(0.3, 0.4, 0.8))
+        let littleSphereMaterial = newMaterial(brdf = newDiffuseBRDF(
+                pigment = newUniformPigment(newColor(0.7, 0.1, 0.3)))
         )
-    )
 
-    let mirrorMaterial = newMaterial(
-        brdf = newSpecularBRDF(
-            pigment = newUniformPigment(newColor(0.6, 0.2, 0.3))
+        let mirrorMaterial = newMaterial(
+            brdf = newSpecularBRDF(
+                pigment = newUniformPigment(newColor(0.6, 0.2, 0.3))
+            )
         )
-    )
 
-    world.addShape(
-        newSphere(material = skyMaterial,
-        transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0,
-                0, 0.4)))
-    )
-
-    world.addShape(newPlane(material = groundMaterial))
-
-    world.addShape(
-        newSphere(
-            material = sphereMaterial,
-            transformation = translation(newVec(0, 0, 1))
+        world.addShape(
+            newSphere(material = skyMaterial,
+            transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0,
+                    0, 0.4)))
         )
-    )
 
-    world.addShape(
-        newSphere(
-            material = mirrorMaterial,
-            transformation = translation(newVec(1, 2.5, 0))
+        world.addShape(newPlane(material = groundMaterial))
+
+        world.addShape(
+            newSphere(
+                material = bigSphereMaterial,
+                transformation = translation(newVec(0, 0, 1))
+            )
         )
-    )
 
-    world.addLight(newPointLight(position = newPoint(-50, 30, 30),
-            color = white))
+        world.addShape(
+            newSphere(
+                material = littleSphereMaterial,
+                transformation = translation(newVec(0,0, 2.5))*scaling(newVec(0.3,0.3,0.3))
+                # Pay attention to the order of the transformations! 
+                # In order to do it right the scaling must be second to the translation
+            )
+        )
 
-    # Define transformation on camera
-    let cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
+
+        world.addShape(
+            newSphere(
+                material = mirrorMaterial,
+                transformation = translation(newVec(1, 2.5, 0))
+            )
+        )
+
+        world.addLight(newPointLight(position = newPoint(-30, 30, 30),
+                color = white))
+        
+
+        # Define transformation on camera
+        cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
+
+    else:
+        # Add spheres as vertices of a 0.5 side cube
+        for x in [-0.5, 0.5]:
+            for y in [-0.5, 0.5]:
+                for z in [-0.5, 0.5]:
+                    world.addShape(
+                        newSphere(
+                            transformation = translation(newVec(x, y, z))*scaling(
+                                    newVec(0.1, 0.1, 0.1))
+                        )
+                    )
+
+        # Place two other spheres in the cube, in order to check whether
+        # there are issues with the orientation of the image
+
+        # First sphere at bottom
+        world.addShape(
+            newSphere(
+                transformation = translation(newVec(0.0, 0.0, -0.5)) *
+                    scaling(newVec(0.1, 0.1, 0.1))
+            )
+        )
+
+        # Second sphere on the left face
+        world.addShape(
+            newSphere(
+                transformation = translation(newVec(0.0, 0.5, 0.0)) *
+                    scaling(newVec(0.1, 0.1, 0.1))
+            )
+        )
+
+        cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
 
     var camera: Camera
 
@@ -141,7 +194,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     case algorithm:
         of "on/off":
             echo("Using on/off renderer")
-            renderer = newOnOffRenderer(world, white, black)
+            renderer = newOnOffRenderer(world, black, white)
         of "flat":
             echo("Using flat renderer")
             renderer = newFlatRenderer(world)
@@ -184,7 +237,7 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     tracer.image.writeLdrImage(fileName & "." & format)
     echo "PNG demo image written to " & fileName & ".png"
 
-
+# --------------MAIN--------------
 
 when isMainModule:
 
