@@ -253,20 +253,24 @@ type
 
         e1*, e2*, e3*: Vec
 
-proc createONBfromZ*(normal: Vec or Normal): ONB =
+template defineONBfromZ(type1: typedesc) =
+    proc createONBfromZ*(normal: type1): ONB =
 
-    ## Creates a orthonormal basis (ONB) from a vector representing the z axis (normalized).
-    ## Return a `ONB` object containing the three vectors (e1, e2, e3) of the basis.
-    ## The result is such that e3 = normal.
-    ## The `normal` vector must be *normalized*, otherwise this method won't work.
+        ## Creates a orthonormal basis (ONB) from a vector representing the z axis (normalized).
+        ## Return a `ONB` object containing the three vectors (e1, e2, e3) of the basis.
+        ## The result is such that e3 = normal.
+        ## The `normal` vector must be *normalized*, otherwise this method won't work.
+     
+        let sign = copySign(1.0, normal.z)
+        let a = -1.0 / (sign + normal.z)
+        let b = normal.x * normal.y * a
 
-    let sign = copySign(1.0, normal.z)
-    let a = -1.0 / (sign + normal.z)
-    let b = normal.x * normal.y * a
+        let e1 = newVec(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x)
+        let e2 = newVec(b, sign + normal.y * normal.y * a, -normal.y)
 
-    let e1 = newVec(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x)
-    let e2 = newVec(b, sign + normal.y * normal.y * a, -normal.y)
+        result.e1 = e1
+        result.e2 = e2
+        result.e3 = newVec(normal.x, normal.y, normal.z)
 
-    result.e1 = e1
-    result.e2 = e2
-    result.e3 = newVec(normal.x, normal.y, normal.z)
+defineONBfromZ(Vec)
+defineONBfromZ(Normal)
