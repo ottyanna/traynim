@@ -16,8 +16,10 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import sugar, hdrimages, cameras, ray, colors, pcg
 
+## This module implements operation on an `ImageTracer` type.
+
+import sugar, hdrimages, cameras, ray, colors, pcg
 
 type
     ImageTracer* = object
@@ -32,13 +34,13 @@ type
 proc newImageTracer*(image: HdrImage, camera: Camera, samplesPerSide: int = 0,
         pcg: PCG = newPCG()): ImageTracer =
 
-    ## Creates an ImageTracer object.
+    ## Creates an `ImageTracer` object.
     ##
     ## The parameter `image` must be a `HdrImage` object that has already been initialized.
     ##
     ## The parameter `camera` must be a descendeant of the `Camera` object.
     ##
-    ## If `samples_per_side` is larger than zero, stratified sampling will
+    ## If `samplePerSide` is larger than zero, stratified sampling will
     ## be applied to each pixel in the image, using the random number generator `pcg`
 
     result.image = image
@@ -49,7 +51,7 @@ proc newImageTracer*(image: HdrImage, camera: Camera, samplesPerSide: int = 0,
 proc fireRay*(imagetracer: ImageTracer, col, row: int, uPixel = 0.5,
         vPixel = 0.5): Ray =
 
-    ## Shoots one light6 ray through image pixel (col,row), with origin in bottom left of image.
+    ## Shoots one light ray through image pixel (col,row), with origin in bottom left of image.
 
     let u = (col.toFloat + uPixel) / (imagetracer.image.width).toFloat
     let v = 1.0 - (row.toFloat + vPixel) / (imagetracer.image.height).toFloat
@@ -58,7 +60,7 @@ proc fireRay*(imagetracer: ImageTracer, col, row: int, uPixel = 0.5,
 
 proc fireAllRays*(imagetracer: var ImageTracer, fun: (Ray) -> Color) =
 
-    ## Shoots several light rays crossing each of the pixels in the image
+    ## Shoots several light rays crossing each of the pixels in the image.
     ##
     ## For each pixel in the HdrImage object fire one ray, and pass it to the function `fun`, which
     ## must accept a `Ray` as its only parameter and must return a `Color` instance telling the

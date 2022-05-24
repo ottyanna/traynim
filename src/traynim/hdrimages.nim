@@ -24,6 +24,7 @@ from pixie import newImage, color, writeFile, setColor
 from math import pow, log10
 
 
+# --------------HDR Images--------------
 
 type
     HdrImage* = object ## A High-Dynamic-Range 2D image type
@@ -69,10 +70,9 @@ proc setPixel*(img: var HdrImage, x, y: int, newColor: colors.Color) =
     img.pixels[img.pixelOffset(x, y)] = newColor
 
 
-#PFM files
+# --------------PFM files--------------
 
 type InvalidPfmFileFormat* = object of CatchableError
-
 
 proc parseImgSize*(line: string): tuple =
 

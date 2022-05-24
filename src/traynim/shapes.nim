@@ -19,22 +19,31 @@
 
 ## This module implements shapes and their interaction with the `rays`
 
-
 import transformations, ray, options, hitRecord, geometry, materials, shapesDef
 from math import sqrt, arctan2, arccos, PI, floor
+
+
+method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
+
+    ## Computes the intersection between a ray and a shape, abstract method for `Shape`
+
+    quit "Shape.rayIntersection is an abstract method and cannot be called directly"
+
+method quickRayIntersection*(shape: Shape, ray: Ray): bool {.base.} =
+
+    ## Determine whether a ray hits the shape or not
+
+    quit "quickRayIntersection is an abstract method and cannot be called directly"
+
+
+# --------------SPHERE--------------
 
 type
     Sphere* = ref object of Shape
     ## A 3D unit sphere centered at origin
 
-method rayIntersection*(s: Shape, ray: Ray): Option[HitRecord] {.base.} =
-
-    ## Computes the intersection between a ray and a shape
-
-    quit "Shape.rayIntersection is an abstract method and cannot be called directly"
-
-
-proc newSphere*(transformation = newTransformation(), material: Material = newMaterial()): Sphere =
+proc newSphere*(transformation = newTransformation(),
+        material: Material = newMaterial()): Sphere =
 
     ## Creates a unit sphere, potentially associating a transformation to it
 
@@ -44,8 +53,8 @@ proc newSphere*(transformation = newTransformation(), material: Material = newMa
 
 proc spherePointToUV*(p: Point): Vec2d =
 
-    ## Converts a 3D point of the unit sphere into a  `(u,v)` 2D point on its surface 
-    
+    ## Converts a 3D point of the unit sphere into a  `(u,v)` 2D point on its surface
+
     let u = arctan2(p.y, p.x) / (2.0 * PI)
 
     if u >= 0.0:
@@ -57,11 +66,11 @@ proc spherePointToUV*(p: Point): Vec2d =
 
 proc sphereNormal*(p: Point, rayDir: Vec): Normal =
 
-    ## Computes the normal of the unit sphere 
+    ## Computes the normal of the unit sphere
     ## The normal is computed for `point` (a point of the sphere) and
-    ## it is always chosen is in the opposite direction with respect 
-    ## to `rayDir` 
-    
+    ## it is always chosen is in the opposite direction with respect
+    ## to `rayDir`
+
     if (p.parsePointToVec().dot(rayDir) < 0.0):
         result = newNormal(p.x, p.y, p.z)
     else:
@@ -71,8 +80,8 @@ proc sphereNormal*(p: Point, rayDir: Vec): Normal =
 method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
 
     ## Checks if a ray intersects the sphere.
-    ## 
-    ## It returns `none(HitRecord)` if no intersection was found.  
+    ##
+    ## It returns `none(HitRecord)` if no intersection was found.
 
     let invRay = ray.transform(sphere.transformation.inverse())
     let originVec = invRay.origin.parsePointToVec()
@@ -109,11 +118,38 @@ method rayIntersection*(sphere: Sphere, ray: Ray): Option[HitRecord] =
 
     return some(hitRecord)
 
+method quickRayIntersection*(sphere: Sphere, ray: Ray): bool =
+
+    ## Quickly checks if a ray intersects the sphere
+
+    let invRay = ray.transform(sphere.transformation.inverse())
+
+    let originVec = invRay.origin.parsePointToVec()
+
+    let a = invRay.dir.sqrNorm()
+    let b = 2.0 * originVec.dot(invRay.dir)
+    let c = originVec.sqrNorm() - 1.0
+
+    let delta = b * b - 4.0 * a * c
+    if delta <= 0.0:
+        return false
+
+    let sqrtDelta = sqrt(delta)
+    let tmin = (-b - sqrtDelta) / (2.0 * a)
+    let tmax = (-b + sqrtDelta) / (2.0 * a)
+
+    result = ((invRay.tmin < tmin) and (tmin < invRay.tmax)) or
+                ((invRay.tmin < tmax) and (tmax < invRay.tmax))
+
+
+# --------------PLANE--------------
+
 type
     Plane* = ref object of Shape
         ## A 3D infinite plane parallel to the x and y axis and passing through the origin.
 
-proc newPlane*(transformation = newTransformation(), material: Material = newMaterial()): Plane =
+proc newPlane*(transformation = newTransformation(),
+        material: Material = newMaterial()): Plane =
 
     ## Creates a xy plane, potentially associating a transformation to it
 
@@ -124,7 +160,7 @@ proc newPlane*(transformation = newTransformation(), material: Material = newMat
 method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
 
     ## Checks if a ray intersects the plane.
-    ## 
+    ##
     ## Returns a `none(HitRecord)` if no intersection was found.
 
     let invRay = ray.transform(plane.transformation.inverse())
@@ -151,38 +187,11 @@ method rayIntersection*(plane: Plane, ray: Ray): Option[HitRecord] =
 
     return some(hitRecord)
 
-method quickRayIntersection*(shape: Shape, ray: Ray): bool {.base.} =
-    
-    ## Determine whether a ray hits the shape or not
-    quit "quickRayIntersection is an abstract method and cannot be called directly"
-
-method quickRayIntersection*(sphere: Sphere, ray: Ray): bool = 
-    
-    ## Quickly checks if a ray intersects the sphere
-    
-    let invRay = ray.transform(sphere.transformation.inverse())
-
-    let originVec = invRay.origin.parsePointToVec()
-
-    let a = invRay.dir.sqrNorm()
-    let b = 2.0 * originVec.dot(invRay.dir)
-    let c = originVec.sqrNorm() - 1.0
-
-    let delta = b * b - 4.0 * a * c
-    if delta <= 0.0:
-        return false
-
-    let sqrtDelta = sqrt(delta)
-    let tmin = (-b - sqrtDelta) / (2.0 * a)
-    let tmax = (-b + sqrtDelta) / (2.0 * a)
-
-    result = ((invRay.tmin < tmin) and ( tmin < invRay.tmax)) or 
-                ((invRay.tmin < tmax) and (tmax < invRay.tmax))
 
 method quickRayIntersection*(plane: Plane, ray: Ray): bool =
 
     ## Quickly checks if a ray intersects the plane
-    
+
     let invRay = ray.transform(plane.transformation.inverse())
 
     if abs(invRay.dir.z) < 1e-5:
@@ -191,7 +200,3 @@ method quickRayIntersection*(plane: Plane, ray: Ray): bool =
     let t = -invRay.origin.z / invRay.dir.z
 
     result = (invRay.tmin < t) and (t < invRay.tmax)
-    
-    
-
-    

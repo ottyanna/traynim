@@ -17,10 +17,17 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+## This module implements `Pigment`, `BRDF` and `Material` types
+
 from colors import Color, black, white, `*`, newColor
 from hdrimages import HDRimage, getPixel
 import pcg, ray, geometry
 import math
+
+
+# --------------PIGMENTS--------------
+
+# Base Pigment
 
 type
     Pigment* = ref object of RootObj
@@ -35,6 +42,9 @@ method getColor*(pigment: Pigment, vec2d: Vec2d): Color {.base.} =
     ## Returns the color of the pigment at the specified coordinates
     quit "to override!" # vec2d is a genric point on the abstract surface of the pigment
 
+
+# Uniform Pigment
+
 type
     UniformPigment* = ref object of Pigment
         ## A "pigment" of one chosen color.
@@ -48,6 +58,9 @@ proc newUniformPigment*(color: Color): UniformPigment =
 method getColor*(pigment: UniformPigment, vec2d: Vec2d): Color =
     ## Returns the color of the pigment at the specified coordinates
     return pigment.color
+
+
+# Checkered Pigment
 
 type
     CheckeredPigment* = ref object of Pigment
@@ -68,7 +81,7 @@ proc newCheckeredPigment*(color1, color2: Color,
     result.stepsNum = stepsNum
 
 method getColor*(pigment: CheckeredPigment, vec2d: Vec2d): Color =
-    ## Returns the color of the pigment at the specified coordinates
+    ## Returns the color of the pigment at the specified coordinates of type `Vec2d`
     let intU = int(floor(vec2d.u * pigment.stepsNum.float))
     let intV = int(floor(vec2d.v * pigment.stepsNum.float))
 
@@ -76,6 +89,9 @@ method getColor*(pigment: CheckeredPigment, vec2d: Vec2d): Color =
         return pigment.color1
     else:
         return pigment.color2
+
+
+# Image Pigment
 
 type
     ImagePigment* = ref object of Pigment
@@ -103,6 +119,11 @@ method getColor*(pigment: ImagePigment, vec2d: Vec2d): Color =
     # See https://en.wikipedia.org/wiki/Bilinear_interpolation
     return pigment.image.getPixel(col, row)
 
+
+#-------------- BRDF --------------
+
+# Base BRDF
+
 type
     BRDF* = ref object of RootObj
         ## An abstract class representing a Bidirectional Reflectance Distribution Function
@@ -120,7 +141,11 @@ method eval*(brdf: BRDF, normal: Normal, inDir: Vec, outDir: Vec,
 
 method scatterRay*(brdf: BRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray {.base.} =
+    ## Abstract method to override
     quit "to override!"
+
+
+# Diffuse BRDF
 
 type
     DiffuseBRDF* = ref object of BRDF
@@ -142,21 +167,28 @@ method eval*(brdf: DiffuseBRDF, normal: Normal, inDir: Vec, outDir: Vec,
 
 method scatterRay*(brdf: DiffuseBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
-    
-    let onb:ONB = createONBfromZ(normal)
+
+    ## Cosine-weighted distribution around the z (local) axis
+
+    let onb: ONB = createONBfromZ(normal)
     let cosThetaSq = pcg.randomFloat()
     let (cosTheta, sinTheta) = (sqrt(cosThetaSq), sqrt(1.0 - cosThetaSq))
     let phi = 2.0 * PI * pcg.randomFloat()
-    let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) + onb.e3 * sinTheta
-    return newRay(origin=interactionPoint, dir = dir, tmin=1.0e-3, tmax=Inf , depth=depth)
+    let dir = onb.e1 * (cos(phi)*cosTheta) + onb.e2 * (sin(phi)*cosTheta) +
+            onb.e3 * sinTheta
+    return newRay(origin = interactionPoint, dir = dir, tmin = 1.0e-3,
+            tmax = Inf, depth = depth)
+
+
+# Specular BRDF
 
 type
     SpecularBRDF* = ref object of BRDF
         thresholdAngleRad*: float
 
 proc newSpecularBRDF*(pigment: Pigment = newUniformPigment(white),
-        thresholdAngleRad=PI / 1800.0): SpecularBRDF =
-    
+        thresholdAngleRad = PI / 1800.0): SpecularBRDF =
+
     new(result)
     result.pigment = pigment
     result.thresholdAngleRad = thresholdAngleRad
@@ -175,13 +207,22 @@ method eval*(brdf: SpecularBRDF, normal: Normal, inDir: Vec, outDir: Vec,
 
 method scatterRay*(brdf: SpecularBRDF, pcg: var PCG, incomingDir: Vec,
         interactionPoint: Point, normal: Normal, depth: int): Ray =
+
+    # There is no need to use the PCG here,
+    # as the reflected direction is always completely deterministic
+    # for a perfect mirror
+
     let rayDir = newVec(incomingDir.x, incomingDir.y, incomingDir.z).normalize()
     let normal = normal.parseNormalToVec().normalize()
-    return newRay(origin=interactionPoint,
-               dir=rayDir - normal * 2 * normal.dot(rayDir),
-               tmin=1e-3,
-               tmax=Inf,
-               depth=depth)
+    return newRay(origin = interactionPoint,
+               dir = rayDir - normal * 2 * normal.dot(rayDir),
+               tmin = 1e-3,
+               tmax = Inf,
+               depth = depth)
+
+
+#-------------- MATERIAL --------------
+
 
 type
     Material* = object

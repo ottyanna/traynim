@@ -17,8 +17,8 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module contains all elements (`Shape`) in a scene (`World`)
-## and their relative procedures
+## This module contains all elements (`Shape` and `pointLights`) in a scene (`World`)
+## and their relative procedures.
 
 from ray import Ray, newRay
 from hitRecord import HitRecord
@@ -54,10 +54,11 @@ proc addShape*(world: var World, shape: Shape) =
 
 proc addLight*(world: var World, light: PointLight) =
 
-    ## Append a new point light to this world
-    
+    ## Adds `PointLight` object to inizialised `World`.
+    ## Remember to inizialise `World` object with `newWorld`.
+
     world.pointLights.add(light)
-    
+
 
 proc rayIntersection*(world: World, ray: Ray): Option[HitRecord] =
 
@@ -81,15 +82,10 @@ proc isPointVisible*(world: World, point: Point, observerPos: Point): bool =
     let direction = point - observerPos
     let directionNorm = direction.norm()
 
-    let ray = newRay(origin=observerPos, dir=direction, tmin=1e-2 / directionNorm, tmax=1.0)
+    let ray = newRay(origin = observerPos, dir = direction, tmin = 1e-2 /
+            directionNorm, tmax = 1.0)
     for shape in world.shapes:
         if shape.quickRayIntersection(ray):
             return false
-    
+
     return true
-
-
-    
-
-     
-    

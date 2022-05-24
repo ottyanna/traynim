@@ -17,8 +17,8 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module implements operations on geometry types,
-## such as `Point`, `Vec`, `Normal`.
+## This module implements operations on geometry types:
+## `Point`, `Vec`, `Normal`, `Vec2d` and `ONB `.
 
 import common
 from math import sqrt, copySign
@@ -204,11 +204,11 @@ defineNormalize(Vec)
 defineNormalize(Normal)
 
 template defineNormalizedDot(type1: typedesc, type2: typedesc) =
-    proc normalizedDot*(a: type1, b: type2) : float64 = 
+    proc normalizedDot*(a: type1, b: type2): float64 =
 
         ## Apply the dot product to the two arguments after having normalized them.
         ## The result is the cosine of the angle between the two vectors/normals.
-        
+
         let v1 = newVec(a.x, a.y, a.z).normalize()
         let v2 = newVec(b.x, b.y, b.z).normalize()
 
@@ -219,6 +219,7 @@ defineNormalizedDot(Vec, Normal)
 defineNormalizedDot(Normal, Vec)
 defineNormalizedDot(Normal, Normal)
 
+# --------------Vec2d--------------
 
 type
     Vec2d* = object
@@ -243,12 +244,22 @@ proc areClose*(a, b: Vec2d, epsilon = 1e-5): bool =
     return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
 
 
-type 
-    ONB* = object
-        e1*, e2*, e3* : Vec
+# --------------ONB--------------
 
+type
+    ONB* = object
+
+        ## a orthonormal basis (ONB)
+
+        e1*, e2*, e3*: Vec
 
 proc createONBfromZ*(normal: Vec or Normal): ONB =
+
+    ## Creates a orthonormal basis (ONB) from a vector representing the z axis (normalized).
+    ## Return a `ONB` object containing the three vectors (e1, e2, e3) of the basis.
+    ## The result is such that e3 = normal.
+    ## The `normal` vector must be *normalized*, otherwise this method won't work.
+
     let sign = copySign(1.0, normal.z)
     let a = -1.0 / (sign + normal.z)
     let b = normal.x * normal.y * a

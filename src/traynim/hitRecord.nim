@@ -17,9 +17,9 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
+## This module implements `HitRecod` object operations
+
 import geometry, ray, options, common, shapesDef
-
-
 
 type
     HitRecord* = object
@@ -39,8 +39,6 @@ type
         t*: float
         ray*: Ray
         shape*: Shape
-     
-
 
 
 proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
@@ -54,7 +52,7 @@ proc newHitRecord*(worldPoint: Point, normal: Normal, surfacePoint: Vec2d,
     result.t = t
     result.ray = ray
     result.shape = shape
-    
+
 proc areClose*(self: HitRecord, other: Option[HitRecord],
         epsilon = 1e-5): bool =
 

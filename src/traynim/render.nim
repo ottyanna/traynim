@@ -23,97 +23,132 @@ import colors, ray, world, materials, shapesDef, pcg
 from geometry import normalizedDot, `-`, `*`, norm
 import options
 
+# --------------BASE RENDERER--------------
+
 type Renderer* = ref object of RootObj
+    
     ## generic renderer
+
     world*: World
     backgroundColor*: Color
 
 method newBaseRenderer*(renderer: Renderer, world: World,
         backgroundColor = black) {.base.} =
+    
+    ## Initialises a generic renderer 
+
     renderer.backgroundColor = backgroundColor
     renderer.world = world
 
 method call*(renderer: Renderer, ray: Ray): Color {.base.} =
+    
+    ## abstract method
+
     quit "to override!"
 
+
+# --------------ON/OFF RENDERER--------------
+
 type OnOffRenderer* = ref object of Renderer
+    
     ## A on/off renderer: everything is of two colors (`backgroundColor` and `color`).
+    
     color*: Color
 
 proc newOnOffRenderer*(world: World, backgroundColor = black,
         color = white): OnOffRenderer =
+    
     new(result)
     result.newBaseRenderer(world, backgroundColor)
     result.color = color
 
 method call*(renderer: OnOffRenderer, ray: Ray): Color =
-    ## Calls the image rendering where the shapes are in solid color `color`.
+    
+    ## Calls the image rendering where the shapes are in solid color `Color`.
+    
     if renderer.world.rayIntersection(ray).isSome:
         return renderer.color
     else: return renderer.backgroundColor
 
 
+# --------------FLAT RENDERER--------------
+
 type FlatRenderer* = ref object of Renderer
+
     ## A «flat» renderer
     ## This renderer estimates the solution of the rendering equation by neglecting any contribution of the light.
     ## It just uses the pigment of each surface to determine how to compute the final radiance.
 
 proc newFlatRenderer*(world: World, backgroundColor = black): FlatRenderer =
+
     new(result)
     result.newBaseRenderer(world, backgroundColor)
 
 
+method call*(renderer: FlatRenderer, ray: Ray): Color =
 
-method call*(renderer: FlatRenderer, ray: Ray) : Color=
-        let hit = renderer.world.rayIntersection(ray)
-        if hit.isNone:
-            return renderer.backgroundColor
+    let hit = renderer.world.rayIntersection(ray)
+    if hit.isNone:
+        return renderer.backgroundColor
 
-        let material = (hit.get).shape.material
+    let material = (hit.get).shape.material
 
-        result= (material.brdf.pigment.getColor((hit.get).surfacePoint) +
-                material.emittedRadiance.getColor((hit.get).surfacePoint))
+    result = (material.brdf.pigment.getColor((hit.get).surfacePoint) +
+            material.emittedRadiance.getColor((hit.get).surfacePoint))
 
+
+# --------------PATH TRACER--------------
 
 type
     PathTracer* = ref object of Renderer
-        pcg* : PCG
-        raysNum* : int
-        maxDepth* : int
-        rouletteMax* : int
 
-proc newPathTracer*(world: World, backgroundColor = black, pcg: PCG, raysNum=10, maxDepth=2, rouletteMax=3): PathTracer =
+        ## A simple path-tracing renderer.
+        ## The algorithm implemented here allows the caller to 
+        ## tune number of rays thrown at each iteration, as well as the
+        ## maximum depth. It implements Russian roulette, 
+        ## so in principle it will take a finite time to complete the
+        ## calculation even if you set maxDepth to `Inf`.
+        
+        pcg*: PCG
+        raysNum*: int
+        maxDepth*: int
+        rouletteMax*: int
+
+proc newPathTracer*(world: World, backgroundColor = black, pcg: PCG,
+        raysNum = 10, maxDepth = 2, rouletteMax = 3): PathTracer =
+    
     new(result)
     result.newBaseRenderer(world, backgroundColor)
     result.pcg = pcg
     result.raysNum = raysNum
     result.maxDepth = maxDepth
     result.rouletteMax = rouletteMax
-    
-method call*(renderer: PathTracer, ray: Ray) : Color = 
-    {.warning[LockLevel]:off.} # essential to avoid a useless warning
+
+method call*(renderer: PathTracer, ray: Ray): Color =
+    {.warning[LockLevel]: off.} # essential to avoid a useless warning
     if ray.depth > renderer.maxDepth:
-        return black 
-    
+        return black
+
     let hitRecord = renderer.world.rayIntersection(ray)
-    if hitRecord.isNone :
+    if hitRecord.isNone:
         return renderer.backgroundColor
 
     let hitMaterial = hitRecord.get.shape.material
 
     var hitColor = hitMaterial.brdf.pigment.getColor(hitRecord.get.surfacePoint)
 
-    let emittedRadiance = hitMaterial.emittedRadiance.getColor(hitRecord.get.surfacePoint)
+    let emittedRadiance = hitMaterial.emittedRadiance.getColor(
+            hitRecord.get.surfacePoint)
 
-    let hitColorLum = max(hitColor.r,max(hitColor.g,hitColor.b))
+    let hitColorLum = max(hitColor.r, max(hitColor.g, hitColor.b))
 
     if ray.depth >= renderer.rouletteMax:
-        let q = max(0.05,1-hitColorLum)
+        let q = max(0.05, 1-hitColorLum)
         if renderer.pcg.randomFloat > q:
             hitColor = hitColor * (1.0/(1.0-q))
         else:
             return emittedRadiance
-    
+
     var cumRadiance = black
 
     if hitColorLum > 0.0:
@@ -131,23 +166,25 @@ method call*(renderer: PathTracer, ray: Ray) : Color =
 
     return emittedRadiance + cumRadiance*(1.0/renderer.raysNum.float)
 
-type 
+
+# --------------POINT LIGHT RENDERER--------------
+
+type
     PointLightRenderer* = ref object of Renderer
 
         ## A simple point-light renderer
-        ## This renderer is similar to what POV-Ray provides by default
-        
+
         ambientColor*: Color
 
-proc newPointLightRenderer*(world: World, backgroundColor: Color = black, 
-            ambientColor: Color = newColor(0.1, 0.1, 0.1)): PointLightRenderer = 
-            
-            new(result)
+proc newPointLightRenderer*(world: World, backgroundColor: Color = black,
+            ambientColor: Color = newColor(0.1, 0.1, 0.1)): PointLightRenderer =
 
-            result.newBaseRenderer(world, backgroundColor)
-            result.ambientColor = ambientColor
+    new(result)
 
-method call*(renderer: PointLightRenderer, ray: Ray) : Color = 
+    result.newBaseRenderer(world, backgroundColor)
+    result.ambientColor = ambientColor
+
+method call*(renderer: PointLightRenderer, ray: Ray): Color =
 
     let hitRecord = renderer.world.rayIntersection(ray)
 
@@ -158,16 +195,21 @@ method call*(renderer: PointLightRenderer, ray: Ray) : Color =
 
     var resultColor = renderer.ambientColor
     for curLights in renderer.world.pointLights:
-        if renderer.world.isPointVisible(point = curLights.position, observerPos = hitRecord.get.worldPoint):
+        if renderer.world.isPointVisible(point = curLights.position,
+                observerPos = hitRecord.get.worldPoint):
             let distanceVec = hitRecord.get.worldPoint - curLights.position
             let distance = distanceVec.norm()
             let inDir = distanceVec * (1.0 / distance)
-            let cosTheta = max(0.0, normalizedDot(-ray.dir, hitRecord.get.normal))
+            let cosTheta = max(0.0, normalizedDot(-ray.dir,
+                    hitRecord.get.normal))
 
-            let distanceFactor =  (if curLights.linearRadius > 0: ((curLights.linearRadius / distance)*(curLights.linearRadius / distance)) else: 1.0)
+            let distanceFactor = (if curLights.linearRadius > 0: ((
+                    curLights.linearRadius / distance)*(curLights.linearRadius /
+                    distance)) else: 1.0)
 
-            
-            let emittedColor = hitMaterial.emittedRadiance.getColor(hitRecord.get.surfacePoint)
+
+            let emittedColor = hitMaterial.emittedRadiance.getColor(
+                    hitRecord.get.surfacePoint)
             let brdfColor = hitMaterial.brdf.eval(
                 normal = hitRecord.get.normal,
                 inDir = inDir,
@@ -175,11 +217,7 @@ method call*(renderer: PointLightRenderer, ray: Ray) : Color =
                 uv = hitRecord.get.surfacePoint
             )
 
-            resultColor = resultColor + (emittedColor + brdfColor) * curLights.color * cosTheta * distanceFactor
+            resultColor = resultColor + (emittedColor + brdfColor) *
+                    curLights.color * cosTheta * distanceFactor
 
     result = resultColor
-
-
-
-
-     
