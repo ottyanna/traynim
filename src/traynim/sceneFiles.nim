@@ -36,7 +36,7 @@ type
 
 
 proc `$`*(loc:SourceLocation):string=
-    result="file " & loc.fileName & "at line " & $loc.lineNum & " and column " & $loc.colNum 
+    result="file " & loc.fileName & "at line " & $loc.lineNum & " and column " & $loc.colNum & ":"
 
 type
     KeywordEnum* = enum
@@ -109,6 +109,7 @@ type
 
 #var num = Token(kind: literalNumber, litNum : 0.1)
 
+#[
 proc assign*(token:Token)=
     
     case token.kind:
@@ -118,7 +119,7 @@ proc assign*(token:Token)=
         of literalString: discard
         of symbol: discard
         of stopToken : discard
-
+]#
 type
     GrammarError* = object of CatchableError
     #[An error found by the lexer/parser while reading a scene file
@@ -192,6 +193,46 @@ proc skipWhiteSpAndComments*(inputS: var InputStream)=
     inputS.unreadChar(ch)
 
 
+proc parseStringToken*(inputS: var InputStream,tokenLocation: SourceLocation) : TokenLoc =
+    
+    var token = ""
+    while true:
+        let ch = inputS.readChar()
+
+        if ch == '"':
+            break
+
+        if ch == '\0': #not sure about this
+            raise newException(GrammarError, $tokenLocation & " unterminated string")
+
+
+        token = token & ch
+
+        return TokenLoc(location : tokenLocation, token : Token( kind: literalString, litString: token))
+
+proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : TokenLoc =
+    
+    var token : string = $firstChar
+    var value : float
+    while true:
+        var ch = readChar(inputS)
+
+        if not (ch.isDigit() or ch == '.' or ch in ['e', 'E']):
+            inputS.unreadChar(ch)
+            break
+
+        token = token & ch
+
+        try:
+            value = token.parseFloat
+        except ValueError:
+            raise newException(GrammarError, $tokenLoc & " " & token & " is an invalid floating-point number.")
+
+        return TokenLoc(token : Token(kind : literalNumber, litNum: value), location : tokenLoc)
+
+proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : TokenLoc =
+    discard
+
 proc readToken*(inputS:var InputStream): TokenLoc =
 
     inputS.skipWhiteSpAndComments()
@@ -207,13 +248,13 @@ proc readToken*(inputS:var InputStream): TokenLoc =
         return TokenLoc(token : Token(kind: symbol, sym: ch),location: inputS.location)
 
     elif ch == '"':
-        return parseStringToken(result.location)
+        return inputS.parseStringToken(result.location)
     
     elif (ch.isDigit()) or (ch in ['+','-','.']):
-        return parseFloatToken(ch,result.location)
+        return inputS.parseFloatToken(ch,result.location)
 
     elif (ch.isAlphaAscii()) or (ch == '_'):
-        return parseKeywordOrIdentifierToken(ch,result.location)
+        return inputS.parseKeywordOrIdentifierToken(ch,result.location)
 
     else:
-        raise newException(GrammarError, "Invalid character " & ch & " in " & $inputS.location)
+        raise newException(GrammarError, $inputS.location & " Invalid character " & ch)
