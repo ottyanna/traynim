@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module implements operation on Ray type
+## This module implements operation on `Ray` type
 
 import geometry, transformations
 

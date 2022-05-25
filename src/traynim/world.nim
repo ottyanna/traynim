@@ -17,12 +17,14 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module contains all elements (`Shape`) in a scene (`World`)
-## and their relative procedures
+## This module contains all elements (`Shape` and `pointLights`) in a scene (`World`)
+## and their relative procedures.
 
-from ray import Ray
+from ray import Ray, newRay
 from hitRecord import HitRecord
-import options, shapes
+from lights import PointLight
+from geometry import Point, `-`, norm
+import options, shapes, shapesDef
 
 type
     World* = object
@@ -34,12 +36,14 @@ type
         ## of the shapes in the world.
 
         shapes*: seq[Shape]
+        pointLights*: seq[PointLight]
 
 proc newWorld*(): World =
 
     ## Inizialises World object
 
     result.shapes = @[]
+    result.pointLights = @[]
 
 proc addShape*(world: var World, shape: Shape) =
 
@@ -47,6 +51,14 @@ proc addShape*(world: var World, shape: Shape) =
     ## Remember to inizialise `World` object with `newWorld`.
 
     world.shapes.add(shape)
+
+proc addLight*(world: var World, light: PointLight) =
+
+    ## Adds `PointLight` object to inizialised `World`.
+    ## Remember to inizialise `World` object with `newWorld`.
+
+    world.pointLights.add(light)
+
 
 proc rayIntersection*(world: World, ray: Ray): Option[HitRecord] =
 
@@ -64,3 +76,16 @@ proc rayIntersection*(world: World, ray: Ray): Option[HitRecord] =
             closest = intersection
 
     return closest
+
+proc isPointVisible*(world: World, point: Point, observerPos: Point): bool =
+
+    let direction = point - observerPos
+    let directionNorm = direction.norm()
+
+    let ray = newRay(origin = observerPos, dir = direction, tmin = 1e-2 /
+            directionNorm, tmax = 1.0)
+    for shape in world.shapes:
+        if shape.quickRayIntersection(ray):
+            return false
+
+    return true

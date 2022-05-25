@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+## Added
+- **Major update**: Path Tracing renderer
+- **Major update**: Flat renderer
+- **Major update**: Point Light renderer
+- Antialiasing feature
+- Some pigments and BRDFs
+
+
 ## [0.2.0](https://github.com/ottyanna/traynim/releases/tag/v0.2.0)
 
 ### Added

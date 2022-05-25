@@ -17,12 +17,12 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module implements useful operations
+## This module implements useful operations on floating points
 
 template defineAreClose(type1: typedesc) =
-    proc areClose*(a,b : type1, epsilon = 1e-5): bool = 
+    proc areClose*(a, b: type1, epsilon = 1e-5): bool =
         ## Checks if two floating points are equal
         return abs(a - b) < epsilon
-    
+
 defineAreClose(float32)
 defineAreClose(float64)

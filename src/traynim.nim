@@ -17,7 +17,10 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-import strutils, streams, cligen, sugar, options
+import strutils, streams, cligen, sugar
+from math import sqrt, pow
+when compileOption("profiler"):
+  import nimprof
 
 import
     cameras,
@@ -25,9 +28,16 @@ import
     geometry,
     hdrimages,
     imageTracer,
+    lights,
+    materials,
+    std/monotimes,
+    pcg,
+    render,
     shapes,
     transformations,
     world
+
+# --------------PFM2FORMAT--------------
 
 proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
         outputFileName: string) =
@@ -45,46 +55,126 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
     echo ("File " & outputFileName & " has been written to disk")
 
+# --------------DEMO--------------
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
-        fileName = "demo", format = "png") =
+        fileName = "demo", format = "png", algorithm = "pathtracing",
+        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54,
+                samplePerPixel = 1.0,
+        luminosity: float = 0.0) =
+
+    let samplesPerSide = sqrt(samplePerPixel).int
+    if pow(samplesPerSide.float, 2.float) != samplePerPixel:
+        quit("Error, the number of samples per pixel ({samplePerPixel}) must be a perfect square")
 
     var image = newHDRImage(width, height)
+    echo("Generating a ", width, "x", height,
+            " image, with the camera tilted by ", angleDeg, "°")
 
     var world = newWorld()
+    var cameraTr : Transformation
 
-    # Add spheres as vertices of a 0.5 side cube
-    for x in [-0.5, 0.5]:
-        for y in [-0.5, 0.5]:
-            for z in [-0.5, 0.5]:
-                world.addShape(
-                    newSphere(
-                        transformation = translation(newVec(x, y, z))*scaling(
-                                newVec(0.1, 0.1, 0.1))
+    if (algorithm != "on/off"):
+        let skyMaterial = newMaterial(
+            brdf = newDiffuseBRDF(pigment = newUniformPigment(newColor(0.7, 0.7, 0.7))),
+            emittedRadiance = newUniformPigment(newColor(0.7, 0.7, 0.7))
+            )
+
+        let groundMaterial = newMaterial(
+            brdf = newDiffuseBRDF(
+                pigment = newCheckeredPigment(
+                    color1 = newColor(0.3, 0.5, 0.1),
+                    color2 = newColor(0.1, 0.2, 0.5)))
+            )
+        
+
+        let bigSphereMaterial = newMaterial(
+            brdf = newDiffuseBRDF(
+                pigment = newUniformPigment(newColor(0.3, 0.4, 0.8))
+            )
+        )
+
+        let littleSphereMaterial = newMaterial(brdf = newDiffuseBRDF(
+                pigment = newUniformPigment(newColor(0.7, 0.1, 0.3)))
+        )
+
+        let mirrorMaterial = newMaterial(
+            brdf = newSpecularBRDF(
+                pigment = newUniformPigment(newColor(0.6, 0.2, 0.3))
+            )
+        )
+
+        world.addShape(
+            newSphere(material = skyMaterial,
+            transformation = scaling(newVec(200, 200, 200)) * translation(newVec(0,
+                    0, 0.4)))
+        )
+
+        world.addShape(newPlane(material = groundMaterial))
+
+        world.addShape(
+            newSphere(
+                material = bigSphereMaterial,
+                transformation = translation(newVec(0, 0, 1))
+            )
+        )
+
+        world.addShape(
+            newSphere(
+                material = littleSphereMaterial,
+                transformation = translation(newVec(0,0, 2.5))*scaling(newVec(0.3,0.3,0.3))
+                # Pay attention to the order of the transformations! 
+                # In order to do it right the scaling must be second to the translation
+            )
+        )
+
+
+        world.addShape(
+            newSphere(
+                material = mirrorMaterial,
+                transformation = translation(newVec(1, 2.5, 0))
+            )
+        )
+
+        world.addLight(newPointLight(position = newPoint(-30, 30, 30),
+                color = white))
+        
+
+        # Define transformation on camera
+        cameraTr = rotationZ(angleDeg) * translation(newVec(-2.0, 0.0, 1.0))
+
+    else:
+        # Add spheres as vertices of a 0.5 side cube
+        for x in [-0.5, 0.5]:
+            for y in [-0.5, 0.5]:
+                for z in [-0.5, 0.5]:
+                    world.addShape(
+                        newSphere(
+                            transformation = translation(newVec(x, y, z))*scaling(
+                                    newVec(0.1, 0.1, 0.1))
+                        )
                     )
-                )
 
-    # Place two other spheres in the cube, in order to check whether
-    # there are issues with the orientation of the image
+        # Place two other spheres in the cube, in order to check whether
+        # there are issues with the orientation of the image
 
-    # First sphere at bottom
-    world.addShape(
-        newSphere(
-            transformation = translation(newVec(0.0, 0.0, -0.5)) *
-                scaling(newVec(0.1, 0.1, 0.1))
+        # First sphere at bottom
+        world.addShape(
+            newSphere(
+                transformation = translation(newVec(0.0, 0.0, -0.5)) *
+                    scaling(newVec(0.1, 0.1, 0.1))
+            )
         )
-    )
 
-    # Second sphere on the left face
-    world.addShape(
-        newSphere(
-            transformation = translation(newVec(0.0, 0.5, 0.0)) *
-                scaling(newVec(0.1, 0.1, 0.1))
+        # Second sphere on the left face
+        world.addShape(
+            newSphere(
+                transformation = translation(newVec(0.0, 0.5, 0.0)) *
+                    scaling(newVec(0.1, 0.1, 0.1))
+            )
         )
-    )
 
-    # DEfine transformation on camera
-    let cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
+        cameraTr = rotationZ(angleDeg) * translation(newVec(-1.0, 0.0, 0.0))
 
     var camera: Camera
 
@@ -95,11 +185,39 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         camera = newPerspectiveCamera(aspectRatio = width / height,
                 transformation = cameraTr)
 
-    var tracer = newImageTracer(image, camera)
+    # Run the tracer
 
-    # Run ray tracer with "on/off" renderer
-    tracer.fireAllRays(ray => (if world.rayIntersection(
-            ray).isSome: white else: black))
+    var tracer = newImageTracer(image, camera, samplesPerSide = samplesPerSide)
+
+    var renderer: Renderer
+
+    case algorithm:
+        of "on/off":
+            echo("Using on/off renderer")
+            renderer = newOnOffRenderer(world, black, white)
+        of "flat":
+            echo("Using flat renderer")
+            renderer = newFlatRenderer(world)
+        of "pathtracing":
+            echo("Using pathtracing")
+            var pcg = newPCG(initState = initState.uint64,
+                    initSeq = initSeq.uint64)
+            renderer = newPathTracer(
+                world = world,
+                pcg = pcg,
+                raysNum = raysNum,
+                maxDepth = maxDepth
+            )
+        of "pointlight":
+            echo("Using point-light tracer")
+            renderer = newPointLightRenderer(world = world,
+                    backgroundColor = black)
+        else:
+            quit("Unknown renderer")
+
+    let time = getMonoTime()
+    tracer.fireAllRays(ray => call(renderer, ray))
+    echo "Time taken: ", getMonoTime() - time
 
     # Save the HDR image
     let outPfm = newFileStream(fileName & ".pfm", fmWrite)
@@ -108,13 +226,18 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
     outPfm.close()
 
     # Apply tone-mapping to the image
-    tracer.image.normalizeImage(factor = 1.0)
+    if luminosity == 0.0:
+        tracer.image.normalizeImage(factor = 1.0) #use average luminosity
+    else:
+        tracer.image.normalizeImage(factor = 1.0, luminosity)
+
     tracer.image.clampImage()
 
     # Save the LDR image
     tracer.image.writeLdrImage(fileName & "." & format)
     echo "PNG demo image written to " & fileName & ".png"
 
+# --------------MAIN--------------
 
 when isMainModule:
 
@@ -133,17 +256,20 @@ when isMainModule:
     echo traynim
 
     dispatchMulti(
-        [pfm2format, 
-            help = {"outputFileName":" Path to output file (PNG, PPM, BMP or QOI formats)", 
-                    "factor":"Multiplicative factor",
-                    "gamma":"Exponent for gamma-correction",
-                    "inPfmFileName":"Path to input file (PFM)" }
+        [pfm2format,
+            help = {"outputFileName": " Path to output file (PNG, PPM, BMP or QOI formats)",
+                    "factor": "Multiplicative factor",
+                    "gamma": "Exponent for gamma-correction",
+                    "inPfmFileName": "Path to input file (PFM)"}
         ],
         [demo,
             help = {"angleDeg": "Angle rotation of the camera (Degrees)",
-                    "orthogonal" : "Perspective or orthogonal camera (DefaultPerspective)",
-                    "width" : "Width of the image",
-                    "height" : "Height of the image",
-                    "fileName" : "Path to output file without format",
-                    "format": "PNG, PPM, BMP or QOI formats"}
+                    "orthogonal": "Perspective or orthogonal camera (fefault is perspective)",
+                    "width": "Width of the image",
+                    "height": "Height of the image",
+                    "fileName": "Path to output file without format",
+                    "format": "PNG, PPM, BMP or QOI formats",
+                    "samplePerPixel": "Number of samples per pixel (must be a perfect square, e.g., 16)",
+                    "algorithm": "options on/off, flat, pathtracing renderer",
+                    "luminosity": "luminosity for LDR image conversion, lower number is lighter, default is averageLuminosity"}
         ])

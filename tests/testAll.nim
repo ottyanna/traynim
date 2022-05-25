@@ -31,8 +31,12 @@ import
     geometry,
     hdrimages, 
     hitRecord,
-    imageTracer,  
+    imageTracer,
+    materials,
+    pcg,  
     ray, 
+    render,
+    shapesDef,
     shapes,
     transformations,
     world
@@ -114,7 +118,7 @@ suite "test colors.nim":
 suite "test geometry.nim":
 
     setup:
-        var a = newVec(1.0, 2.0, 3.0)
+        var a {.used.} = newVec(1.0, 2.0, 3.0) 
 
     test "test on areClose":
         assert areClose(a.x, 1.0)
@@ -136,6 +140,30 @@ suite "test geometry.nim":
         assert b.parseVecToNormal == newNormal(4.0, 6.0, 8.0)
         assert areClose(a.sqrNorm(), 14.0)
         assert areClose(a.norm()*a.norm(), 14.0)
+    
+    test "test ONB creation":
+        
+        var pcg = newPCG()
+        for i in 0 ..< 10000:
+            let normal = newVec(pcg.randomFloat(), pcg.randomFloat(), pcg.randomFloat()).normalize()
+            let onb = createONBfromZ(normal)
+
+            # Verify that the z axis is aligned with the normal
+            assert areClose(onb.e3, normal)
+
+            # Verify that the base is orthogonal
+            assert areClose(0.0, onb.e1.dot(onb.e2))
+            assert areClose(0.0, onb.e2.dot(onb.e3))
+            assert areClose(0.0, onb.e3.dot(onb.e1))
+
+            # Verify right-hand rule
+            assert areClose(onb.e3, onb.e1.cross(onb.e2))
+
+            # Verifiy that each component is normalized
+
+            assert areClose(1.0, onb.e1.sqrNorm())
+            assert areClose(1.0, onb.e2.sqrNorm())
+            assert areClose(1.0, onb.e3.sqrNorm())
         
 
 suite "test hdrImages.nim (HDRimage type)":
@@ -165,7 +193,7 @@ suite "test hdrImages.nim (HDRimage type)":
         let col = newColor(1.0, 2.0, 3.0)
         img.setPixel(3, 2, col)
         assert areClose(col, img.getPixel(3, 2))
-
+    
 
 suite "test hdrImages.nim (read and write Pfm files)":
     
@@ -285,8 +313,98 @@ suite "test imageTracer.nim":
                 for col in 0..<tracer.image.width:
                     assert tracer.image.getPixel(col, row) == newColor(1.0, 2.0, 3.0)
 
+        test "test on antialiasing":
+            
+            var numOfRays = 0
+            let smallImage = newHdrImage(width=1, height=1)
+            let camera1 = newOrthogonalCamera(aspectRatio=1)
+            var tracer1 = newImageTracer(smallImage, camera1, samplesPerSide=10, pcg=newPCG())
 
-suite "test on rays.nim":
+            proc traceRay(ray: Ray, numOfRays: var int) : Color=
+                let point = ray.at(1)
+
+                # Check that all the rays intersect the screen within the region [−1, 1] × [−1, 1]
+                assert areClose(0.0 , point.x)
+                assert -1.0 <= point.y and point.y <= 1.0
+                assert -1.0 <= point.z and point.z <= 1.0
+
+                numOfRays = numOfRays + 1
+
+                return newColor(0.0, 0.0, 0.0)
+
+            tracer1.fireAllRays(ray => traceRay(ray,numOfRays))
+
+            # Check that the number of rays that were fired is what we expect (10²)
+            assert numOfRays == 100
+
+
+
+suite "test materials.nim":
+
+    test "test Uniform Pigment":
+        let color = newColor(1.0, 2.0, 3.0)
+        let pigment = newUniformPigment(color)
+
+        assert pigment.getColor(newVec2d(0.0, 0.0)).areClose(color)
+        assert pigment.getColor(newVec2d(1.0, 0.0)).areClose(color)
+        assert pigment.getColor(newVec2d(0.0, 1.0)).areClose(color)
+        assert pigment.getColor(newVec2d(1.0, 1.0)).areClose(color)
+    
+    test "test Image Pigment":
+        var image = newHDRImage(2, 2)
+        image.setPixel(0, 0, newColor(1.0, 2.0, 3.0))
+        image.setPixel(1, 0, newColor(2.0, 3.0, 1.0))
+        image.setPixel(0, 1, newColor(2.0, 1.0, 3.0))
+        image.setPixel(1, 1, newColor(3.0, 2.0, 1.0))
+
+        let pigment = newImagePigment(image)
+        assert pigment.getColor(newVec2d(0.0, 0.0)).areClose(newColor(1.0, 2.0, 3.0))
+        assert pigment.getColor(newVec2d(1.0, 0.0)).areClose(newColor(2.0, 3.0, 1.0))
+        assert pigment.getColor(newVec2d(0.0, 1.0)).areClose(newColor(2.0, 1.0, 3.0))
+        assert pigment.getColor(newVec2d(1.0, 1.0)).areClose(newColor(3.0, 2.0, 1.0))
+    
+    test "test Checkered Pigment":
+        let color1 = newColor(1.0, 2.0, 3.0)
+        let color2 = newColor(10.0, 20.0, 30.0)
+
+        let pigment = newCheckeredPigment(color1, color2, 2)
+
+        # With num_of_steps == 2, the pattern should be the following:
+        #
+        #              (0.5, 0)
+        #   (0, 0) +------+------+ (1, 0)
+        #          |      |      |
+        #          | col1 | col2 |
+        #          |      |      |
+        # (0, 0.5) +------+------+ (1, 0.5)
+        #          |      |      |
+        #          | col2 | col1 |
+        #          |      |      |
+        #   (0, 1) +------+------+ (1, 1)
+        #              (0.5, 1)
+
+        assert pigment.getColor(newVec2d(0.25, 0.25)).areClose(color1)
+        assert pigment.getColor(newVec2d(0.75, 0.25)).areClose(color2)
+        assert pigment.getColor(newVec2d(0.25, 0.75)).areClose(color2)
+        assert pigment.getColor(newVec2d(0.75, 0.75)).areClose(color1)
+
+
+suite "test pcg.nim":
+    test "test on random":
+        var pcg = newPCG()
+
+        ##
+
+        assert pcg.state == 1753877967969059832.uint64
+        assert pcg.incr == 109
+
+        for expected in [2707161783.uint32, 2068313097.uint32, 
+                        3122475824.uint32, 2211639955.uint32,
+                        3215226955.uint32, 3421331566.uint32]:
+                            assert expected == pcg.random()
+
+
+suite "test rays.nim":
 
     test "test on ray.areClose":
         let ray1 = newRay(origin = newPoint(1.0, 2.0, 3.0), dir = newVec(5.0, 4.0, -1.0))
@@ -313,7 +431,86 @@ suite "test on rays.nim":
         assert transformed.dir.areclose(newVec(6.0, -4.0, 5.0))
 
 
-suite "test on shapes.nim (Plane)":
+suite "test render.nim":
+
+    test "test on OnOffRenderer":
+        let sphere = newSphere(transformation=translation(newVec(2, 0, 0))*scaling(newVec(0.2, 0.2, 0.2)),
+                        material=newMaterial(brdf=newDiffuseBRDF(pigment=newUniformPigment(white))))
+        let image = newHdrImage(width=3, height=3)
+        let camera = newOrthogonalCamera()
+        var tracer = newImageTracer(image, camera)
+        var world = newWorld()
+        world.addShape(sphere)
+        let renderer = newOnOffRenderer(world)
+        tracer.fireAllRays(ray => call(renderer,ray))
+
+        assert tracer.image.getPixel(0, 0).areClose(black)
+        assert tracer.image.getPixel(1, 0).areClose(black)
+        assert tracer.image.getPixel(2, 0).areClose(black)
+
+        assert tracer.image.getPixel(0, 1).areClose(black)
+        assert tracer.image.getPixel(1, 1).areClose(white)
+        assert tracer.image.getPixel(2, 1).areClose(black)
+
+        assert tracer.image.getPixel(0, 2).areClose(black)
+        assert tracer.image.getPixel(1, 2).areClose(black)
+        assert tracer.image.getPixel(2, 2).areClose(black)
+
+    test "test on FlatRenderer":
+        let sphereColor = newColor(1.0, 2.0, 3.0)
+        let sphere = newSphere(transformation=translation(newVec(2, 0, 0))*scaling(newVec(0.2, 0.2, 0.2)),
+                        material=newMaterial(brdf=newDiffuseBRDF(pigment=newUniformPigment(sphereColor))))
+        let image = newHdrImage(width=3, height=3)
+        let camera = newOrthogonalCamera()
+        var tracer = newImageTracer(image=image, camera=camera)
+        var world = newWorld()
+        world.addShape(sphere)
+        var renderer = newFlatRenderer(world=world)
+        tracer.fireAllRays(ray => call(renderer,ray))
+
+        assert tracer.image.getPixel(0, 0).areClose(black)
+        assert tracer.image.getPixel(1, 0).areClose(black)
+        assert tracer.image.getPixel(2, 0).areClose(black)
+
+        assert tracer.image.getPixel(0, 1).areClose(black)
+        assert tracer.image.getPixel(1, 1).areClose(sphereColor)
+        assert tracer.image.getPixel(2, 1).areClose(black)
+
+        assert tracer.image.getPixel(0, 2).areClose(black)
+        assert tracer.image.getPixel(1, 2).areClose(black)
+        assert tracer.image.getPixel(2, 2).areClose(black)
+    
+    test "test Pathtracer":
+
+        var pcg = newPCG()
+
+        for i in 0 ..< 10:
+            var world = newWorld()
+            
+            let emittedRadiance = pcg.randomFloat()
+            let reflectance = pcg.randomFloat() * 0.9
+            let enclosureMaterial = newMaterial(
+                brdf = newDiffuseBRDF(pigment=newUniformPigment(white*reflectance)),
+                emittedRadiance = newUniformPigment(white*emittedRadiance) 
+            )
+            
+            world.addShape(newSphere(material=enclosureMaterial))
+            
+            let pathTracer = newPathTracer(pcg = pcg, raysNum=1, world=world, maxDepth = 100, rouletteMax=101)
+
+            let ray = newRay(origin = newPoint(0,0,0), dir = newVec(1,0,0))
+            let color = pathTracer.call(ray)
+
+            let expected = emittedRadiance / (1.0 - reflectance)
+                        
+
+            assert areClose(expected, color.r, epsilon=1e-3)
+            assert areClose(expected, color.g, epsilon=1e-3)
+            assert areClose(expected, color.b, epsilon=1e-3)
+        
+
+
+suite "test shapes.nim (Plane)":
 
     setup:
         var plane = newPlane()
@@ -382,7 +579,8 @@ suite "test on shapes.nim (Plane)":
         let intersection3 = plane.rayIntersection(ray3)
         assert intersection3.get.surfacePoint.areClose(newVec2d(0.25, 0.75))
 
-suite "test on shapes.nim (Spheres)":
+
+suite "test shapes.nim (Spheres)":
 
     setup:
         var sphere = newSphere()
@@ -522,7 +720,7 @@ suite "test on shapes.nim (Spheres)":
         assert sphere.rayIntersection(ray6).get.surfacePoint.areClose(newVec2d(0.0, 2/3))
 
 
-suite "test on transformations.nim":
+suite "test transformations.nim":
 
     setup:
         let m {.used.} = [
@@ -690,4 +888,18 @@ suite "test world.nim":
         let intersection2 = world.rayIntersection(newRay(origin=newPoint(10.0, 0.0, 0.0), dir = -vecX))
 
         assert intersection2.isSome
-        assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))
+        assert intersection2.get.worldPoint.areClose(newPoint(9.0, 0.0, 0.0))    
+
+    test "test on quick ray intersection":
+        assert not world.isPointVisible(point=newPoint(10.0, 0.0, 0.0),
+                                          observerPos=newPoint(0.0, 0.0, 0.0))
+        assert not world.isPointVisible(point=newPoint(5.0, 0.0, 0.0),
+                                          observerPos=newPoint(0.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(5.0, 0.0, 0.0),
+                                      observerPos=newPoint(4.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(0.5, 0.0, 0.0),
+                                      observerPos=newPoint(0.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(0.0, 10.0, 0.0),
+                                      observerPos=newPoint(0.0, 0.0, 0.0))
+        assert world.isPointVisible(point=newPoint(0.0, 0.0, 10.0),
+                                      observerPos=newPoint(0.0, 0.0, 0.0))

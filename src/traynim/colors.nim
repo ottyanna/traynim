@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module implements operations on Color type
+## This module implements operations on  `Color` type
 
 import common
 
@@ -34,8 +34,8 @@ proc newColor*(r, g, b: float32): Color =
     result.g = g
     result.b = b
 
-const white* = Color(r: 1.0, g: 1.0, b:1.0 )
-const black* = Color(r: 0.0, g: 0.0, b:0.0 )
+const white* = Color(r: 1.0, g: 1.0, b: 1.0)
+const black* = Color(r: 0.0, g: 0.0, b: 0.0)
 
 # Implementation of simple operations on Color type
 
@@ -73,8 +73,8 @@ proc areClose*(color1, color2: Color, epsilon = 1e-5): bool =
 
     ## Determines if two colors are equal (to use with floating points)
 
-    return areClose(color1.r, color2.r, epsilon) and areClose(color1.g, color2.g, epsilon) and
-            areClose(color1.b, color2.b, epsilon)
+    return areClose(color1.r, color2.r, epsilon) and areClose(color1.g,
+            color2.g, epsilon) and areClose(color1.b, color2.b, epsilon)
 
 
 proc luminosity*(color: Color): float32 =

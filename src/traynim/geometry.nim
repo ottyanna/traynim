@@ -17,11 +17,11 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-## This module implements operations on geometry types,
-## such as `Point`, `Vec`, `Normal`.
+## This module implements operations on geometry types:
+## `Point`, `Vec`, `Normal`, `Vec2d` and `ONB `.
 
 import common
-from math import sqrt
+from math import sqrt, copySign
 
 type
     Point* = object ## A point in 3d space with three floating-point fields: `x`, `y`, and `z`
@@ -66,6 +66,7 @@ define3dOp(`-`, Vec, Vec, Vec)
 define3dOp(`+`, Vec, Point, Point)
 define3dOp(`+`, Point, Vec, Point)
 define3dOp(`-`, Point, Vec, Point)
+define3dOp(`-`, Point, Point, Vec)
 define3dOp(`+`, Normal, Normal, Normal)
 define3dOp(`-`, Normal, Normal, Normal)
 
@@ -167,6 +168,7 @@ template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
         result.z = a.z
 
 define3dOpParsing(parsePointToVec, Point, Vec)
+define3dOpParsing(parseNormalToVec, Normal, Vec)
 define3dOpParsing(parseVecToNormal, Vec, Normal)
 
 template defineSqrNorm(type1: typedesc) =
@@ -201,6 +203,23 @@ template defineNormalize(type1) =
 defineNormalize(Vec)
 defineNormalize(Normal)
 
+template defineNormalizedDot(type1: typedesc, type2: typedesc) =
+    proc normalizedDot*(a: type1, b: type2): float64 =
+
+        ## Apply the dot product to the two arguments after having normalized them.
+        ## The result is the cosine of the angle between the two vectors/normals.
+
+        let v1 = newVec(a.x, a.y, a.z).normalize()
+        let v2 = newVec(b.x, b.y, b.z).normalize()
+
+        result = v1.dot(v2)
+
+defineNormalizedDot(Vec, Vec)
+defineNormalizedDot(Vec, Normal)
+defineNormalizedDot(Normal, Vec)
+defineNormalizedDot(Normal, Normal)
+
+# --------------Vec2d--------------
 
 type
     Vec2d* = object
@@ -223,3 +242,35 @@ proc areClose*(a, b: Vec2d, epsilon = 1e-5): bool =
     ## Determines whether 2D objects are equal or not (Floating point use only!!!)
 
     return (areClose(a.u, b.u, epsilon)) and (areClose(a.v, b.v, epsilon))
+
+
+# --------------ONB--------------
+
+type
+    ONB* = object
+
+        ## a orthonormal basis (ONB)
+
+        e1*, e2*, e3*: Vec
+
+template defineONBfromZ(type1: typedesc) =
+    proc createONBfromZ*(normal: type1): ONB =
+
+        ## Creates a orthonormal basis (ONB) from a vector representing the z axis (normalized).
+        ## Return a `ONB` object containing the three vectors (e1, e2, e3) of the basis.
+        ## The result is such that e3 = normal.
+        ## The `normal` vector must be *normalized*, otherwise this method won't work.
+     
+        let sign = copySign(1.0, normal.z)
+        let a = -1.0 / (sign + normal.z)
+        let b = normal.x * normal.y * a
+
+        let e1 = newVec(1.0 + sign * normal.x * normal.x * a, sign * b, -sign * normal.x)
+        let e2 = newVec(b, sign + normal.y * normal.y * a, -normal.y)
+
+        result.e1 = e1
+        result.e2 = e2
+        result.e3 = newVec(normal.x, normal.y, normal.z)
+
+defineONBfromZ(Vec)
+defineONBfromZ(Normal)

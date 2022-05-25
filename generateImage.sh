@@ -17,20 +17,12 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
 if [ "$1" == "" ]; then
-    echo "Usage: $(basename $0) NUM_OF_CORES"
+    echo "Usage: $(basename $0) ANGLE"
     exit 1
 fi
 
-mkdir demo
+readonly angle="$1"
+readonly angleNNN=$(printf "%03d" $angle)
 
-nimble run
-
-parallel -j "$1" ./generateImage.sh '{}' ::: $(seq 0 359)
-
-# -r 25: Number of frames per second
-ffmpeg -r 25 -f image2 -s 640x480 -i "demo/img%03d.png" -vcodec libx264 -pix_fmt yuv420p \
-    "demo/spheres-perspective.mp4"
-
-rm demo/img*
+time ./traynim demo --algorithm=on/off --width=640 --height=480 -a=$angle --fileName="demo/img$angleNNN" --luminosity=0.5

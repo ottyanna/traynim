@@ -1,4 +1,3 @@
-#!/bin/bash
 #encoding: utf-8
 
 #traynim is a ray tracer program written in Nim
@@ -18,19 +17,17 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
-if [ "$1" == "" ]; then
-    echo "Usage: $(basename $0) NUM_OF_CORES"
-    exit 1
-fi
+## This short module implements just the `Shape` type definition 
+## in order to avoid cyclic imports problems.
 
-mkdir demo
+import transformations, materials
 
-nimble run
+type
+    Shape* = ref object of RootObj
 
-parallel -j "$1" ./generateImage.sh '{}' ::: $(seq 0 359)
+        ## A generic 3D shape
+        ## It's an abstract object
+        ## Make sure to derive *real* object from it
 
-# -r 25: Number of frames per second
-ffmpeg -r 25 -f image2 -s 640x480 -i "demo/img%03d.png" -vcodec libx264 -pix_fmt yuv420p \
-    "demo/spheres-perspective.mp4"
-
-rm demo/img*
+        transformation*: Transformation
+        material*: Material
