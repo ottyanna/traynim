@@ -36,6 +36,7 @@ import
     pcg,  
     ray, 
     render,
+    sceneFiles,
     shapesDef,
     shapes,
     transformations,
@@ -291,7 +292,7 @@ suite "test imageTracer.nim":
         setup:
             let image = newHdrImage(width = 4, height = 2)
             let camera = newPerspectiveCamera(aspectRatio = 2)
-            var tracer = newImageTracer(image = image, camera = camera)
+            var tracer {.used.} = newImageTracer(image = image, camera = camera)
 
         test "test orientation":
             # Fire a ray against top-left corner of the screen
@@ -903,3 +904,52 @@ suite "test world.nim":
                                       observerPos=newPoint(0.0, 0.0, 0.0))
         assert world.isPointVisible(point=newPoint(0.0, 0.0, 10.0),
                                       observerPos=newPoint(0.0, 0.0, 0.0))
+
+suite "test sceneFiles.nim":
+
+    test "test Input Files":
+
+        var stream = newInputStream(newStringStream("abc   \nd\nef"))
+
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 1
+
+        assert stream.readChar() == 'a'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 2
+
+        stream.unreadChar('A')
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 1
+
+        assert stream.readChar() == 'A'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 2
+
+        assert stream.readChar() == 'b'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 3
+
+        assert stream.readChar() == 'c'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 4
+
+        stream.skipWhiteSpAndComments()
+
+        assert stream.readChar() == 'd'
+        assert stream.location.lineNum == 2
+        assert stream.location.colNum == 2
+
+        assert stream.readChar() == '\n'
+        assert stream.location.lineNum == 3
+        assert stream.location.colNum == 1
+
+        assert stream.readChar() == 'e'
+        assert stream.location.lineNum == 3
+        assert stream.location.colNum == 2
+
+        assert stream.readChar() == 'f'
+        assert stream.location.lineNum == 3
+        assert stream.location.colNum == 3
+
+        assert stream.readChar() == '\0'
