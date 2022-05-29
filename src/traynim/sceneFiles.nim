@@ -16,9 +16,9 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import std/tables, streams, strutils
+import streams, strutils
 
-const WHITESPACE* = ['\0','\t','\n','\r']
+const WHITESPACE* = [' ','\t','\n','\r']
 const SYMBOLS* = ['(',')','<','>','[',']','*']
 
 type
@@ -40,62 +40,38 @@ proc `$`*(loc:SourceLocation):string=
 
 type
     KeywordEnum* = enum
-        NEW = 1
-        MATERIAL = 2
-        PLANE = 3
-        SPHERE = 4
-        DIFFUSE = 5
-        SPECULAR = 6
-        UNIFORM = 7
-        CHECKERED = 8
-        IMAGE = 9
-        IDENTITY = 10
-        TRANSLATION = 11
-        ROTATIONX = 12
-        ROTATIONY = 13
-        ROTATIONZ = 14
-        SCALING = 15
-        CAMERA = 16
-        ORTHOGONAL = 17
-        PERSPECTIVE = 18
-        FLOAT = 19
-
-
-const KEYWORDS* = {
-    "new": KeywordEnum.NEW,
-    "material": KeywordEnum.MATERIAL,
-    "plane": KeywordEnum.PLANE,
-    "sphere": KeywordEnum.SPHERE,
-    "diffuse": KeywordEnum.DIFFUSE,
-    "specular": KeywordEnum.SPECULAR,
-    "uniform": KeywordEnum.UNIFORM,
-    "checkered": KeywordEnum.CHECKERED,
-    "image": KeywordEnum.IMAGE,
-    "identity": KeywordEnum.IDENTITY,
-    "translation": KeywordEnum.TRANSLATION,
-    "rotationX": KeywordEnum.ROTATIONX,
-    "rotationY": KeywordEnum.ROTATIONY,
-    "rotationZ": KeywordEnum.ROTATIONZ,
-    "scaling": KeywordEnum.SCALING,
-    "camera": KeywordEnum.CAMERA,
-    "orthogonal": KeywordEnum.ORTHOGONAL,
-    "perspective": KeywordEnum.PERSPECTIVE,
-    "float": KeywordEnum.FLOAT,
-}.toTable
-
+        NEW = "new"
+        MATERIAL = "material"
+        PLANE = "plane"
+        SPHERE = "sphere"
+        DIFFUSE = "diffuse"
+        SPECULAR = "specular"
+        UNIFORM = "uniform"
+        CHECKERED = "checkered"
+        IMAGE = "image"
+        IDENTITY = "identity"
+        TRANSLATION = "traslation"
+        ROTATIONX = "rotationX"
+        ROTATIONY = "rotationY"
+        ROTATIONZ = "rotationZ"
+        SCALING = "scaling"
+        CAMERA = "camera"
+        ORTHOGONAL = "orthogonal"
+        PERSPECTIVE = "perspective"
+        FLOAT = "float"
 
 type
-    TokenType* = enum #Tag
+    TokenType* = enum 
         keyword,
         identifier,
         literalNumber,
         literalString,
         symbol,
         stopToken
-    Token* = ref TokenValue
-    TokenValue* = object #Union
+   
+    TokenValue* = object 
         case kind* : TokenType
-            of keyword: kWord*: string
+            of keyword: keywords*: KeywordEnum
             of identifier: idWord*: string 
             of literalNumber: litNum* : float
             of literalString: litString* : string
@@ -103,43 +79,30 @@ type
             of stopToken : stop* : char
 
 type 
-    TokenLoc* = object
-        token* :Token
-        location* :SourceLocation
+    Token* = object
+        token* : TokenValue
+        location* : SourceLocation
 
-#var num = Token(kind: literalNumber, litNum : 0.1)
-
-#[
-proc assign*(token:Token)=
-    
-    case token.kind:
-        of keyword: token.kWord="ok"
-        of identifier: discard 
-        of literalNumber: discard
-        of literalString: discard
-        of symbol: discard
-        of stopToken : discard
-]#
 type
-    GrammarError* = object of CatchableError
-    #[An error found by the lexer/parser while reading a scene file
-    The fields of this type are the following:
-    - `file_name`: the name of the file, or the empty string if there is no real file
-    - `line_num`: the line number where the error was discovered (starting from 1)
-    - `col_num`: the column number where the error was discovered (starting from 1)
-    - `message`: a user-frendly error message
-    """]#
+    GrammarError* = object 
+        ## An error found by the lexer/parser while reading a scene file
+        ## The fields of this type are the following:
+        ## - `fileName`: the name of the file, or the empty string if there is no real file
+        ## - `lineNum`: the line number where the error was discovered (starting from 1)
+        ## - `colNum`: the column number where the error was discovered (starting from 1)
+        error: CatchableError
+        location: SourceLocation
 
 type
     InputStream* = object
         stream*: Stream
-        location* :SourceLocation
+        location* : SourceLocation
         savedChar*: char
         savedLoc*: SourceLocation
         tabulations : int
         savedToken : Token
 
-proc newInputStream*(stream:Stream, fileName="", tabulations=8):InputStream=
+proc newInputStream*(stream:Stream, fileName="", tabulations=8): InputStream=
         
         result.stream = stream
 
@@ -193,7 +156,7 @@ proc skipWhiteSpAndComments*(inputS: var InputStream)=
     inputS.unreadChar(ch)
 
 
-proc parseStringToken*(inputS: var InputStream,tokenLocation: SourceLocation) : TokenLoc =
+proc parseStringToken*(inputS: var InputStream,location: SourceLocation) : Token =
     
     var token = ""
     while true:
@@ -203,14 +166,14 @@ proc parseStringToken*(inputS: var InputStream,tokenLocation: SourceLocation) : 
             break
 
         if ch == '\0': #not sure about this
-            raise newException(GrammarError, $tokenLocation & " unterminated string")
+            raise newException(GrammarError.error, $location & " unterminated string")
 
 
         token = token & ch
 
-        return TokenLoc(location : tokenLocation, token : Token( kind: literalString, litString: token))
+        return Token(location : location, token : TokenValue( kind: literalString, litString: token))
 
-proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : TokenLoc =
+proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token =
     
     var token : string = $firstChar
     var value : float
@@ -226,26 +189,26 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceL
         try:
             value = token.parseFloat
         except ValueError:
-            raise newException(GrammarError, $tokenLoc & " " & token & " is an invalid floating-point number.")
+            raise newException(GrammarError.error, $tokenLoc & " " & token & " is an invalid floating-point number.")
 
-        return TokenLoc(token : Token(kind : literalNumber, litNum: value), location : tokenLoc)
+        return Token(token : TokenValue(kind : literalNumber, litNum: value), location : tokenLoc)
 
-proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : TokenLoc =
+proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token =
     discard
 
-proc readToken*(inputS:var InputStream): TokenLoc =
+proc readToken*(inputS:var InputStream): Token =
 
     inputS.skipWhiteSpAndComments()
 
     var ch = inputS.readChar()
 
     if ch == '\0':
-        return TokenLoc(token : Token(kind: stopToken),location: inputS.location)
+        return Token(token : TokenValue(kind: stopToken),location: inputS.location)
 
     result.location=inputS.location
 
     if ch in SYMBOLS:
-        return TokenLoc(token : Token(kind: symbol, sym: ch),location: inputS.location)
+        return Token(token : TokenValue(kind: symbol, sym: ch),location: inputS.location)
 
     elif ch == '"':
         return inputS.parseStringToken(result.location)
@@ -257,4 +220,4 @@ proc readToken*(inputS:var InputStream): TokenLoc =
         return inputS.parseKeywordOrIdentifierToken(ch,result.location)
 
     else:
-        raise newException(GrammarError, $inputS.location & " Invalid character " & ch)
+        raise newException(GrammarError.error, $inputS.location & " Invalid character " & ch)
