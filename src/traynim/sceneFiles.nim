@@ -19,7 +19,7 @@
 import streams, strutils
 
 const WHITESPACE* = [' ','\t','\n','\r']
-const SYMBOLS* = ['(',')','<','>','[',']','*']
+const SYMBOLS* = ['(',')','<','>','[',']','*',',']
 
 type
     SourceLocation* = object
@@ -156,11 +156,12 @@ proc skipWhiteSpAndComments*(inputS: var InputStream)=
     inputS.unreadChar(ch)
 
 
-proc parseStringToken*(inputS: var InputStream,location: SourceLocation) : Token =
+proc parseStringToken*(inputS: var InputStream, location: SourceLocation) : Token =
     
     var token = ""
     while true:
-        let ch = inputS.readChar()
+        var ch = inputS.readChar()
+        
 
         if ch == '"':
             break
@@ -171,7 +172,7 @@ proc parseStringToken*(inputS: var InputStream,location: SourceLocation) : Token
 
         token = token & ch
 
-        return Token(location : location, token : TokenValue( kind: literalString, litString: token))
+    return Token(location : location, token : TokenValue( kind: literalString, litString: token))
 
 proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token =
     
@@ -193,8 +194,26 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceL
 
         return Token(token : TokenValue(kind : literalNumber, litNum: value), location : tokenLoc)
 
-proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token =
-    discard
+proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token = 
+
+    var token : string = $firstChar
+    
+    while true:
+        var ch = inputS.readChar()
+        
+        if not (ch.isAlphaNumeric() or ch == '_'):
+            inputS.unreadChar(ch)
+            break
+
+        token = token & ch
+
+    try:
+        return Token(token : TokenValue(kind : keyword, keywords: parseEnum[KeywordEnum](token)), location: tokenLoc)
+    
+    except ValueError:
+        return Token(token : TokenValue(kind : identifier, idWord : token), location : tokenLoc)
+    
+    
 
 proc readToken*(inputS:var InputStream): Token =
 
@@ -203,7 +222,7 @@ proc readToken*(inputS:var InputStream): Token =
     var ch = inputS.readChar()
 
     if ch == '\0':
-        return Token(token : TokenValue(kind: stopToken),location: inputS.location)
+        return Token(token : TokenValue(kind: stopToken), location: inputS.location)
 
     result.location=inputS.location
 
