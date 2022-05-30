@@ -21,6 +21,7 @@ import
     math,
     options, 
     streams,
+    strutils,
     sugar,
     unittest
 
@@ -953,3 +954,112 @@ suite "test sceneFiles.nim":
         assert stream.location.colNum == 3
 
         assert stream.readChar() == '\0'
+    
+    
+    test "test lexer":
+
+        const testString = """
+        # This is a comment
+        # This is another comment
+        new material sky_material(
+            diffuse(image("my file.pfm")),
+            <5.0, 500.0, 300.0>
+        ) # Comment at the end of the line
+        """
+        var inputFile = newInputStream(newStringStream(testString))
+
+        var testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("new")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("material")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == identifier
+        assert testToken.token.idWord == "sky_material"
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '('
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("diffuse")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '('
+        
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("image")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '('
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalString
+        assert testToken.token.litString == "my file.pfm"
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')'
+
+        #[testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ','
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '<'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalNumber
+        assert areClose(testToken.token.litNum, 5.0)
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol, "\n-------------->" & $testToken.token.kind & "\n --->" & $testToken.token
+        assert testToken.token.sym == ','
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalNumber
+        assert areClose(testToken.token.litNum, 500.0)
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ','
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalNumber
+        assert areClose(testToken.token.litNum, 300.0)
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '>'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')']#
+
+
+
+
+
+
+            
+
+        
+
+        
+
