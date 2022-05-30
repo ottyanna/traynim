@@ -1012,7 +1012,7 @@ suite "test sceneFiles.nim":
         assert testToken.token.kind == symbol
         assert testToken.token.sym == ')'
 
-        #[testToken = inputFile.readToken()
+        testToken = inputFile.readToken()
         assert testToken.token.kind == symbol
         assert testToken.token.sym == ','
 
@@ -1025,7 +1025,7 @@ suite "test sceneFiles.nim":
         assert areClose(testToken.token.litNum, 5.0)
 
         testToken = inputFile.readToken()
-        assert testToken.token.kind == symbol, "\n-------------->" & $testToken.token.kind & "\n --->" & $testToken.token
+        assert testToken.token.kind == symbol
         assert testToken.token.sym == ','
 
         testToken = inputFile.readToken()
@@ -1048,8 +1048,8 @@ suite "test sceneFiles.nim":
         assert testToken.token.kind == symbol
         assert testToken.token.sym == ')'
 
-        testToken = inputFile.readToken()
-        assert testToken.token.kind == symbol
+       #[ testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol , "\n-------------->" & $testToken.token.kind & "\n --->" & $testToken.token
         assert testToken.token.sym == ')']#
 
 
