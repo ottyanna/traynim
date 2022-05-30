@@ -166,7 +166,7 @@ proc parseStringToken*(inputS: var InputStream, location: SourceLocation) : Toke
         if ch == '"':
             break
 
-        if ch == '\0': #not sure about this
+        if ch == '\0': 
             raise newException(GrammarError.error, $location & " unterminated string")
 
 
@@ -192,7 +192,7 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceL
         except ValueError:
             raise newException(GrammarError.error, $tokenLoc & " " & token & " is an invalid floating-point number.")
 
-        return Token(token : TokenValue(kind : literalNumber, litNum: value), location : tokenLoc)
+    return Token(token : TokenValue(kind : literalNumber, litNum: value), location : tokenLoc)
 
 proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token = 
 
