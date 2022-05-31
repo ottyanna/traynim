@@ -1048,9 +1048,9 @@ suite "test sceneFiles.nim":
         assert testToken.token.kind == symbol
         assert testToken.token.sym == ')'
 
-       #[ testToken = inputFile.readToken()
-        assert testToken.token.kind == symbol , "\n-------------->" & $testToken.token.kind & "\n --->" & $testToken.token
-        assert testToken.token.sym == ')']#
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == stopToken
+        
 
 
 
