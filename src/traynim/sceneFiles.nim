@@ -283,5 +283,5 @@ proc expectString*(inputS: var InputStream): string =
         raise newException(GrammarError.error, 
     "got " & $inputToken.token.kind & " instead of a string")
 
-    result = inputToken.token.litString
+    result = inputToken.token.literalString
     
