@@ -460,7 +460,23 @@ proc parseTransformation*(inputS: var InputStream, scene: Scene): Transformation
             inputS.unreadToken(nextKeyword)
             break
     
-    
+type 
+    coupleMat = object
+        name : string
+        mat : Material
+
+
+proc parseMaterial(s: var InputStream, scene: Scene) : coupleMat=
+    let name = expectIdentifier(s)
+
+    expectSymbol(s, '(')
+    let brdf = parseBrdf(s, scene)
+    expectSymbol(s, ',')
+    let emittedRadiance = parsePigment(s, scene)
+    expectSymbol(s, ')')
+
+    result.name = name
+    result.mat = newMaterial(brdf=brdf, emittedRadiance=emittedRadiance)
 
 
     
