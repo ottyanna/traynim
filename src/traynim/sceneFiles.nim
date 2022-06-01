@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import std/tables, streams, strutils, options, std/sets
-import materials, world, cameras, geometry, colors, tranformations, shapes
+import materials, world, cameras, geometry, colors, transformations, shapes
 
 const WHITESPACE* = [' ', '\t', '\n', '\r']
 const SYMBOLS* = ['(', ')', '<', '>', '[', ']', '*', ',']
@@ -278,8 +278,7 @@ proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[
 
     if not (inputToken.token.kind == keyword):
         raise newException(GrammarError.error,
-    $inputS.location & " expected a keyword instead of " &
-    $inputToken.token.kind)
+    $inputS.location & " expected a keyword instead of " & $inputToken.token.kind)
 
     if not (inputToken.token.keywords in inputKeywords):
         raise newException(GrammarError.error,
@@ -343,14 +342,24 @@ proc expectIdentifier*(s: var InputStream): string =
 
     return token.token.idWord
 
+proc parseColor*(InputS: var InputStream, scene: Scene): Color =
+    
+    expectSymbol(InputS, '<')
+    let red = expectNumber(InputS, scene)
+    expectSymbol(InputS, ',')
+    
+    expectSymbol(InputS, '<')
+    let green = expectNumber(InputS, scene)
+    expectSymbol(InputS, ',')
 
-proc parseVector(s: InputStream, scene: Scene) : Vec =
-    expect_symbol(input_file, "[")
-    x = expect_number(input_file, scene)
-    expect_symbol(input_file, ",")
-    y = expect_number(input_file, scene)
-    expect_symbol(input_file, ",")
-    z = expect_number(input_file, scene)
-    expect_symbol(input_file, "]")
+    expectSymbol(InputS, '<')
+    let blue = expectNumber(InputS, scene)
+    expectSymbol(InputS, ',')
 
-    return Vec(x, y, z)
+    result = newColor(red, green, blue)
+
+
+
+
+
+    
