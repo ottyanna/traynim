@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import std/tables, streams, strutils, options, std/sets
-import materials, world, cameras, geometry, colors, transformations, shapes
+import materials, world, cameras, geometry, colors, transformations, shapes, hdrimages
 
 const WHITESPACE* = [' ', '\t', '\n', '\r']
 const SYMBOLS* = ['(', ')', '<', '>', '[', ']', '*', ',']
@@ -358,6 +358,34 @@ proc parseColor*(InputS: var InputStream, scene: Scene): Color =
 
     result = newColor(red, green, blue)
 
+proc parsePigment*(s: var InputStream, scene: Scene) : Pigment =
+
+    let list = @[KeywordEnum.UNIFORM, KeywordEnum.CHECKERED, KeywordEnum.IMAGE]
+
+    let keyword = expectKeywords(s, list)
+
+    expectSymbol(s, '(')
+    if keyword == KeywordEnum.UNIFORM:
+        let color = parseColor(s, scene)
+        result = newUniformPigment(color=color)
+    elif keyword == KeywordEnum.CHECKERED:
+        let color1 = parseColor(s, scene)
+        expectSymbol(s, ',')
+        let color2 = parseColor(s, scene)
+        expectSymbol(s, ',')
+        let numOfSteps = int(expectNumber(s, scene))
+        result = newCheckeredPigment(color1=color1, color2=color2, stepsNum=numOfSteps)
+    elif keyword == KeywordEnum.IMAGE:
+        let fileName = expectString(s)
+        let stream = newFileStream(fileName,fmRead)
+        let image = readPfmImage(stream)
+        stream.close()
+        result = newImagePigment(image=image)
+    else:
+        assert false, "This line should be unreachable"
+
+    expectSymbol(s, ')') 
+
 proc parseBRDF*(inputS: var InputStream, scene: Scene): BRDF =
     
     let brdfKeyword = expectKeywords(inputS, @[KeywordEnum.DIFFUSE, KeywordEnum.SPECULAR])
@@ -371,7 +399,19 @@ proc parseBRDF*(inputS: var InputStream, scene: Scene): BRDF =
     elif brdfKeyword == KeywordEnum.SPECULAR:
         result = newSpecularBRDF(pigment=pigment)
     
-    assert false, "This line should be unreachble"
+    assert false, "This line should be unreacheble"
+
+proc parseVector*(s: var InputStream, scene: Scene) : Vec =
+
+    expectSymbol(s, '[')
+    let x = expectNumber(s, scene)
+    expectSymbol(s, ',')
+    let y = expectNumber(s, scene)
+    expectSymbol(s, ',')
+    let z = expectNumber(s, scene)
+    expectSymbol(s, ']')
+
+    return newVec(x, y, z)
 
 
 
