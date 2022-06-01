@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import std/tables, streams, strutils, options, std/sets
-import materials, world, cameras, geometry, colors, tranformations, shapes
+import materials, world, cameras, geometry, colors, transformations, shapes, hdrImages
 
 const WHITESPACE* = [' ', '\t', '\n', '\r']
 const SYMBOLS* = ['(', ')', '<', '>', '[', ']', '*', ',']
@@ -278,8 +278,8 @@ proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[
 
     if not (inputToken.token.kind == keyword):
         raise newException(GrammarError.error,
-    $inputS.location & " expected a keyword instead of " &
-    $inputToken.token.kind)
+                        $inputS.location & " expected a keyword instead of " &
+                        $inputToken.token.kind)
 
     if not (inputToken.token.keywords in inputKeywords):
         raise newException(GrammarError.error,
@@ -302,7 +302,7 @@ proc expectString*(inputS: var InputStream): string =
 
 
 proc expectSymbol*(s: var InputStream, sym: char) =
-    ## Reads a token from `input_file` and check that it matches `symbol`
+    ## Reads a token from `s` and check that it matches `symbol`
 
     let token = s.readToken()
 
@@ -311,7 +311,7 @@ proc expectSymbol*(s: var InputStream, sym: char) =
                 token.token.sym & " instead of " & sym)
 
 proc expectNumber*(s: var InputStream, scene: Scene): float =
-    #"""Read a token from `input_file` and check that it is either a literal number or a variable in `scene`.
+    #"""Read a token from `s` and check that it is either a literal number or a variable in `scene`.
     #Return the number as a ``float``."""
 
     let token = s.readToken()
@@ -331,7 +331,7 @@ proc expectNumber*(s: var InputStream, scene: Scene): float =
 
 
 proc expectIdentifier*(s: var InputStream): string =
-    ## """Read a token from `input_file` and check that it is an identifier.
+    ## """Read a token from `s` and check that it is an identifier.
     ## Return the name of the identifier."""
 
     let token = s.readToken()
@@ -344,13 +344,42 @@ proc expectIdentifier*(s: var InputStream): string =
     return token.token.idWord
 
 
-proc parseVector(s: InputStream, scene: Scene) : Vec =
-    expect_symbol(input_file, "[")
-    x = expect_number(input_file, scene)
-    expect_symbol(input_file, ",")
-    y = expect_number(input_file, scene)
-    expect_symbol(input_file, ",")
-    z = expect_number(input_file, scene)
-    expect_symbol(input_file, "]")
+proc parseVector*(s: var InputStream, scene: Scene) : Vec =
+    
+    expectSymbol(s, '[')
+    let x = expectNumber(s, scene)
+    expectSymbol(s, ',')
+    let y = expectNumber(s, scene)
+    expectSymbol(s, ',')
+    let z = expectNumber(s, scene)
+    expectSymbol(s, ']')
 
-    return Vec(x, y, z)
+    return newVec(x, y, z)
+
+proc parsePigment*(s: var InputStream, scene: Scene) : Pigment =
+    
+    let list = @[KeywordEnum.UNIFORM, KeywordEnum.CHECKERED, KeywordEnum.IMAGE]
+
+    let keyword = expectKeywords(s, list)
+
+    expectSymbol(s, '(')
+    if keyword == KeywordEnum.UNIFORM:
+        let color = parseColor(s, scene)
+        result = newUniformPigment(color=color)
+    elif keyword == KeywordEnum.CHECKERED:
+        let color1 = parseColor(s, scene)
+        expectSymbol(s, ',')
+        let color2 = parseColor(s, scene)
+        expectSymbol(s, ',')
+        let numOfSteps = int(expectNumber(s, scene))
+        result = newCheckeredPigment(color1=color1, color2=color2, stepsNum=numOfSteps)
+    elif keyword == KeywordEnum.IMAGE:
+        let fileName = expectString(s)
+        let stream = newFileStream(fileName,fmRead)
+        let image = readPfmImage(stream)
+        stream.close()
+        result = newImagePigment(image=image)
+    #else:
+    #    assert False, "This line should be unreachable"
+
+    expectSymbol(s, ')')
