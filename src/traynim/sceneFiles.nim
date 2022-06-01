@@ -307,7 +307,7 @@ proc expectString*(inputS: var InputStream): string =
 
 
 proc expectSymbol*(s: var InputStream, sym: char) =
-    ## Reads a token from `input_file` and check that it matches `symbol`
+    ## Reads a token from `inputS` and check that it matches `symbol`
 
     let token = s.readToken()
 
@@ -316,7 +316,7 @@ proc expectSymbol*(s: var InputStream, sym: char) =
                 token.token.sym & " instead of " & sym)
 
 proc expectNumber*(s: var InputStream, scene: Scene): float =
-    #"""Read a token from `input_file` and check that it is either a literal number or a variable in `scene`.
+    #"""Read a token from `inputS` and check that it is either a literal number or a variable in `scene`.
     #Return the number as a ``float``."""
 
     let token = s.readToken()
@@ -336,7 +336,7 @@ proc expectNumber*(s: var InputStream, scene: Scene): float =
 
 
 proc expectIdentifier*(s: var InputStream): string =
-    ## """Read a token from `input_file` and check that it is an identifier.
+    ## """Read a token from `inputS` and check that it is an identifier.
     ## Return the name of the identifier."""
 
     let token = s.readToken()
@@ -466,7 +466,7 @@ type
         mat : Material
 
 
-proc parseMaterial(s: var InputStream, scene: Scene) : coupleMat=
+proc parseMaterial*(s: var InputStream, scene: Scene) : coupleMat=
     let name = expectIdentifier(s)
 
     expectSymbol(s, '(')
@@ -479,4 +479,33 @@ proc parseMaterial(s: var InputStream, scene: Scene) : coupleMat=
     result.mat = newMaterial(brdf=brdf, emittedRadiance=emittedRadiance)
 
 
+proc parsePlane*(inputS: var InputStream, scene: Scene) : Plane=
     
+    expectSymbol(inputS, '(')
+
+    let materialName = expectIdentifier(inputS)
+    if not scene.materials.contains(materialName):
+        # We raise the exception here because inputS is pointing to the end of the wrong identifier
+        raise newException(GrammarError.error, " Unknown material " & materialName)
+
+    expectSymbol(inputS, ',')
+    let transformation = parseTransformation(inputS, scene)
+    expectSymbol(inputS, ')')
+
+    return newPlane(transformation=transformation, material=scene.materials[materialName])
+
+proc parseCamera*(inputS: var InputStream, scene: Scene) : Camera=
+    expectSymbol(inputS, '(')
+    let typeKw = expectKeywords(inputS, @[KeywordEnum.PERSPECTIVE, KeywordEnum.ORTHOGONAL])
+    expectSymbol(inputS, ',')
+    let transformation = parseTransformation(inputS, scene)
+    expect_symbol(inputS, ',')
+    let aspectRatio = expectNumber(inputS, scene)
+    expect_symbol(inputS, ',')
+    let distance = expectNumber(inputS, scene)
+    expectSymbol(inputS, ')')
+
+    if typeKw == KeywordEnum.PERSPECTIVE:
+        result = newPerspectiveCamera(screenDistance=distance, aspectRatio=aspectRatio, transformation=transformation)
+    elif typeKw == KeywordEnum.ORTHOGONAL:
+        result = newOrthogonalCamera(aspectRatio=aspectRatio, transformation=transformation)
