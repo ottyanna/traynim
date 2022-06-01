@@ -413,6 +413,23 @@ proc parseVector*(s: var InputStream, scene: Scene) : Vec =
 
     return newVec(x, y, z)
 
+type 
+    coupleMat = object
+        name : string
+        mat : Material
+
+
+proc parseMaterial(s: var InputStream, scene: Scene) : coupleMat=
+    let name = expectIdentifier(s)
+
+    expectSymbol(s, '(')
+    let brdf = parseBrdf(s, scene)
+    expectSymbol(s, ',')
+    let emittedRadiance = parsePigment(s, scene)
+    expectSymbol(s, ')')
+
+    result.name = name
+    result.mat = newMaterial(brdf=brdf, emittedRadiance=emittedRadiance)
 
 
     
