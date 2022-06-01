@@ -343,6 +343,15 @@ proc expectIdentifier*(s: var InputStream): string =
 
     return token.token.idWord
 
+proc parseColor*(InputS: var InputStream, scene: Scene): Color =
+    
+    expectSymbol(InputS, '<')
+    let red = expectNumber(InputS, scene)
+    expectSymbol(InputS, ',')
+    
+    expectSymbol(InputS, '<')
+    let green = expectNumber(InputS, scene)
+    expectSymbol(InputS, ',')
 
 proc parseVector*(s: var InputStream, scene: Scene) : Vec =
     
