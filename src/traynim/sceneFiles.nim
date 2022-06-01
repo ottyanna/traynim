@@ -478,6 +478,19 @@ proc parseMaterial*(s: var InputStream, scene: Scene) : coupleMat=
     result.name = name
     result.mat = newMaterial(brdf=brdf, emittedRadiance=emittedRadiance)
 
+proc parseSphere*(inputS: var InputStream, scene: Scene): Sphere =
+
+    expectSymbol(inputS, '(')
+
+    let materialName = expectIdentifier(inputS)
+    if not scene.materials.contains(materialName):
+        raise newException(GrammarError.error, "Unknown material " & $materialName)
+    
+    expectSymbol(inputS, ',')
+    let transformation = parseTransformation(inputS, scene)
+    expectSymbol(inputS, ')')
+
+    result = newSphere(transformation=transformation, material=scene.materials[materialName])
 
 proc parsePlane*(inputS: var InputStream, scene: Scene) : Plane=
     
