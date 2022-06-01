@@ -247,12 +247,41 @@ type
         materials* : Table[string, materials.Material]
         world*: World
         camera*: Option[cameras.Camera]
-        floatVariable*: Table[string, float]
+        floatVariables*: Table[string, float]
         overriddenVariables*: HashSet[string]
 
 proc newScene*(): Scene =
     result.materials = initTable[string, materials.Material]()
     result.world = newWorld()
     result.camera = none(cameras.Camera)
-    result.floatVariable = initTable[string, float]()
+    result.floatVariables = initTable[string, float]()
     result.overriddenVariables.init()
+
+proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[KeywordEnum]): KeywordEnum =
+    
+    ## Read a token from `inputS` and check that is one of the kewywords in `KeywordEnum`
+    
+    let inputToken = inputS.readToken()
+
+    if not (inputToken.token.kind == keyword):
+        raise newException(GrammarError.error, 
+    $inputS.location & " expected a keyword instead of " & $inputToken.token.kind)
+
+    if not (inputToken.token.keywords in inputKeywords):
+        raise newException(GrammarError.error,
+         $inputS & " expected one of the the keywords" & join(inputKeywords, " , ") & "instead of " & $inputToken.token.keywords)
+    
+    result = inputToken.token.keywords
+
+proc expectString*(inputS: var InputStream): string =
+
+    ## Read a token from `inputS` and check that is a `literalString`
+    
+    let inputToken = inputS.readToken()
+
+    if not (inputToken.token.kind == literalString):
+        raise newException(GrammarError.error, 
+    "got " & $inputToken.token.kind & " instead of a string")
+
+    result = inputToken.token.litString
+    
