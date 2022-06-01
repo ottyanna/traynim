@@ -358,7 +358,20 @@ proc parseColor*(InputS: var InputStream, scene: Scene): Color =
 
     result = newColor(red, green, blue)
 
+proc parseBRDF*(inputS: var InputStream, scene: Scene): BRDF =
+    
+    let brdfKeyword = expectKeywords(inputS, @[KeywordEnum.DIFFUSE, KeywordEnum.SPECULAR])
+    expectSymbol(inputS, '(')
 
+    let pigment = parsePigment(inputS, scene)
+    expectSymbol(inputS, ')')
+
+    if brdfKeyword == KeywordEnum.DIFFUSE:
+        result = newDiffuseBRDF(pigment=pigment)
+    elif brdfKeyword == KeywordEnum.SPECULAR:
+        result = newSpecularBRDF(pigment=pigment)
+    
+    assert false, "This line should be unreachble"
 
 
 
