@@ -247,12 +247,51 @@ type
         materials* : Table[string, materials.Material]
         world*: World
         camera*: Option[cameras.Camera]
-        floatVariable*: Table[string, float]
+        floatVariables*: Table[string, float]
         overriddenVariables*: HashSet[string]
 
 proc newScene*(): Scene =
     result.materials = initTable[string, materials.Material]()
     result.world = newWorld()
     result.camera = none(cameras.Camera)
-    result.floatVariable = initTable[string, float]()
+    result.floatVariables = initTable[string, float]()
     result.overriddenVariables.init()
+
+
+proc expectSymbol*(s: var InputStream, sym: char) =
+    ## Reads a token from `input_file` and check that it matches `symbol`
+    
+    let token = s.readToken()
+
+    if ((token.token.kind != symbol) or (token.token.sym != sym)):
+        raise newException(GrammarError.error, $s.location & " Got " & token.token.sym & " instead of " & sym)
+
+proc expectNumber*(s: var InputStream, scene: Scene) : float=
+    #"""Read a token from `input_file` and check that it is either a literal number or a variable in `scene`.
+    #Return the number as a ``float``."""
+    
+    let token = s.readToken()
+
+    if token.token.kind == literalNumber:
+        return token.token.litNum
+    elif token.token.kind == identifier:
+        let variableName = token.token.idWord
+        if not (scene.floatVariables).contains(variableName):
+            raise newException(GrammarError.error, $s.location & " Unknown variable " & variableName)
+
+        return scene.floatVariables[variableName]
+
+    raise newException(GrammarError.error,$s.location & " Got " & $token.token.kind & " instead of a number")
+
+
+proc expectIdentifier*(s: var InputStream) : string =
+    ## """Read a token from `input_file` and check that it is an identifier.
+    ## Return the name of the identifier."""
+    
+    let token = s.readToken()
+
+    if token.token.kind != identifier:
+        raise newException(GrammarError.error, $s.location & " Got " & $token.token.kind & " instead of an identifier")
+        
+
+    return token.token.idWord
