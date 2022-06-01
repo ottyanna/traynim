@@ -16,7 +16,8 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import streams, strutils
+import std/tables, streams, strutils, options, std/sets
+import materials, world, cameras
 
 const WHITESPACE* = [' ','\t','\n','\r']
 const SYMBOLS* = ['(',')','<','>','[',']','*',',']
@@ -239,3 +240,19 @@ proc readToken*(inputS:var InputStream): Token =
 
     else:
         raise newException(GrammarError.error, $inputS.location & " Invalid character " & ch)
+
+
+type
+    Scene* = object
+        materials* : Table[string, materials.Material]
+        world*: World
+        camera*: Option[cameras.Camera]
+        floatVariable*: Table[string, float]
+        overriddenVariables*: HashSet[string]
+
+proc newScene*(): Scene =
+    result.materials = initTable[string, materials.Material]()
+    result.world = newWorld()
+    result.camera = none(cameras.Camera)
+    result.floatVariable = initTable[string, float]()
+    result.overriddenVariables.init()
