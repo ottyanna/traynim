@@ -19,8 +19,8 @@
 import std/tables, streams, strutils, options, std/sets
 import materials, world, cameras
 
-const WHITESPACE* = [' ','\t','\n','\r']
-const SYMBOLS* = ['(',')','<','>','[',']','*',',']
+const WHITESPACE* = [' ', '\t', '\n', '\r']
+const SYMBOLS* = ['(', ')', '<', '>', '[', ']', '*', ',']
 
 type
     SourceLocation* = object
@@ -30,14 +30,15 @@ type
         ##  (e.g., because the source code was provided as a memory stream, or through a network connection)
         ## - lineNum: number of the line (starting from 1)
         ## colNum: number of the column (starting from 1)
-    
+
         fileName*: string
         lineNum*: int
-        colNum*: int 
+        colNum*: int
 
 
-proc `$`*(loc:SourceLocation):string=
-    result="file " & loc.fileName & "at line " & $loc.lineNum & " and column " & $loc.colNum & ":"
+proc `$`*(loc: SourceLocation): string =
+    result = "file " & loc.fileName & "at line " & $loc.lineNum &
+            " and column " & $loc.colNum & ":"
 
 type
     KeywordEnum* = enum
@@ -62,30 +63,30 @@ type
         FLOAT = "float"
 
 type
-    TokenType* = enum 
+    TokenType* = enum
         keyword,
         identifier,
         literalNumber,
         literalString,
         symbol,
         stopToken
-   
-    TokenValue* = object 
-        case kind* : TokenType
-            of keyword: keywords*: KeywordEnum
-            of identifier: idWord*: string 
-            of literalNumber: litNum* : float
-            of literalString: litString* : string
-            of symbol: sym* : char
-            of stopToken : stop* : char
 
-type 
-    Token* = object
-        token* : TokenValue
-        location* : SourceLocation
+    TokenValue* = object
+        case kind*: TokenType
+            of keyword: keywords*: KeywordEnum
+            of identifier: idWord*: string
+            of literalNumber: litNum*: float
+            of literalString: litString * : string
+            of symbol: sym*: char
+            of stopToken: stop*: char
 
 type
-    GrammarError* = object 
+    Token* = object
+        token*: TokenValue
+        location*: SourceLocation
+
+type
+    GrammarError* = object
         ## An error found by the lexer/parser while reading a scene file
         ## The fields of this type are the following:
         ## - `fileName`: the name of the file, or the empty string if there is no real file
@@ -97,24 +98,25 @@ type
 type
     InputStream* = object
         stream*: Stream
-        location* : SourceLocation
+        location*: SourceLocation
         savedChar*: char
         savedLoc*: SourceLocation
-        tabulations : int
-        savedToken : Token
+        tabulations: int
+        savedToken: Token
 
-proc newInputStream*(stream:Stream, fileName="", tabulations=8): InputStream=
-        
-        result.stream = stream
+proc newInputStream*(stream: Stream, fileName = "",
+        tabulations = 8): InputStream =
 
-        result.location = SourceLocation(fileName:fileName, lineNum:1, colNum:1)
+    result.stream = stream
 
-        result.savedChar = '\0'
-        result.savedLoc = result.location
-        result.tabulations = tabulations
+    result.location = SourceLocation(fileName: fileName, lineNum: 1, colNum: 1)
 
-        
-proc updatePos*(inputS:var InputStream, ch:char)=
+    result.savedChar = '\0'
+    result.savedLoc = result.location
+    result.tabulations = tabulations
+
+
+proc updatePos*(inputS: var InputStream, ch: char) =
     if ch == '\0':
         return
     elif ch == '\n':
@@ -125,59 +127,62 @@ proc updatePos*(inputS:var InputStream, ch:char)=
     else:
         inputS.location.colNum += 1
 
-proc readChar*(inputS: var InputStream):char=
+proc readChar*(inputS: var InputStream): char =
 
     if inputS.savedChar != '\0':
-        result=inputS.savedChar
-        inputS.savedChar='\0'
+        result = inputS.savedChar
+        inputS.savedChar = '\0'
     else:
-        result=inputS.stream.readChar()
+        result = inputS.stream.readChar()
 
     inputS.savedLoc = inputS.location
 
     inputS.updatePos(result)
 
-proc unreadChar*(inputS:var InputStream, ch:char)=
+proc unreadChar*(inputS: var InputStream, ch: char) =
     assert inputS.savedChar == '\0'
-    inputS.savedChar=ch
-    inputS.location=inputS.savedLoc
+    inputS.savedChar = ch
+    inputS.location = inputS.savedLoc
 
-proc skipWhiteSpAndComments*(inputS: var InputStream)=
+proc skipWhiteSpAndComments*(inputS: var InputStream) =
     var ch = inputS.readChar()
 
     while (ch in WHITESPACE) or (ch == '#'):
         if ch == '#':
-            while not (inputS.readChar() in ['\r','\n','\0']):
-                discard  
-        ch=inputS.readChar()
+            while not (inputS.readChar() in ['\r', '\n', '\0']):
+                discard
+        ch = inputS.readChar()
         if ch == '\0':
             return
 
     inputS.unreadChar(ch)
 
 
-proc parseStringToken*(inputS: var InputStream, location: SourceLocation) : Token =
-    
+proc parseStringToken*(inputS: var InputStream,
+        location: SourceLocation): Token =
+
     var token = ""
     while true:
         var ch = inputS.readChar()
-        
+
 
         if ch == '"':
             break
 
-        if ch == '\0': 
+        if ch == '\0':
             raise newException(GrammarError.error, $location & " unterminated string")
 
 
         token = token & ch
 
-    return Token(location : location, token : TokenValue( kind: literalString, litString: token))
+    return Token(location: location, token: TokenValue(kind: literalString,
+            litString: token))
 
-proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token =
-    
-    var token : string = $firstChar
-    var value : float
+proc parseFloatToken(inputS: var InputStream, firstChar: char,
+        tokenLoc: SourceLocation): Token =
+
+    var token: string = $firstChar
+    var value: float
     while true:
         var ch = readChar(inputS)
 
@@ -192,15 +197,17 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char, tokenLoc: SourceL
         except ValueError:
             raise newException(GrammarError.error, $tokenLoc & " " & token & " is an invalid floating-point number.")
 
-    return Token(token : TokenValue(kind : literalNumber, litNum: value), location : tokenLoc)
+    return Token(token: TokenValue(kind: literalNumber, litNum: value),
+            location: tokenLoc)
 
-proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, tokenLoc: SourceLocation) : Token = 
+proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char,
+        tokenLoc: SourceLocation): Token =
 
-    var token : string = $firstChar
-    
+    var token: string = $firstChar
+
     while true:
         var ch = inputS.readChar()
-        
+
         if not (ch.isAlphaNumeric() or ch == '_'):
             inputS.unreadChar(ch)
             break
@@ -208,43 +215,48 @@ proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char, to
         token = token & ch
 
     try:
-        return Token(token : TokenValue(kind : keyword, keywords: parseEnum[KeywordEnum](token)), location: tokenLoc)
-    
-    except ValueError:
-        return Token(token : TokenValue(kind : identifier, idWord : token), location : tokenLoc)
-    
-    
+        return Token(token: TokenValue(kind: keyword, keywords: parseEnum[
+                KeywordEnum](token)), location: tokenLoc)
 
-proc readToken*(inputS:var InputStream): Token =
+    except ValueError:
+        return Token(token: TokenValue(kind: identifier, idWord: token),
+                location: tokenLoc)
+
+
+
+proc readToken*(inputS: var InputStream): Token =
 
     inputS.skipWhiteSpAndComments()
 
     var ch = inputS.readChar()
 
     if ch == '\0':
-        return Token(token : TokenValue(kind: stopToken), location: inputS.location)
+        return Token(token: TokenValue(kind: stopToken),
+                location: inputS.location)
 
-    result.location=inputS.location
+    result.location = inputS.location
 
     if ch in SYMBOLS:
-        return Token(token : TokenValue(kind: symbol, sym: ch),location: inputS.location)
+        return Token(token: TokenValue(kind: symbol, sym: ch),
+                location: inputS.location)
 
     elif ch == '"':
         return inputS.parseStringToken(result.location)
-    
-    elif (ch.isDigit()) or (ch in ['+','-','.']):
-        return inputS.parseFloatToken(ch,result.location)
+
+    elif (ch.isDigit()) or (ch in ['+', '-', '.']):
+        return inputS.parseFloatToken(ch, result.location)
 
     elif (ch.isAlphaAscii()) or (ch == '_'):
-        return inputS.parseKeywordOrIdentifierToken(ch,result.location)
+        return inputS.parseKeywordOrIdentifierToken(ch, result.location)
 
     else:
-        raise newException(GrammarError.error, $inputS.location & " Invalid character " & ch)
+        raise newException(GrammarError.error, $inputS.location &
+                " Invalid character " & ch)
 
 
 type
     Scene* = object
-        materials* : Table[string, materials.Material]
+        materials*: Table[string, materials.Material]
         world*: World
         camera*: Option[cameras.Camera]
         floatVariables*: Table[string, float]
@@ -257,31 +269,76 @@ proc newScene*(): Scene =
     result.floatVariables = initTable[string, float]()
     result.overriddenVariables.init()
 
-proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[KeywordEnum]): KeywordEnum =
-    
+proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[
+        KeywordEnum]): KeywordEnum =
+
     ## Read a token from `inputS` and check that is one of the kewywords in `KeywordEnum`
-    
+
     let inputToken = inputS.readToken()
 
     if not (inputToken.token.kind == keyword):
-        raise newException(GrammarError.error, 
-    $inputS.location & " expected a keyword instead of " & $inputToken.token.kind)
+        raise newException(GrammarError.error,
+    $inputS.location & " expected a keyword instead of " &
+    $inputToken.token.kind)
 
     if not (inputToken.token.keywords in inputKeywords):
         raise newException(GrammarError.error,
-         $inputS & " expected one of the the keywords" & join(inputKeywords, " , ") & "instead of " & $inputToken.token.keywords)
-    
+         $inputS & " expected one of the the keywords" & join(inputKeywords,
+                 " , ") & "instead of " & $inputToken.token.keywords)
+
     result = inputToken.token.keywords
 
 proc expectString*(inputS: var InputStream): string =
 
     ## Read a token from `inputS` and check that is a `literalString`
-    
+
     let inputToken = inputS.readToken()
 
     if not (inputToken.token.kind == literalString):
-        raise newException(GrammarError.error, 
+        raise newException(GrammarError.error,
     "got " & $inputToken.token.kind & " instead of a string")
 
-    result = inputToken.token.literalString
-    
+    result = inputToken.token.litString
+
+
+proc expectSymbol*(s: var InputStream, sym: char) =
+    ## Reads a token from `input_file` and check that it matches `symbol`
+
+    let token = s.readToken()
+
+    if ((token.token.kind != symbol) or (token.token.sym != sym)):
+        raise newException(GrammarError.error, $s.location & " Got " &
+                token.token.sym & " instead of " & sym)
+
+proc expectNumber*(s: var InputStream, scene: Scene): float =
+    #"""Read a token from `input_file` and check that it is either a literal number or a variable in `scene`.
+    #Return the number as a ``float``."""
+
+    let token = s.readToken()
+
+    if token.token.kind == literalNumber:
+        return token.token.litNum
+    elif token.token.kind == identifier:
+        let variableName = token.token.idWord
+        if not (scene.floatVariables).contains(variableName):
+            raise newException(GrammarError.error, $s.location &
+                    " Unknown variable " & variableName)
+
+        return scene.floatVariables[variableName]
+
+    raise newException(GrammarError.error, $s.location & " Got " &
+            $token.token.kind & " instead of a number")
+
+
+proc expectIdentifier*(s: var InputStream): string =
+    ## """Read a token from `input_file` and check that it is an identifier.
+    ## Return the name of the identifier."""
+
+    let token = s.readToken()
+
+    if token.token.kind != identifier:
+        raise newException(GrammarError.error, $s.location & " Got " &
+                $token.token.kind & " instead of an identifier")
+
+
+    return token.token.idWord
