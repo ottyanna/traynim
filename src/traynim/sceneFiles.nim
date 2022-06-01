@@ -23,13 +23,13 @@ const SYMBOLS* = ['(',')','<','>','[',']','*',',']
 
 type
     SourceLocation* = object
-    #[A specific position in a source file
-    This class has the following fields:
-    - file_name: the name of the file, or the empty string if there is no file associated with this location
-      (e.g., because the source code was provided as a memory stream, or through a network connection)
-    - line_num: number of the line (starting from 1)
-    - col_num: number of the column (starting from 1)
-    ]#
+        ## A specific position in a source file
+        ## This class has the following fields:
+        ## - fileName: the name of the file, or the empty string if there is no file associated with this location
+        ##  (e.g., because the source code was provided as a memory stream, or through a network connection)
+        ## - lineNum: number of the line (starting from 1)
+        ## colNum: number of the column (starting from 1)
+    
         fileName*: string
         lineNum*: int
         colNum*: int 
@@ -112,8 +112,7 @@ proc newInputStream*(stream:Stream, fileName="", tabulations=8): InputStream=
         result.savedLoc = result.location
         result.tabulations = tabulations
 
-        #result.savedToken: Option[Token, None] = None
-
+        
 proc updatePos*(inputS:var InputStream, ch:char)=
     if ch == '\0':
         return
