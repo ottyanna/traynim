@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import std/tables, streams, strutils, options, std/sets
-import materials, world, cameras
+import materials, world, cameras, geometry, colors, tranformations, shapes
 
 const WHITESPACE* = [' ', '\t', '\n', '\r']
 const SYMBOLS* = ['(', ')', '<', '>', '[', ']', '*', ',']
@@ -342,3 +342,15 @@ proc expectIdentifier*(s: var InputStream): string =
 
 
     return token.token.idWord
+
+
+proc parseVector(s: InputStream, scene: Scene) : Vec =
+    expect_symbol(input_file, "[")
+    x = expect_number(input_file, scene)
+    expect_symbol(input_file, ",")
+    y = expect_number(input_file, scene)
+    expect_symbol(input_file, ",")
+    z = expect_number(input_file, scene)
+    expect_symbol(input_file, "]")
+
+    return Vec(x, y, z)
