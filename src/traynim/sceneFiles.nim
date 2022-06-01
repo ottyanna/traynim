@@ -102,7 +102,7 @@ type
         savedChar*: char
         savedLoc*: SourceLocation
         tabulations: int
-        savedToken: Token
+        savedToken: Option[Token]
 
 proc newInputStream*(stream: Stream, fileName = "",
         tabulations = 8): InputStream =
@@ -114,6 +114,7 @@ proc newInputStream*(stream: Stream, fileName = "",
     result.savedChar = '\0'
     result.savedLoc = result.location
     result.tabulations = tabulations
+    result.savedToken = none(Token)
 
 
 proc updatePos*(inputS: var InputStream, ch: char) =
@@ -253,6 +254,11 @@ proc readToken*(inputS: var InputStream): Token =
         raise newException(GrammarError.error, $inputS.location &
                 " Invalid character " & ch)
 
+proc unreadToken*(inputS: var InputStream, token: Token) = 
+    
+    assert not inputS.savedToken.isNone
+    inputS.savedToken = some(token)
+    
 
 type
     Scene* = object
@@ -413,6 +419,48 @@ proc parseVector*(s: var InputStream, scene: Scene) : Vec =
 
     return newVec(x, y, z)
 
+proc parseTransformation*(inputS: var InputStream, scene: Scene): Transformation =
+    
+    result = newTransformation()
+
+    while true:
+        let transfKeywords = expectKeywords(inputS,
+            @[KeywordEnum.IDENTITY,
+            KeywordEnum.TRANSLATION,
+            KeywordEnum.ROTATIONX,
+            KeywordEnum.ROTATIONY,
+            KeywordEnum.ROTATIONZ,
+            KeywordEnum.SCALING])
+        
+        if transfKeywords == KeywordEnum.IDENTITY:
+            discard
+        elif transfKeywords == KeywordEnum.TRANSLATION:
+            expectSymbol(inputS, '(')
+            result = result * translation(parseVector(inputS, scene))
+            expectSymbol(inputS, ')')
+        elif transfKeywords == KeywordEnum.ROTATIONX:
+            expectSymbol(inputS, '(')
+            result = result * rotationX(expectNumber(inputS, scene))
+            expectSymbol(inputS, ')')
+        elif transfKeywords == KeywordEnum.ROTATIONY:
+            expectSymbol(inputS, '(')
+            result = result * rotationY(expectNumber(inputS, scene))
+            expectSymbol(inputS, ')')
+        elif transfKeywords == KeywordEnum.ROTATIONZ:
+            expectSymbol(inputS, '(')
+            result = result * rotationZ(expectNumber(inputS, scene))
+            expectSymbol(inputS, ')')
+        elif transfKeywords == KeywordEnum.SCALING:
+            expectSymbol(inputS, '(')
+            result = result * scaling(parseVector(inputS, scene))
+            expectSymbol(inputS, ')')
+        
+        let nextKeyword = inputS.readToken()
+        if nextKeyword.token.kind != symbol or nextKeyword.token.sym != '*':
+            inputS.unreadToken(nextKeyword)
+            break
+    
+    
 
 
     
