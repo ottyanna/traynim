@@ -4,7 +4,7 @@
 <h1 align="center"> TrayNim </h1>
 <h3 align="center"> A simple ray tracer written in Nim </h3>  
 
-</br>
+
 
 <p align="center"> 
   <img src="img/traynim_banner.gif" alt="Sample signal" width="80%" height="80%">
