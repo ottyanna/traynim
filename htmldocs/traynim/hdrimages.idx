@@ -1,0 +1,15 @@
+HdrImage	traynim/hdrimages.html#HdrImage	hdrimages: HdrImage	
+newHDRImage	traynim/hdrimages.html#newHDRImage,int,int	hdrimages: newHDRImage(width, height: int): HdrImage	
+validCoordinates	traynim/hdrimages.html#validCoordinates,HdrImage,int,int	hdrimages: validCoordinates(img: HdrImage; x, y: int): bool	
+pixelOffset	traynim/hdrimages.html#pixelOffset,HdrImage,int,int	hdrimages: pixelOffset(img: HdrImage; x, y: int): int	
+getPixel	traynim/hdrimages.html#getPixel,HdrImage,int,int	hdrimages: getPixel(img: HdrImage; x, y: int): colors.Color	
+setPixel	traynim/hdrimages.html#setPixel,HdrImage,int,int,	hdrimages: setPixel(img: var HdrImage; x, y: int; newColor: colors.Color)	
+InvalidPfmFileFormat	traynim/hdrimages.html#InvalidPfmFileFormat	hdrimages: InvalidPfmFileFormat	
+parseImgSize	traynim/hdrimages.html#parseImgSize,string	hdrimages: parseImgSize(line: string): tuple	
+parseEndianness	traynim/hdrimages.html#parseEndianness,string	hdrimages: parseEndianness(line: string): Endianness	
+readPfmImage	traynim/hdrimages.html#readPfmImage,Stream	hdrimages: readPfmImage(stream: Stream): HdrImage	
+writePfmImage	traynim/hdrimages.html#writePfmImage,HdrImage,Stream	hdrimages: writePfmImage(img: HdrImage; stream: Stream; endianness = littleEndian)	
+averageLuminosity	traynim/hdrimages.html#averageLuminosity,HdrImage,float	hdrimages: averageLuminosity(img: HdrImage; delta = 1e-10): float32	
+normalizeImage	traynim/hdrimages.html#normalizeImage,HdrImage,float32	hdrimages: normalizeImage(img: var HdrImage; factor: float32;\n               luminosity = averageLuminosity(img))	
+clampImage	traynim/hdrimages.html#clampImage,HdrImage	hdrimages: clampImage(img: var HdrImage)	
+writeLdrImage	traynim/hdrimages.html#writeLdrImage,HdrImage,string,float	hdrimages: writeLdrImage(img: HdrImage; outputPath: string; gamma = 1.0)	

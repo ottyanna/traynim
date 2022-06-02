@@ -1,0 +1,5 @@
+Ray	traynim/ray.html#Ray	ray: Ray	
+newRay	traynim/ray.html#newRay,Point,Vec,float,int	ray: newRay(origin: Point; dir: Vec; tmin = 0.00001; tmax = Inf; depth = 0): Ray	
+areClose	traynim/ray.html#areClose,Ray,Ray,float	ray: areClose(a, b: Ray; epsilon = 0.00001): bool	
+at	traynim/ray.html#at,Ray,float64	ray: at(ray: Ray; t: float64): Point	
+transform	traynim/ray.html#transform,Ray,Transformation	ray: transform(ray: Ray; transformation: Transformation): Ray	
