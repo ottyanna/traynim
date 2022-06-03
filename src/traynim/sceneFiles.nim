@@ -382,20 +382,20 @@ proc parsePigment*(s: var InputStream, scene: Scene) : Pigment =
     expectSymbol(s, '(')
     if keyword == KeywordEnum.UNIFORM:
         let color = parseColor(s, scene)
-        return newUniformPigment(color=color)
+        result = newUniformPigment(color=color)
     elif keyword == KeywordEnum.CHECKERED:
         let color1 = parseColor(s, scene)
         expectSymbol(s, ',')
         let color2 = parseColor(s, scene)
         expectSymbol(s, ',')
         let numOfSteps = int(expectNumber(s, scene))
-        return newCheckeredPigment(color1=color1, color2=color2, stepsNum=numOfSteps)
+        result = newCheckeredPigment(color1=color1, color2=color2, stepsNum=numOfSteps)
     elif keyword == KeywordEnum.IMAGE:
         let fileName = expectString(s)
         let stream = newFileStream(fileName,fmRead)
         let image = readPfmImage(stream)
         stream.close()
-        return newImagePigment(image=image)
+        result = newImagePigment(image=image)
     else:
         assert false, "This line should be unreachable"
 
@@ -404,8 +404,8 @@ proc parsePigment*(s: var InputStream, scene: Scene) : Pigment =
 proc parseBRDF*(inputS: var InputStream, scene: Scene): BRDF =
     
     let brdfKeyword = expectKeywords(inputS, @[KeywordEnum.DIFFUSE, KeywordEnum.SPECULAR])
+    
     expectSymbol(inputS, '(')
-
     let pigment = parsePigment(inputS, scene)
     expectSymbol(inputS, ')')
 
