@@ -23,7 +23,10 @@
 Traynim is a CLI program written in Nim that lets you create photorealistic images using spheres and planes. 
 It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 
-You can find [API docs](https://github.com/ottyanna/traynim/blob/gh-pages/htmldocs/theindex.html).
+You can find 
+<a href="htmldocs/theindex.html">API</a>
+
+[API docs](https://github.com/ottyanna/traynim/blob/gh-pages/htmldocs/theindex.html).
 
 <html>
 <meta http-equiv="refresh" content="0; url=https://github.com/ottyanna/traynim/blob/gh-pages/htmldocs/theindex.html">
