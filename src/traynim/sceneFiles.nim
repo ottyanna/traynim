@@ -528,12 +528,13 @@ proc parseCamera*(inputS: var InputStream, scene: Scene) : Camera=
     elif typeKw == KeywordEnum.ORTHOGONAL:
         result = newOrthogonalCamera(aspectRatio=aspectRatio, transformation=transformation)
 
-proc parseScene*(inputS: var InputStream, variables: Table[string, float]): Scene =
+proc parseScene*(inputS: var InputStream, variables: Table[string, float] = initTable[string,float]()): Scene =
     
     ## Read a scene description from a stream and return a `Scene` object
     var scene = newScene()
     
     scene.floatVariables = variables
+
     for k in variables.keys:
         scene.overriddenVariables.incl(k)
     
@@ -544,7 +545,7 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float]): Scen
             break
 
         if not (what.token.kind == keyword):
-            raise newException(GrammarError.error, $what.location & "expected a keyword instead of " & 
+            raise newException(GrammarError.error, $what.location & " expected a keyword instead of " & 
             $what.token.kind)    
         
         if what.token.keywords == KeywordEnum.FLOAT:
