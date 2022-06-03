@@ -16,7 +16,7 @@
 #You should have received a copy of the GNU General Public License
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-import std/tables, streams, strutils, options, std/sets
+import std/tables, streams, strutils, options, std/sets, hashes
 import materials, world, cameras, geometry, colors, transformations, shapes, hdrimages
 
 const WHITESPACE* = [' ', '\t', '\n', '\r']
@@ -37,7 +37,7 @@ type
 
 
 proc `$`*(loc: SourceLocation): string =
-    result = "file " & loc.fileName & "at line " & $loc.lineNum &
+    result = "file " & loc.fileName & " at line " & $loc.lineNum &
             " and column " & $loc.colNum & ":"
 
 type
@@ -227,6 +227,11 @@ proc parseKeywordOrIdentifierToken (inputS: var InputStream, firstChar: char,
 
 proc readToken*(inputS: var InputStream): Token =
 
+    if inputS.savedToken.isSome:
+        result = inputS.savedToken.get
+        inputS.savedToken = none(Token)
+        return result
+          
     inputS.skipWhiteSpAndComments()
 
     var ch = inputS.readChar()
@@ -273,7 +278,7 @@ proc newScene*(): Scene =
     result.world = newWorld()
     result.camera = none(cameras.Camera)
     result.floatVariables = initTable[string, float]()
-    result.overriddenVariables.init()
+    result.overriddenVariables = initHashSet[string]()
 
 proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[
         KeywordEnum]): KeywordEnum =
@@ -522,3 +527,61 @@ proc parseCamera*(inputS: var InputStream, scene: Scene) : Camera=
         result = newPerspectiveCamera(screenDistance=distance, aspectRatio=aspectRatio, transformation=transformation)
     elif typeKw == KeywordEnum.ORTHOGONAL:
         result = newOrthogonalCamera(aspectRatio=aspectRatio, transformation=transformation)
+
+proc parseScene*(inputS: var InputStream, variables: Table[string, float]): Scene =
+    
+    ## Read a scene description from a stream and return a `Scene` object
+    var scene = newScene()
+    
+    scene.floatVariables = variables
+    for k in variables.keys:
+        scene.overriddenVariables.incl(k)
+    
+    while true:
+        var what = inputS.readToken()
+        
+        if what.token.kind == stopToken:
+            break
+
+        if not (what.token.kind == keyword):
+            raise newException(GrammarError.error, $what.location & "expected a keyword instead of " & 
+            $what.token.kind)    
+        
+        if what.token.keywords == KeywordEnum.FLOAT:
+            let variableName = expectIdentifier(inputS)
+
+            #Save this for the error message
+            let variableLoc = inputS.location
+
+            expectSymbol(inputS,'(')
+            let variableValue = expectNumber(inputS, scene)
+            expectSymbol(inputS, ')')
+
+            if (scene.floatVariables.contains(variableName)) and not (scene.overriddenVariables.contains(variableName)):
+                raise newException(GrammarError.error, $variableLoc & "\n" & $variableName & " cannot be redefined")
+
+            if not (scene.overriddenVariables.contains(variableName)):
+
+                # Only define the variable if it was not defined by the user *outside* the scene file
+                # (e.g., from the command line)
+                scene.floatVariables[variableName] = variableValue
+
+            elif what.token.keywords == KeywordEnum.SPHERE:
+                scene.world.addShape(parseSphere(inputS, scene))
+            
+            elif what.token.keywords == KeywordEnum.PLANE:
+                scene.world.addShape(parsePlane(inputS, scene))
+            
+            elif what.token.keywords == KeywordEnum.CAMERA:
+                if scene.camera.isSome:
+                    raise newException(GrammarError.error, 
+                                        $what.location & " You cannot define more than one camera")
+            
+                scene.camera = some(parseCamera(inputS, scene))
+            
+            elif what.token.keywords == KeywordEnum.MATERIAL:
+
+                let mat = parseMaterial(inputS, scene)
+                scene.materials[mat.name] = mat.mat
+
+    result = scene
