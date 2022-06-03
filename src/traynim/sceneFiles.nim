@@ -363,15 +363,13 @@ proc parseColor*(InputS: var InputStream, scene: Scene): Color =
     echo "r:***", red
     expectSymbol(InputS, ',')
     
-    expectSymbol(InputS, '<')
     let green = expectNumber(InputS, scene)
     echo "g:***", green
     expectSymbol(InputS, ',')
 
-    expectSymbol(InputS, '<')
     let blue = expectNumber(InputS, scene)
     echo "blue:***", blue
-    expectSymbol(InputS, ',')
+    expectSymbol(InputS, '>')
 
     result = newColor(red, green, blue)
 
