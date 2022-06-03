@@ -310,10 +310,6 @@ proc expectSymbol*(s: var InputStream, sym: char) =
 
     let token = s.readToken()
 
-    echo token
-
-    echo "from expectsymbol:*** " , token
-
     if token.token.kind != symbol:
         raise newException(GrammarError, $s.location & " Got " & $token.token.kind & " instead of a symbol")
 
@@ -360,15 +356,12 @@ proc parseColor*(InputS: var InputStream, scene: Scene): Color =
     
     expectSymbol(InputS, '<')
     let red = expectNumber(InputS, scene)
-    echo "r:***", red
     expectSymbol(InputS, ',')
     
     let green = expectNumber(InputS, scene)
-    echo "g:***", green
     expectSymbol(InputS, ',')
 
     let blue = expectNumber(InputS, scene)
-    echo "blue:***", blue
     expectSymbol(InputS, '>')
 
     result = newColor(red, green, blue)
@@ -544,8 +537,6 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
     
     while true:
         var what = inputS.readToken()
-
-        echo "what****", what
         
         if what.token.kind == stopToken:
             break

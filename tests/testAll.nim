@@ -23,7 +23,9 @@ import
     streams,
     strutils,
     sugar,
-    unittest
+    unittest,
+    tables,
+    typetraits
 
 import
     cameras, 
@@ -1051,10 +1053,81 @@ suite "test sceneFiles.nim":
         testToken = inputFile.readToken()
         assert testToken.token.kind == stopToken
         
+    test "test parser":
 
+        const testString = """
+            float clock(150)
 
+            material skyMaterial(
+                diffuse(uniform(<0, 0, 0>)),
+                uniform(<0.7, 0.5, 1>)
+            )
 
+            # Here is a comment
 
+            material groundMaterial(
+                diffuse(checkered(<0.3, 0.5, 0.1>,
+                                  <0.1, 0.2, 0.5>, 4)),
+                uniform(<0, 0, 0>)
+            )
+
+            material sphereMaterial(
+                specular(uniform(<0.5, 0.5, 0.5>)),
+                uniform(<0, 0, 0>)
+            )
+
+            plane (skyMaterial, translation([0, 0, 100]) * rotation_y(clock))
+            plane (groundMaterial, identity)
+
+            sphere(sphereMaterial, translation([0, 0, 1]))
+
+            camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)"""
+
+        var inputFile = newInputStream(newStringStream(testString))
+
+        let scene = parseScene(inputFile)
+
+        # Check that the float variables are ok
+
+        assert scene.floatVariables.len == 1
+        assert "clock" in scene.floatVariables
+        assert scene.floatVariables["clock"] == 150.0
+
+        # Check that the materials are ok
+
+        assert len(scene.materials) == 3
+        assert "sphereMaterial" in scene.materials
+        assert "skyMaterial" in scene.materials
+        assert "groundMaterial" in scene.materials
+
+        let sphereMaterial = scene.materials["sphereMaterial"]
+        let skyMaterial = scene.materials["skyMaterial"]
+        let groundMaterial = scene.materials["groundMaterial"]
+
+        echo $skyMaterial.brdf.typeof
+        echo $skyMaterial.brdf.pigment.typeof
+
+        #assert skyMaterial.brdf is DiffuseBRDF
+        #assert $skyMaterial.brdf.pigment.typeof == "UniformPigment"
+        #assert skyMaterial.brdf.pigment.color.areClose(NewColor(0, 0, 0))
+
+        #[assert isinstance(ground_material.brdf, DiffuseBRDF)
+        assert isinstance(ground_material.brdf.pigment, CheckeredPigment)
+        assert ground_material.brdf.pigment.color1.is_close(Color(0.3, 0.5, 0.1))
+        assert ground_material.brdf.pigment.color2.is_close(Color(0.1, 0.2, 0.5))
+        assert ground_material.brdf.pigment.num_of_steps == 4
+
+        assert isinstance(sphere_material.brdf, SpecularBRDF)
+        assert isinstance(sphere_material.brdf.pigment, UniformPigment)
+        assert sphere_material.brdf.pigment.color.is_close(Color(0.5, 0.5, 0.5))
+
+        assert isinstance(sky_material.emitted_radiance, UniformPigment)
+        assert sky_material.emitted_radiance.color.is_close(Color(0.7, 0.5, 1.0))
+        assert isinstance(ground_material.emitted_radiance, UniformPigment)
+        assert ground_material.emitted_radiance.color.is_close(Color(0, 0, 0))
+        assert isinstance(sphere_material.emitted_radiance, UniformPigment)
+        assert sphere_material.emitted_radiance.color.is_close(Color(0, 0, 0))
+]#
 
 
             
