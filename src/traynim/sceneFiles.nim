@@ -534,6 +534,8 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
     
     while true:
         var what = inputS.readToken()
+
+        echo what
         
         if what.token.kind == stopToken:
             break
@@ -543,6 +545,7 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
             $what.token.kind)    
         
         if what.token.keywords == KeywordEnum.FLOAT:
+
             let variableName = expectIdentifier(inputS)
 
             #Save this for the error message
@@ -561,22 +564,21 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
                 # (e.g., from the command line)
                 scene.floatVariables[variableName] = variableValue
 
-            elif what.token.keywords == KeywordEnum.SPHERE:
-                scene.world.addShape(parseSphere(inputS, scene))
-            
-            elif what.token.keywords == KeywordEnum.PLANE:
-                scene.world.addShape(parsePlane(inputS, scene))
-            
-            elif what.token.keywords == KeywordEnum.CAMERA:
-                if scene.camera.isSome:
-                    raise newException(GrammarError, 
-                                        $what.location & " You cannot define more than one camera")
-            
-                scene.camera = some(parseCamera(inputS, scene))
-            
-            elif what.token.keywords == KeywordEnum.MATERIAL:
-
-                let mat = parseMaterial(inputS, scene)
-                scene.materials[mat.name] = mat.mat
+        elif what.token.keywords == KeywordEnum.SPHERE:
+            scene.world.addShape(parseSphere(inputS, scene))
+        
+        elif what.token.keywords == KeywordEnum.PLANE:
+            scene.world.addShape(parsePlane(inputS, scene))
+        
+        elif what.token.keywords == KeywordEnum.CAMERA:
+            if scene.camera.isSome:
+                raise newException(GrammarError, 
+                                    $what.location & " You cannot define more than one camera")
+        
+            scene.camera = some(parseCamera(inputS, scene))
+        
+        elif what.token.keywords == KeywordEnum.MATERIAL:
+            let mat = parseMaterial(inputS, scene)
+            scene.materials[mat.name] = mat.mat
 
     result = scene
