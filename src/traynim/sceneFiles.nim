@@ -52,7 +52,7 @@ type
         CHECKERED = "checkered"
         IMAGE = "image"
         IDENTITY = "identity"
-        TRANSLATION = "traslation"
+        TRANSLATION = "translation"
         ROTATIONX = "rotationX"
         ROTATIONY = "rotationY"
         ROTATIONZ = "rotationZ"
