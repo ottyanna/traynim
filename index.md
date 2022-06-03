@@ -28,10 +28,6 @@ You can find
 
 [API docs](https://github.com/ottyanna/traynim/blob/gh-pages/htmldocs/theindex.html).
 
-<html>
-<meta http-equiv="refresh" content="0; url=https://github.com/ottyanna/traynim/blob/gh-pages/htmldocs/theindex.html">
-</html>
-
 ## Demo-Preview
 
 Traynim can produce images like this with four different renderers: path tracer, on/off, point light and flat renderer respectively.
