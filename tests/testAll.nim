@@ -1107,7 +1107,7 @@ suite "test sceneFiles.nim":
         echo $skyMaterial.brdf.typeof
         echo $skyMaterial.brdf.pigment.typeof
 
-        #assert skyMaterial.brdf is DiffuseBRDF
+        assert skyMaterial.brdf of DiffuseBRDF
         #assert $skyMaterial.brdf.pigment.typeof == "UniformPigment"
         #assert skyMaterial.brdf.pigment.color.areClose(NewColor(0, 0, 0))
 
@@ -1130,6 +1130,23 @@ suite "test sceneFiles.nim":
 ]#
 
 
+        # Check that the shapes are ok
+
+        assert len(scene.world.shapes) == 3
+        #echo $scene.world.shapes[0].typeof
+        #assert $scene.world.shapes[0].typeof == "Plane" 
+        assert scene.world.shapes[0].transformation.areClose(translation(newVec(0, 0, 100)) * rotationY(150.0))
+        #assert isinstance(scene.world.shapes[1], Plane)
+        assert scene.world.shapes[1].transformation.areClose(newTransformation())
+        #assert isinstance(scene.world.shapes[2], Sphere)
+        #assert scene.world.shapes[2].transformation.areClose(translation(newVec(0, 0, 1)))
+ 
+        # Check that the camera is ok
+
+        #assert isinstance(scene.camera, PerspectiveCamera)
+        #assert scene.camera.get.transformation.areClose(rotationZ(30) * translation(newVec(-4, 0, 1)))
+        assert areClose(scene.camera.get.aspectRatio,1.0)
+        #assert areClose(scene.camera.get.screenDistance,2.0)
             
 
         
