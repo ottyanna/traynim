@@ -85,15 +85,9 @@ type
         token*: TokenValue
         location*: SourceLocation
 
-type
-    GrammarError* = object
-        ## An error found by the lexer/parser while reading a scene file
-        ## The fields of this type are the following:
-        ## - `fileName`: the name of the file, or the empty string if there is no real file
-        ## - `lineNum`: the line number where the error was discovered (starting from 1)
-        ## - `colNum`: the column number where the error was discovered (starting from 1)
-        error: CatchableError
-        location: SourceLocation
+type GrammarError* = object of CatchableError
+    ## An error found by the lexer/parser while reading a scene file
+        
 
 type
     InputStream* = object
@@ -171,7 +165,7 @@ proc parseStringToken*(inputS: var InputStream,
             break
 
         if ch == '\0':
-            raise newException(GrammarError.error, $location & " unterminated string")
+            raise newException(GrammarError, $location & " unterminated string")
 
 
         token = token & ch
@@ -196,7 +190,7 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char,
         try:
             value = token.parseFloat
         except ValueError:
-            raise newException(GrammarError.error, $tokenLoc & " " & token & " is an invalid floating-point number.")
+            raise newException(GrammarError, $tokenLoc & " " & token & " is an invalid floating-point number.")
 
     return Token(token: TokenValue(kind: literalNumber, litNum: value),
             location: tokenLoc)
@@ -256,7 +250,7 @@ proc readToken*(inputS: var InputStream): Token =
         return inputS.parseKeywordOrIdentifierToken(ch, result.location)
 
     else:
-        raise newException(GrammarError.error, $inputS.location &
+        raise newException(GrammarError, $inputS.location &
                 " Invalid character " & ch)
 
 proc unreadToken*(inputS: var InputStream, token: Token) = 
@@ -288,11 +282,11 @@ proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[
     let inputToken = inputS.readToken()
 
     if not (inputToken.token.kind == keyword):
-        raise newException(GrammarError.error,
+        raise newException(GrammarError,
     $inputS.location & " expected a keyword instead of " & $inputToken.token.kind)
 
     if not (inputToken.token.keywords in inputKeywords):
-        raise newException(GrammarError.error,
+        raise newException(GrammarError,
          $inputS & " expected one of the the keywords" & join(inputKeywords,
                  " , ") & "instead of " & $inputToken.token.keywords)
 
@@ -305,7 +299,7 @@ proc expectString*(inputS: var InputStream): string =
     let inputToken = inputS.readToken()
 
     if not (inputToken.token.kind == literalString):
-        raise newException(GrammarError.error,
+        raise newException(GrammarError,
     "got " & $inputToken.token.kind & " instead of a string")
 
     result = inputToken.token.litString
@@ -317,7 +311,7 @@ proc expectSymbol*(s: var InputStream, sym: char) =
     let token = s.readToken()
 
     if ((token.token.kind != symbol) or (token.token.sym != sym)):
-        raise newException(GrammarError.error, $s.location & " Got " &
+        raise newException(GrammarError, $s.location & " Got " &
                 token.token.sym & " instead of " & sym)
 
 proc expectNumber*(s: var InputStream, scene: Scene): float =
@@ -331,12 +325,12 @@ proc expectNumber*(s: var InputStream, scene: Scene): float =
     elif token.token.kind == identifier:
         let variableName = token.token.idWord
         if not (scene.floatVariables).contains(variableName):
-            raise newException(GrammarError.error, $s.location &
+            raise newException(GrammarError, $s.location &
                     " Unknown variable " & variableName)
 
         return scene.floatVariables[variableName]
 
-    raise newException(GrammarError.error, $s.location & " Got " &
+    raise newException(GrammarError, $s.location & " Got " &
             $token.token.kind & " instead of a number")
 
 
@@ -347,7 +341,7 @@ proc expectIdentifier*(s: var InputStream): string =
     let token = s.readToken()
 
     if token.token.kind != identifier:
-        raise newException(GrammarError.error, $s.location & " Got " &
+        raise newException(GrammarError, $s.location & " Got " &
                 $token.token.kind & " instead of an identifier")
 
 
@@ -489,7 +483,7 @@ proc parseSphere*(inputS: var InputStream, scene: Scene): Sphere =
 
     let materialName = expectIdentifier(inputS)
     if not scene.materials.contains(materialName):
-        raise newException(GrammarError.error, "Unknown material " & $materialName)
+        raise newException(GrammarError, "Unknown material " & $materialName)
     
     expectSymbol(inputS, ',')
     let transformation = parseTransformation(inputS, scene)
@@ -504,7 +498,7 @@ proc parsePlane*(inputS: var InputStream, scene: Scene) : Plane=
     let materialName = expectIdentifier(inputS)
     if not scene.materials.contains(materialName):
         # We raise the exception here because inputS is pointing to the end of the wrong identifier
-        raise newException(GrammarError.error, " Unknown material " & materialName)
+        raise newException(GrammarError, " Unknown material " & materialName)
 
     expectSymbol(inputS, ',')
     let transformation = parseTransformation(inputS, scene)
@@ -545,7 +539,7 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
             break
 
         if not (what.token.kind == keyword):
-            raise newException(GrammarError.error, $what.location & " expected a keyword instead of " & 
+            raise newException(GrammarError, $what.location & " expected a keyword instead of " & 
             $what.token.kind)    
         
         if what.token.keywords == KeywordEnum.FLOAT:
@@ -559,7 +553,7 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
             expectSymbol(inputS, ')')
 
             if (scene.floatVariables.contains(variableName)) and not (scene.overriddenVariables.contains(variableName)):
-                raise newException(GrammarError.error, $variableLoc & "\n" & $variableName & " cannot be redefined")
+                raise newException(GrammarError, $variableLoc & "\n" & $variableName & " cannot be redefined")
 
             if not (scene.overriddenVariables.contains(variableName)):
 
@@ -575,7 +569,7 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
             
             elif what.token.keywords == KeywordEnum.CAMERA:
                 if scene.camera.isSome:
-                    raise newException(GrammarError.error, 
+                    raise newException(GrammarError, 
                                         $what.location & " You cannot define more than one camera")
             
                 scene.camera = some(parseCamera(inputS, scene))
