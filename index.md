@@ -23,14 +23,10 @@
 Traynim is a CLI program written in Nim that lets you create photorealistic images using spheres and planes. 
 It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 
-You can find 
-<a href="htmldocs/theindex.html">API</a>
-
-[API docs](https://github.com/ottyanna/traynim/blob/gh-pages/htmldocs/theindex.html).
 
 ## Demo-Preview
 
-Traynim can produce images like this with four different renderers: path tracer, on/off, point light and flat renderer respectively.
+Traynim can produce images like these with four different renderers: path tracer, on/off, point light and flat renderer respectively.
 
 <p align="center"> 
   <img src="img/demo/Antialiasing/pathTracingr4s16.png" alt="Sample signal" width="45%" height="50%">
@@ -50,6 +46,7 @@ Traynim can produce images like this with four different renderers: path tracer,
 - [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
+- [Documentation](#documentation)
 - [Contribute](#contribute)
 - [Release History](#release-history)
 - [License](#license)
@@ -163,6 +160,11 @@ As you can see the noise is sensibly reduced by increasing the samplesPerPixel.
 `-g=2.2` | ![](img/pfm2formatExamples/sample2.20.15.png) | ![](img/pfm2formatExamples/sample2.20.30.png)  |  ![](img/pfm2formatExamples/sample2.20.50.png)
 
 You can compare different values for `gamma` and `factor` tweaking the bash script in [img/pfm2formatExamples](img/pfm2formatExamples/) folder<sup id="a1">[1](#f1)</sup>
+
+## Documentation
+[(Back to top)](#table-of-contents)
+
+<a href="htmldocs/theindex.html">Here</a> you can find the whole source documentation.
 
 ## Contribute
 [(Back to top)](#table-of-contents)
