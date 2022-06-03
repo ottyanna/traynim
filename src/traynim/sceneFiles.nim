@@ -255,7 +255,7 @@ proc readToken*(inputS: var InputStream): Token =
 
 proc unreadToken*(inputS: var InputStream, token: Token) = 
     
-    assert not inputS.savedToken.isNone
+    assert inputS.savedToken.isNone
     inputS.savedToken = some(token)
     
 
