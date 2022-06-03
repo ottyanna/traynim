@@ -493,7 +493,7 @@ proc parseSphere*(inputS: var InputStream, scene: Scene): Sphere =
 
     let materialName = expectIdentifier(inputS)
     if not scene.materials.contains(materialName):
-        raise newException(GrammarError, "Unknown material " & $materialName)
+        raise newException(GrammarError, $inputS.location & "Unknown material " & $materialName)
     
     expectSymbol(inputS, ',')
     let transformation = parseTransformation(inputS, scene)
@@ -508,7 +508,7 @@ proc parsePlane*(inputS: var InputStream, scene: Scene) : Plane=
     let materialName = expectIdentifier(inputS)
     if not scene.materials.contains(materialName):
         # We raise the exception here because inputS is pointing to the end of the wrong identifier
-        raise newException(GrammarError, " Unknown material " & materialName)
+        raise newException(GrammarError,$inputS.location &  " Unknown material " & materialName)
 
     expectSymbol(inputS, ',')
     let transformation = parseTransformation(inputS, scene)
