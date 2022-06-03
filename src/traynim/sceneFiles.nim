@@ -517,9 +517,9 @@ proc parseCamera*(inputS: var InputStream, scene: Scene) : Camera=
     let typeKw = expectKeywords(inputS, @[KeywordEnum.PERSPECTIVE, KeywordEnum.ORTHOGONAL])
     expectSymbol(inputS, ',')
     let transformation = parseTransformation(inputS, scene)
-    expect_symbol(inputS, ',')
+    expectSymbol(inputS, ',')
     let aspectRatio = expectNumber(inputS, scene)
-    expect_symbol(inputS, ',')
+    expectSymbol(inputS, ',')
     let distance = expectNumber(inputS, scene)
     expectSymbol(inputS, ')')
 
