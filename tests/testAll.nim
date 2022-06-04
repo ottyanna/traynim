@@ -1139,12 +1139,12 @@ suite "test sceneFiles.nim":
         #assert isinstance(scene.world.shapes[1], Plane)
         assert scene.world.shapes[1].transformation.areClose(newTransformation())
         #assert isinstance(scene.world.shapes[2], Sphere)
-        #assert scene.world.shapes[2].transformation.areClose(translation(newVec(0, 0, 1)))
- 
+        assert scene.world.shapes[2].transformation.areClose(translation(newVec(0, 0, 1)))
+
         # Check that the camera is ok
 
         #assert isinstance(scene.camera, PerspectiveCamera)
-        #assert scene.camera.get.transformation.areClose(rotationZ(30) * translation(newVec(-4, 0, 1)))
+        assert scene.camera.get.transformation.areClose(rotationZ(30) * translation(newVec(-4, 0, 1)))
         assert areClose(scene.camera.get.aspectRatio,1.0)
         #assert areClose(scene.camera.get.screenDistance,2.0)
             

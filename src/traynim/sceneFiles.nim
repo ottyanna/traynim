@@ -178,6 +178,7 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char,
 
     var token: string = $firstChar
     var value: float
+
     while true:
         var ch = readChar(inputS)
 
@@ -187,10 +188,10 @@ proc parseFloatToken(inputS: var InputStream, firstChar: char,
 
         token = token & ch
 
-        try:
-            value = token.parseFloat
-        except ValueError:
-            raise newException(GrammarError, $tokenLoc & " " & token & " is an invalid floating-point number.")
+    try:
+        value = token.parseFloat
+    except ValueError:
+        raise newException(GrammarError, $tokenLoc & " " & token & " is an invalid floating-point number.")
 
     return Token(token: TokenValue(kind: literalNumber, litNum: value),
             location: tokenLoc)
@@ -411,6 +412,7 @@ proc parseBRDF*(inputS: var InputStream, scene: Scene): BRDF =
 
 proc parseVector*(s: var InputStream, scene: Scene) : Vec =
 
+
     expectSymbol(s, '[')
     let x = expectNumber(s, scene)
     expectSymbol(s, ',')
@@ -424,7 +426,7 @@ proc parseVector*(s: var InputStream, scene: Scene) : Vec =
 proc parseTransformation*(inputS: var InputStream, scene: Scene): Transformation =
     
     result = newTransformation()
-
+    
     while true:
         let transfKeywords = expectKeywords(inputS,
             @[KeywordEnum.IDENTITY,
@@ -438,7 +440,9 @@ proc parseTransformation*(inputS: var InputStream, scene: Scene): Transformation
             discard
         elif transfKeywords == KeywordEnum.TRANSLATION:
             expectSymbol(inputS, '(')
+
             result = result * translation(parseVector(inputS, scene))
+
             expectSymbol(inputS, ')')
         elif transfKeywords == KeywordEnum.ROTATIONX:
             expectSymbol(inputS, '(')
