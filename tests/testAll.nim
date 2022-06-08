@@ -24,8 +24,7 @@ import
     strutils,
     sugar,
     unittest,
-    tables,
-    typetraits
+    tables
 
 import
     cameras, 
@@ -1104,49 +1103,49 @@ suite "test sceneFiles.nim":
         let skyMaterial = scene.materials["skyMaterial"]
         let groundMaterial = scene.materials["groundMaterial"]
 
-        echo $skyMaterial.brdf.typeof
-        echo $skyMaterial.brdf.pigment.typeof
-
+        assert not (skyMaterial.brdf of SpecularBRDF)
         assert skyMaterial.brdf of DiffuseBRDF
-        #assert $skyMaterial.brdf.pigment.typeof == "UniformPigment"
-        #assert skyMaterial.brdf.pigment.color.areClose(NewColor(0, 0, 0))
+        assert DiffuseBRDF(skyMaterial.brdf).pigment of UniformPigment
+        assert (DiffuseBRDF(skyMaterial.brdf)).pigment.UniformPigment.color.areClose(black)
+        assert (DiffuseBRDF(skyMaterial.brdf)).pigment.UniformPigment.color.areClose(black)
 
-        #[assert isinstance(ground_material.brdf, DiffuseBRDF)
-        assert isinstance(ground_material.brdf.pigment, CheckeredPigment)
-        assert ground_material.brdf.pigment.color1.is_close(Color(0.3, 0.5, 0.1))
-        assert ground_material.brdf.pigment.color2.is_close(Color(0.1, 0.2, 0.5))
-        assert ground_material.brdf.pigment.num_of_steps == 4
 
-        assert isinstance(sphere_material.brdf, SpecularBRDF)
-        assert isinstance(sphere_material.brdf.pigment, UniformPigment)
-        assert sphere_material.brdf.pigment.color.is_close(Color(0.5, 0.5, 0.5))
 
-        assert isinstance(sky_material.emitted_radiance, UniformPigment)
-        assert sky_material.emitted_radiance.color.is_close(Color(0.7, 0.5, 1.0))
-        assert isinstance(ground_material.emitted_radiance, UniformPigment)
-        assert ground_material.emitted_radiance.color.is_close(Color(0, 0, 0))
-        assert isinstance(sphere_material.emitted_radiance, UniformPigment)
-        assert sphere_material.emitted_radiance.color.is_close(Color(0, 0, 0))
-]#
+        assert groundMaterial.brdf of DiffuseBRDF
+        assert DiffuseBRDF(groundMaterial.brdf).pigment of CheckeredPigment
+        assert getColor1(CheckeredPigment(DiffuseBRDF(groundMaterial.brdf).pigment)).areClose(newColor(0.3, 0.5, 0.1))
+        assert getColor2(CheckeredPigment(DiffuseBRDF(groundMaterial.brdf).pigment)).areClose(newColor(0.1, 0.2, 0.5))
+        assert getStepsNum(CheckeredPigment(DiffuseBRDF(groundMaterial.brdf).pigment)) == 4
+
+        assert sphereMaterial.brdf of SpecularBRDF
+        assert SpecularBRDF(sphereMaterial.brdf).pigment of UniformPigment
+        assert (SpecularBRDF(sphereMaterial.brdf)).pigment.UniformPigment.color.areClose(newColor(0.5, 0.5, 0.5))
+
+        assert skyMaterial.emittedRadiance of UniformPigment
+        assert UniformPigment(skyMaterial.emittedRadiance).color.areClose(newColor(0.7, 0.5, 1.0))
+        assert groundMaterial.emittedRadiance of UniformPigment
+        assert UniformPigment(groundMaterial.emittedRadiance).color.areClose(newColor(0, 0, 0))
+        assert sphereMaterial.emittedRadiance of UniformPigment
+        assert UniformPigment(sphereMaterial.emittedRadiance).color.areClose(newColor(0, 0, 0))
+
 
 
         # Check that the shapes are ok
 
         assert len(scene.world.shapes) == 3
-        #echo $scene.world.shapes[0].typeof
-        #assert $scene.world.shapes[0].typeof == "Plane" 
+        assert scene.world.shapes[0] of shapes.Plane
         assert scene.world.shapes[0].transformation.areClose(translation(newVec(0, 0, 100)) * rotationY(150.0))
-        #assert isinstance(scene.world.shapes[1], Plane)
+        assert scene.world.shapes[1] of shapes.Plane
         assert scene.world.shapes[1].transformation.areClose(newTransformation())
-        #assert isinstance(scene.world.shapes[2], Sphere)
+        assert scene.world.shapes[2] of shapes.Sphere
         assert scene.world.shapes[2].transformation.areClose(translation(newVec(0, 0, 1)))
 
         # Check that the camera is ok
 
-        #assert isinstance(scene.camera, PerspectiveCamera)
+        assert scene.camera.get of PerspectiveCamera
         assert scene.camera.get.transformation.areClose(rotationZ(30) * translation(newVec(-4, 0, 1)))
         assert areClose(scene.camera.get.aspectRatio,1.0)
-        #assert areClose(scene.camera.get.screenDistance,2.0)
+        assert areClose(PerspectiveCamera(scene.camera.get).screenDistance,2.0)
             
 
         

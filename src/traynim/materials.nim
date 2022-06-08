@@ -119,6 +119,31 @@ method getColor*(pigment: ImagePigment, vec2d: Vec2d): Color =
     # See https://en.wikipedia.org/wiki/Bilinear_interpolation
     return pigment.image.getPixel(col, row)
 
+#[ type
+    UndeclaredField = object of CatchableError
+
+
+proc `get`*(pigment:Pigment):UniformPigment or CheckeredPigment or ImagePigment=
+
+    if pigment of UniformPigment:
+        return UniformPigment(pigment)
+    elif pigment of CheckeredPigment:
+        return CheckeredPigment(pigment)
+    elif pigment of ImagePigment:
+        return ImagePigment(pigment)
+    else:
+        raise newException(UndeclaredField, "undeclared field for type UniformPigment")
+ ]#
+
+proc getColor1*(pigment:CheckeredPigment):Color=
+    return pigment.color1
+
+proc getColor2*(pigment:CheckeredPigment):Color=
+    return pigment.color2
+
+proc getStepsNum*(pigment:CheckeredPigment):int=
+    return pigment.stepsNum
+
 
 #-------------- BRDF --------------
 
