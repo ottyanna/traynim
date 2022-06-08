@@ -35,7 +35,99 @@ import
     render,
     shapes,
     transformations,
-    world
+    world,
+    sceneFiles,
+    options
+
+# --------------RENDER--------------
+
+proc renderer(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
+        fileName = "demo", format = "png", algorithm = "pathtracing",
+        raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54,
+                samplePerPixel = 1.0,
+        luminosity: float = 0.0, inSceneName : string = "examples/exTest.txt")=
+
+    let samplesPerSide = sqrt(samplePerPixel).int
+    if pow(samplesPerSide.float, 2.float) != samplePerPixel:
+        quit("Error, the number of samples per pixel ({samplePerPixel}) must be a perfect square")
+
+    let inScene = newFileStream(inSceneName, fmRead)
+
+    var inputStream = newInputStream(stream=inScene, fileName=inSceneName)
+ 
+    var scene : Scene
+
+    try:
+        scene = parseScene(inputStream)
+    
+    except GrammarError:
+        quit(1)
+    #[    let loc = e.location
+            print(f"{loc.file_name}:{loc.line_num}:{loc.col_num}: {e.message}")
+            sys.exit(1)
+ ]#
+
+    inScene.close()
+
+    var image = newHDRImage(width, height)
+    echo("Generating a ", width, "x", height,
+            " image, with the camera tilted by ", angleDeg, "°")
+
+    
+
+    #var camera:Camera
+
+    var tracer = newImageTracer(image, scene.camera.get, 1)
+
+    var renderer: Renderer
+
+    case algorithm:
+        of "on/off":
+            echo("Using on/off renderer")
+            renderer = newOnOffRenderer(scene.world, black, white)
+        of "flat":
+            echo("Using flat renderer")
+            renderer = newFlatRenderer(scene.world)
+        of "pathtracing":
+            echo("Using pathtracing")
+            var pcg = newPCG(initState = initState.uint64,
+                    initSeq = initSeq.uint64)
+            renderer = newPathTracer(
+                world = scene.world,
+                pcg = pcg,
+                raysNum = raysNum,
+                maxDepth = maxDepth
+            )
+        of "pointlight":
+            echo("Using point-light tracer")
+            renderer = newPointLightRenderer(world = scene.world,
+                    backgroundColor = black)
+        else:
+            quit("Unknown renderer")
+
+    let time = getMonoTime()
+    tracer.fireAllRays(ray => call(renderer, ray))
+    echo "Time taken: ", getMonoTime() - time
+
+    # Save the HDR image
+    let outPfm = newFileStream(fileName & ".pfm", fmWrite)
+    tracer.image.writePfmImage(outPfm)
+    echo "HDR demo image written to " & fileName & ".pfm"
+    outPfm.close()
+
+    # Apply tone-mapping to the image
+    if luminosity == 0.0:
+        tracer.image.normalizeImage(factor = 1.0) #use average luminosity
+    else:
+        tracer.image.normalizeImage(factor = 1.0, luminosity)
+
+    tracer.image.clampImage()
+
+    # Save the LDR image
+    tracer.image.writeLdrImage(fileName & "." & format)
+    echo "PNG demo image written to " & fileName & ".png"
+
+
 
 # --------------PFM2FORMAT--------------
 
@@ -256,6 +348,7 @@ when isMainModule:
     echo traynim
 
     dispatchMulti(
+        [renderer, help = {"angleDeg": "Angle rotation of the camera (Degrees)"}],
         [pfm2format,
             help = {"outputFileName": " Path to output file (PNG, PPM, BMP or QOI formats)",
                     "factor": "Multiplicative factor",
