@@ -49,9 +49,14 @@ proc renderer(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
 
     let samplesPerSide = sqrt(samplePerPixel).int
     if pow(samplesPerSide.float, 2.float) != samplePerPixel:
-        quit("Error, the number of samples per pixel ({samplePerPixel}) must be a perfect square")
+        quit("Error: the number of samples per pixel ({samplePerPixel}) must be a perfect square")
 
-    let inScene = newFileStream(inSceneName, fmRead)
+    var inScene: Stream
+    try:
+        inScene = openFileStream(inSceneName,fmRead)
+    except IOError:
+        quit("ERROR: " & getCurrentExceptionMsg())
+        #quit(1)
 
     var inputStream = newInputStream(stream=inScene, fileName=inSceneName)
  
@@ -59,14 +64,8 @@ proc renderer(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
 
     try:
         scene = parseScene(inputStream)
-    
     except GrammarError:
-        echo ("Error: " & getCurrentExceptionMsg())
-        quit(1)
-    #[    let loc = e.location
-            print(f"{loc.file_name}:{loc.line_num}:{loc.col_num}: {e.message}")
-            sys.exit(1)
- ]#
+        quit("ERROR: " & getCurrentExceptionMsg() & " [GrammarError]")
 
     inScene.close()
 

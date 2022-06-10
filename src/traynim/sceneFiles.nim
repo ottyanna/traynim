@@ -386,7 +386,11 @@ proc parsePigment*(s: var InputStream, scene: Scene) : Pigment =
         result = newCheckeredPigment(color1=color1, color2=color2, stepsNum=numOfSteps)
     elif keyword == KeywordEnum.IMAGE:
         let fileName = expectString(s)
-        let stream = newFileStream(fileName,fmRead)
+        var stream: Stream
+        try:
+            stream = openFileStream(fileName,fmRead)
+        except IOError:
+            raise newException(GrammarError, $s.location & " " & getCurrentExceptionMsg())
         let image = readPfmImage(stream)
         stream.close()
         result = newImagePigment(image=image)
