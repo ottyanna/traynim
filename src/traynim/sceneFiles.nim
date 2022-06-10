@@ -288,8 +288,8 @@ proc expectKeywords*(inputS: var InputStream, inputKeywords: seq[
 
     if not (inputToken.token.keywords in inputKeywords):
         raise newException(GrammarError,
-         $inputS & " expected one of the the keywords" & join(inputKeywords,
-                 " , ") & "instead of " & $inputToken.token.keywords)
+         $inputS.location & " expected one of the the keywords " & join(inputKeywords,
+                 " , ") & " instead of " & $inputToken.token.keywords)
 
     result = inputToken.token.keywords
 

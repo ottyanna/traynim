@@ -61,6 +61,7 @@ proc renderer(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         scene = parseScene(inputStream)
     
     except GrammarError:
+        echo ("Error: " & getCurrentExceptionMsg())
         quit(1)
     #[    let loc = e.location
             print(f"{loc.file_name}:{loc.line_num}:{loc.col_num}: {e.message}")

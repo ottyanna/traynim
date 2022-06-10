@@ -1,7 +1,7 @@
-float clock(150)
+float clock(0)
 
             material skyMaterial(
-                diffuse(uniform(<0, 0, 0>)),
+                diffuse(uniform(<0.5, 0.0, 0.7>)),
                 uniform(<0.7, 0.5, 1>)
             )
 
