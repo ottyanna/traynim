@@ -35,6 +35,7 @@ import
     hitRecord,
     imageTracer,
     materials,
+    lights,
     pcg,  
     ray, 
     render,
@@ -1080,6 +1081,8 @@ suite "test sceneFiles.nim":
 
             sphere(sphereMaterial, translation([0, 0, 1]))
 
+            light([-30,30,30],<1,1,1>)
+
             camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)"""
 
         var inputFile = newInputStream(newStringStream(testString))
@@ -1139,6 +1142,11 @@ suite "test sceneFiles.nim":
         assert scene.world.shapes[1].transformation.areClose(newTransformation())
         assert scene.world.shapes[2] of shapes.Sphere
         assert scene.world.shapes[2].transformation.areClose(translation(newVec(0, 0, 1)))
+
+        # Check that the lights are ok
+        assert scene.world.pointLights[0] is PointLight
+        assert scene.world.pointLights[0].position.areClose(newPoint(-30,30,30))
+        assert scene.world.pointLights[0].color.areClose(white)
 
         # Check that the camera is ok
 

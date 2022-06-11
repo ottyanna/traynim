@@ -17,7 +17,7 @@
 #along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import std/tables, streams, strutils, options, std/sets, hashes
-import materials, world, cameras, geometry, colors, transformations, shapes, hdrimages
+import materials, world, cameras, geometry, colors, transformations, shapes, hdrimages, lights
 
 const WHITESPACE* = [' ', '\t', '\n', '\r']
 const SYMBOLS* = ['(', ')', '<', '>', '[', ']', '*', ',']
@@ -61,6 +61,7 @@ type
         ORTHOGONAL = "orthogonal"
         PERSPECTIVE = "perspective"
         FLOAT = "float"
+        LIGHT="light"
 
 type
     TokenType* = enum
@@ -517,6 +518,20 @@ proc parsePlane*(inputS: var InputStream, scene: Scene) : Plane=
 
     return newPlane(transformation=transformation, material=scene.materials[materialName])
 
+proc parseLight*(inputS: var InputStream, scene: Scene) : PointLight =
+
+    expectSymbol(inputS, '(')
+    let position = parseVector(inputS,scene).parseVecToPoint()
+
+    expectSymbol(inputS, ',')
+
+    let color=parseColor(inputS,scene)
+
+    expectSymbol(inputS,')')
+
+    return newPointLight(position,color)
+
+
 proc parseCamera*(inputS: var InputStream, scene: Scene) : Camera=
     expectSymbol(inputS, '(')
     let typeKw = expectKeywords(inputS, @[KeywordEnum.PERSPECTIVE, KeywordEnum.ORTHOGONAL])
@@ -532,6 +547,8 @@ proc parseCamera*(inputS: var InputStream, scene: Scene) : Camera=
         result = newPerspectiveCamera(screenDistance=distance, aspectRatio=aspectRatio, transformation=transformation)
     elif typeKw == KeywordEnum.ORTHOGONAL:
         result = newOrthogonalCamera(aspectRatio=aspectRatio, transformation=transformation)
+
+
 
 proc parseScene*(inputS: var InputStream, variables: Table[string, float] = initTable[string,float]()): Scene =
     
@@ -579,6 +596,9 @@ proc parseScene*(inputS: var InputStream, variables: Table[string, float] = init
         elif what.token.keywords == KeywordEnum.PLANE:
             scene.world.addShape(parsePlane(inputS, scene))
         
+        elif what.token.keywords == KeywordEnum.LIGHT:
+            scene.world.addLight(parseLight(inputS, scene))
+
         elif what.token.keywords == KeywordEnum.CAMERA:
             if scene.camera.isSome:
                 raise newException(GrammarError, 
