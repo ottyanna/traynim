@@ -1082,6 +1082,7 @@ suite "test sceneFiles.nim":
             sphere(sphereMaterial, translation([0, 0, 1]))
 
             light([-30,30,30],<1,1,1>)
+            light([-30,30,10],<1,1,0.5>, 9.3)
 
             camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)"""
 
@@ -1147,6 +1148,11 @@ suite "test sceneFiles.nim":
         assert scene.world.pointLights[0] is PointLight
         assert scene.world.pointLights[0].position.areClose(newPoint(-30,30,30))
         assert scene.world.pointLights[0].color.areClose(white)
+
+        assert scene.world.pointLights[1] is PointLight
+        assert scene.world.pointLights[1].position.areClose(newPoint(-30,30,10))
+        assert scene.world.pointLights[1].color.areClose(newColor(1,1,0.5))
+        assert scene.world.pointLights[1].linearRadius.areClose(9.3)
 
         # Check that the camera is ok
 

@@ -353,7 +353,7 @@ proc expectSymbol*(inputS: var InputStream, sym: char) =
 
     if token.token.kind != symbol:
         raise newException(GrammarError, $inputS.location & " Got " &
-                $token.token.kind & " instead of a symbol")
+                $token.token.kind & " instead of the symbol " & sym)
 
 
     elif token.token.sym != sym:
@@ -495,22 +495,24 @@ proc parseTransformation*(inputS: var InputStream,
             discard
         elif transfKeywords == KeywordEnum.TRANSLATION:
             expectSymbol(inputS, '(')
-
             result = result * translation(parseVector(inputS, scene))
-
             expectSymbol(inputS, ')')
+
         elif transfKeywords == KeywordEnum.ROTATIONX:
             expectSymbol(inputS, '(')
             result = result * rotationX(expectNumber(inputS, scene))
             expectSymbol(inputS, ')')
+        
         elif transfKeywords == KeywordEnum.ROTATIONY:
             expectSymbol(inputS, '(')
             result = result * rotationY(expectNumber(inputS, scene))
             expectSymbol(inputS, ')')
+        
         elif transfKeywords == KeywordEnum.ROTATIONZ:
             expectSymbol(inputS, '(')
             result = result * rotationZ(expectNumber(inputS, scene))
             expectSymbol(inputS, ')')
+        
         elif transfKeywords == KeywordEnum.SCALING:
             expectSymbol(inputS, '(')
             result = result * scaling(parseVector(inputS, scene))
@@ -585,9 +587,18 @@ proc parseLight*(inputS: var InputStream, scene: Scene): PointLight =
 
     let color = parseColor(inputS, scene)
 
-    expectSymbol(inputS, ')')
+    # We must check if there is the value for the linearRadius. 
 
-    return newPointLight(position, color)
+    let nextToken = inputS.readToken()
+    
+    if nextToken.token.kind == symbol and nextToken.token.sym == ')':
+        return newPointLight(position, color)
+    else:
+        inputS.unreadToken(nextToken)
+        expectSymbol(inputS, ',')
+        let linearRadius = expectNumber(inputS, scene)
+        expectSymbol(inputS,')')
+        return newPointLight(position, color, linearRadius)
 
 
 proc parseCamera*(inputS: var InputStream, scene: Scene): Camera =
