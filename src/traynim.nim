@@ -19,6 +19,7 @@
 
 import strutils, streams, cligen, sugar
 from math import sqrt, pow
+import tables
 when compileOption("profiler"):
   import nimprof
 
@@ -39,31 +40,55 @@ import
     sceneFiles,
     options
 
+proc buildVariablesTable(declareFloat:string):Table[string,float] =
+
+    for item in splitWhitespace(declareFloat):
+        
+        var stringVariable = item.split(':')
+        
+        if stringVariable.len != 2:
+            quit("Error: The format for variable declaration NAME:VALUE is not respected")
+        else:
+            var floatVar: float
+            try:
+                floatVar = stringVariable[1].parseFloat()
+            except ValueError:
+                quit("Error: The second term is not a floating-point")
+
+            result[stringVariable[0]]=floatVar
+
 # --------------RENDER--------------
 
 proc renderer(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         fileName = "demo", format = "png", algorithm = "pathtracing",
         raysNum = 10, maxDepth = 3, initState = 42, initSeq = 54,
                 samplePerPixel = 1.0,
-        luminosity: float = 0.0, inSceneName : string = "examples/exTest.txt")=
+        luminosity: float = 0.0, inSceneName : string = "examples/exTest.txt",
+        declareFloat:string ="" )=
+
+
 
     let samplesPerSide = sqrt(samplePerPixel).int
-    if pow(samplesPerSide.float, 2.float) != samplePerPixel:
+    if pow(samplesPerSide.float, 2.0) != samplePerPixel:
         quit("Error: the number of samples per pixel ({samplePerPixel}) must be a perfect square")
 
     var inScene: Stream
+    var variables:Table[string,float]
     try:
-        inScene = openFileStream(inSceneName,fmRead)
+        if declareFloat=="":
+            inScene = openFileStream(inSceneName,fmRead)
+        else:
+            variables = buildVariablesTable(declareFloat)
+            inScene = openFileStream(inSceneName,fmRead)
     except IOError:
         quit("ERROR: " & getCurrentExceptionMsg())
-        #quit(1)
 
     var inputStream = newInputStream(stream=inScene, fileName=inSceneName)
  
     var scene : Scene
 
     try:
-        scene = parseScene(inputStream)
+        scene = parseScene(inputStream, variables)
     except GrammarError:
         quit("ERROR: " & getCurrentExceptionMsg() & " [GrammarError]")
 

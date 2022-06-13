@@ -18,5 +18,6 @@ plane (skyMaterial, translation([0, 0, 100]) * rotation_y(clock))
 plane (groundMaterial, identity)
 sphere(sphereMaterial, translation([0, 0, 1]))
 light([-30,30,30],<1,1,1>)
+light([30,-30,30],<1,1,1>)
 
 camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)
