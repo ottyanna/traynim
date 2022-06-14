@@ -64,6 +64,12 @@ proc `*`*(color1, color2: Color): Color =
     result.g = color1.g * color2.g
     result.b = color1.b * color2.b
 
+proc `/`*(col: Color, scalar: float): Color =
+    result.r = col.r / scalar
+    result.g = col.g / scalar
+    result.b = col.b / scalar
+
+
 # Implementation of "stringfy" operation for Color object
 proc `$`*(color: Color): string =
     result = "<" & "r: " & $(color.r) & " , " & "g: " & $(color.g) & ", " &

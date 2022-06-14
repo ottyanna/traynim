@@ -113,6 +113,7 @@ suite "test colors.nim":
         assert (col1 * col2).areClose(Color(r: 5.0, g: 14.0, b: 27.0))
         assert not (col1 + col2).areClose(Color(r: 3.0, g: 9.0, b: 12.0))
         assert ($col1) == "<r: 1.0 , g: 2.0, b: 3.0>" #test on Color print
+        assert (col1 / 2.0).areClose(newColor(0.5, 1, 1.5))
 
     test "test on Color Luminosity":
         assert areClose(luminosity(col1), 2.0)
