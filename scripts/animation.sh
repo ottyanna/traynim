@@ -23,14 +23,18 @@ if [ "$1" == "" ]; then
     exit 1
 fi
 
-mkdir demo
+mkdir animation
+
+cd ..
 
 nimble run
+
+cd scripts
 
 parallel -j "$1" ./generateImage.sh '{}' ::: $(seq 0 359)
 
 # -r 25: Number of frames per second
-ffmpeg -r 25 -f image2 -s 640x480 -i "demo/img%03d.png" -vcodec libx264 -pix_fmt yuv420p \
-    "demo/spheres-perspective.mp4"
+ffmpeg -r 25 -f image2 -s 640x480 -i "animation/img%03d.png" -vcodec libx264 -pix_fmt yuv420p \
+    "animation/animation.mp4"
 
-rm demo/img*
+rm animation/img*

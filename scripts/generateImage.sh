@@ -25,4 +25,4 @@ fi
 readonly angle="$1"
 readonly angleNNN=$(printf "%03d" $angle)
 
-time ./traynim demo --algorithm=on/off --width=640 --height=480 -a=$angle --fileName="demo/img$angleNNN" --luminosity=0.5
+time ./../traynim renderer -i="../examples/animation.txt" -a=pointlight -o="animation/img$angleNNN" -l=0.4 -s=16 -d=ang:"$angle"
