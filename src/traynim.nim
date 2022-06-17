@@ -101,8 +101,8 @@ proc renderer( inSceneName : string = "examples/exTest.txt",
     echo("Generating the ", width, "x", height,
             " image...")
 
-    
-    #var camera:Camera
+    if scene.camera.isNone:
+        quit("ERROR: camera not defined in input scene [GrammarError]")
 
     var tracer = newImageTracer(image, scene.camera.get, samplesPerSide)
 
