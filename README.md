@@ -25,7 +25,7 @@ It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 
 ## Demo-Preview
 
-Traynim can produce images like this with four different renderers: path tracer, on/off, point light and flat renderer respectively.
+Traynim can produce images like this with four different renderers: path tracer, on/off, point light and flat renderer respectively. You can click [here]() to see more examples.
 
 <p align="center"> 
   <img src="img/demo/Antialiasing/pathTracingr4s16.png" alt="Sample signal" width="45%" height="50%">
@@ -56,7 +56,7 @@ Traynim can produce images like this with four different renderers: path tracer,
 ### Dependencies
 - [nim](https://github.com/nim-lang) >= 1.6.4
 - [nimble](https://github.com/nim-lang/nimble)
-- [ffmpeg](https://www.ffmpeg.org/) and [parallel](https://en.wikipedia.org/wiki/GNU_parallel) for the animations
+- [ffmpeg](https://www.ffmpeg.org/) and [parallel](https://en.wikipedia.org/wiki/GNU_parallel) for the animations and for `stack` command
 
 
 
@@ -88,11 +88,13 @@ To display the command-line help, you can use
 
 ```sh
 $ ./traynim --help
-
+                       
 Usage:
   traynim {SUBCMD}  [sub-command options & parameters]
 where {SUBCMD} is one of:
   help        print comprehensive or per-cmd help
+  renderer    
+  stack       
   pfm2format  
   demo        
 
@@ -102,27 +104,31 @@ Run "traynim {help SUBCMD|SUBCMD --help}" to see help for just SUBCMD.
 Run "traynim help" to get *comprehensive* help.
 ```
 
-To generate one demo image with default parameters use
+### `renderer`
+
+To generate one image with default parameters (the default input file is ...) use
 
 ```sh
-$ ./traynim demo
+$ ./traynim renderer
 ```
 
-You can change the size of the image, the angle view or the camera type by running `--help`.
+You can change the size of the image and the `png` output conversion luminosity by running `--help`.
 
-As it is shown in [Demo-Preview](#demo-preview), it is possible to use different rendering methods by using the `--algorithm` flag.
+As it is shown in [Demo-Preview](#demo-preview), it is possible to use different rendering methods by using the `-a` or `--algorithm` flag.
 
- Renderer |  Feature
-:-------------------------:|:-------------------------: 
-Simple Path Tracer  | Uses Russian roulette method
-Point Light Renderer  | The source light is considered a dirac delta
-Flat Renderer | The scene is traced without considering the light, so it is in solid colors
-On/off renderer | There are just two colors, one for the objects, one for the background
+ Renderer |  Feature | command
+:-------------------------:|:-------------------------: | :------:
+Simple Path Tracer  | Uses Russian roulette method | `-a=pathtracing` (Default)
+Point Light Renderer  | The source light is considered a dirac delta | `-a=pointlight`
+Flat Renderer | The scene is traced without considering the radiance, so it is in solid colors | `-a=flat`
+On/off renderer | There are just two colors, one for the objects, one for the background | `-a=on/off`
 
 While the path tracer is really slow, the flat, point light and on/off renderers are fast, so they are useful for debugging or to get an idea if the object positions are right. The time scale depends really on the scene but for a simple scene it can take up to 5 minutes for the path tracing while about 5/20 seconds for the others. 
 <!--- Moreover, bear in mind that if you use a sphere for the sky the on/off renderer--> 
 
-To generate the on/off tracer demo animation shown in [Demo-Preview](#demo-preview), in UNIX systems just run
+ANIMATIONS
+
+You can generate the animations by running and tweaking [this]() bash script, then just run
 
 ```sh
 $ ./animation.sh NUM_OF_CORES >/dev/null
@@ -130,12 +136,25 @@ $ ./animation.sh NUM_OF_CORES >/dev/null
 
 where `NUM_OF_CORES` are the number of cores to parallelize the generation.
 
+### `stack`
+
+Generating an image can take long, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#examples) feature or you can just use the `stack` feature that takes advantage of the randomness of the number generator (by setting a different `initSeq` which is different from the seed), to generate the same image with different noise and the it merges them into the same image.
+The [script]() makes this automatic using [parallel](https://en.wikipedia.org/wiki/GNU_parallel). You can also use this feature to reduce noise AND to make blurry images like these????
+
+### `pfm2format`
+
 To use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BMP and [QOI](https://en.wikipedia.org/wiki/QOI_(image_format)) formats are supported.
+
+### `demo` (Deprecated)
+
+The `demo` command is still usable, but since version 1.0.0, it is deprecated and it's better to use inputFiles for scenes. Despite this, if you wish to create your images with `for` cycles, it's better to tweak directly the `demo` part of the code.
 
 
 ## Examples
 
-### Antialiasing with flat rendering:
+### Antialiasing in case of flat rendering:
+
+You can reduce the noise of the image by increasing the number of rays or by increasing the samples per pixel.
 
 The scene has a white light in coordinates (-50, 30, 30). The number of rays is always 4 (`-r=4`) and the luminosity is 0.8.
 
@@ -163,6 +182,8 @@ You can compare different values for `gamma` and `factor` tweaking the bash scri
 [(Back to top)](#table-of-contents)
 
 If you wish to contribute or you found any bug, feel free to open an issue or a pull request on the GitHub repository.
+
+Or if you just want to show your images made with the program, contact us, we'll be happy to show them on the project website. 
 
 ## Release History
 [(Back to top)](#table-of-contents)
