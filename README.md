@@ -25,7 +25,7 @@ It can also be used as a tool for converting PFM files to PNG, PPM, BMP and QOI.
 
 ## Demo-Preview
 
-Traynim can produce images like this with four different renderers: path tracer, on/off, point light and flat renderer respectively. You can click [here]() to see more examples.
+Traynim can produce images like this with four different renderers: path tracer, on/off, point light and flat renderer respectively.
 
 <p align="center"> 
   <img src="img/demo/Antialiasing/pathTracingr4s16.png" alt="Sample signal" width="45%" height="50%">
@@ -34,8 +34,13 @@ Traynim can produce images like this with four different renderers: path tracer,
 
 <p align="center">
   <img src="img/demo/Antialiasing/PointLightr4s16.png" alt="Sample signal" width="45%" height="50%">
-  <img src="img/demo/Antialiasing/flatr4s25.png" alt="Sample signal" width="45%" height="50%">
+  <img src="img/blurrystack.png" alt="Sample signal" width="45%" height="50%">
 </p>
+
+<p align="center">
+  <img src="img/sw.gif" alt="Sample signal" width="45%" height="50%">
+</p>
+
 
 
 # Table of contents
