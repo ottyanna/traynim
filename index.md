@@ -125,7 +125,7 @@ As shown in [Demo-Preview](#demo-preview), it is possible to use different rende
 
  Renderer |  Feature | Option
 :-------------------------:|:-------------------------: | :------:
-Simple Path Tracer  | Uses Russian roulette method | `-a=pathtracing` (Default)
+Simple Path Tracer  | (Most photorealistic renderer (Uses Russian roulette method) | `-a=pathtracing` (Default)
 Point Light Renderer  | The source light is considered a dirac delta | `-a=pointlight`
 Flat Renderer | The scene is traced without considering the radiance, so it is in solid colors | `-a=flat`
 On/off renderer | There are just two colors, one for the objects, one for the background | `-a=on/off`
@@ -145,7 +145,7 @@ where `NUM_OF_CORES` are the number of cores to parallelize the generation.
 
 ### `stack`
 
-Generating an image can take long, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#antialiasing-in-case-of-flat-rendering) feature or you can just use the `stack` command that takes advantage of the seekability property of the chosen number generator (by setting a different `initSeq`). Once you generated the same image with different noise (again by setting `-initSeq`to different values), the `stack` command merges them into the same image. 
+Generating an image can take a long time, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#antialiasing-in-case-of-flat-rendering) feature or you can just use the `stack` command that takes advantage of the seekability property of the chosen number generator (by setting a different `initSeq`). Once you generated the same image with different noise (again by setting `-initSeq`to different values), the `stack` command merges them into the same image. 
 The only thing you have to bear in mind is that the images must be named img0, img1, img2 etc. This [script](scripts/stackMain.sh) makes these procedure automatic using [parallel](https://en.wikipedia.org/wiki/GNU_parallel).
 
 You can also use this feature to reduce noise AND to make blurry images.[Here](#example-for-the-blurry-effect) you can see an example.
