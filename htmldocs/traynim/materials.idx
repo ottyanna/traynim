@@ -9,6 +9,9 @@ getColor	traynim/materials.html#getColor.e,CheckeredPigment,Vec2d	materials: get
 ImagePigment	traynim/materials.html#ImagePigment	materials: ImagePigment	
 newImagePigment	traynim/materials.html#newImagePigment,HdrImage	materials: newImagePigment(image: HdrImage): ImagePigment	
 getColor	traynim/materials.html#getColor.e,ImagePigment,Vec2d	materials: getColor(pigment: ImagePigment; vec2d: Vec2d): Color	
+getColor1	traynim/materials.html#getColor1,CheckeredPigment	materials: getColor1(pigment: CheckeredPigment): Color	
+getColor2	traynim/materials.html#getColor2,CheckeredPigment	materials: getColor2(pigment: CheckeredPigment): Color	
+getStepsNum	traynim/materials.html#getStepsNum,CheckeredPigment	materials: getStepsNum(pigment: CheckeredPigment): int	
 BRDF	traynim/materials.html#BRDF	materials: BRDF	
 newBRDF	traynim/materials.html#newBRDF,Pigment	materials: newBRDF(pigment: Pigment = newUniformPigment(white)): BRDF	
 eval	traynim/materials.html#eval.e,BRDF,Normal,Vec,Vec,Vec2d	materials: eval(brdf: BRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color	

@@ -70,10 +70,12 @@ window.addEventListener('DOMContentLoaded', main);
 <div class="document" id="documentId">
   <div class="container">
     <h1 class="title">Index</h1>
-    Modules: <a href="traynim/cameras.html">traynim/cameras</a>, <a href="traynim/colors.html">traynim/colors</a>, <a href="traynim/common.html">traynim/common</a>, <a href="traynim/hdrimages.html">traynim/hdrimages</a>, <a href="traynim/hitRecord.html">traynim/hitRecord</a>, <a href="traynim/imageTracer.html">traynim/imageTracer</a>, <a href="traynim/lights.html">traynim/lights</a>, <a href="traynim/materials.html">traynim/materials</a>, <a href="traynim/pcg.html">traynim/pcg</a>, <a href="traynim/ray.html">traynim/ray</a>, <a href="traynim/render.html">traynim/render</a>, <a href="traynim/shapes.html">traynim/shapes</a>, <a href="traynim/shapesDef.html">traynim/shapesDef</a>, <a href="traynim/transformations.html">traynim/transformations</a>, <a href="traynim/world.html">traynim/world</a>.<br/><p /><h2>API symbols</h2>
+    Modules: <a href="traynim/cameras.html">traynim/cameras</a>, <a href="traynim/colors.html">traynim/colors</a>, <a href="traynim/common.html">traynim/common</a>, <a href="traynim/hdrimages.html">traynim/hdrimages</a>, <a href="traynim/hitRecord.html">traynim/hitRecord</a>, <a href="traynim/imageTracer.html">traynim/imageTracer</a>, <a href="traynim/lights.html">traynim/lights</a>, <a href="traynim/materials.html">traynim/materials</a>, <a href="traynim/pcg.html">traynim/pcg</a>, <a href="traynim/ray.html">traynim/ray</a>, <a href="traynim/render.html">traynim/render</a>, <a href="traynim/sceneFiles.html">traynim/sceneFiles</a>, <a href="traynim/shapes.html">traynim/shapes</a>, <a href="traynim/shapesDef.html">traynim/shapesDef</a>, <a href="traynim/transformations.html">traynim/transformations</a>, <a href="traynim/world.html">traynim/world</a>.<br/><p /><h2>API symbols</h2>
 <dl><dt><a name="%60%24%60" href="#%60%24%60"><span>`$`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="colors: `$`(color: Color): string" href="traynim/colors.html#%24%2CColor">colors: `$`(color: Color): string</a></li>
+          <li><a class="reference external"
+          data-doc-search-tag="sceneFiles: `$`(loc: SourceLocation): string" href="traynim/sceneFiles.html#%24%2CSourceLocation">sceneFiles: `$`(loc: SourceLocation): string</a></li>
           <li><a class="reference external"
           data-doc-search-tag="transformations: `$`(m: Matrix4x4): string" href="traynim/transformations.html#%24%2CMatrix4x4">transformations: `$`(m: Matrix4x4): string</a></li>
           <li><a class="reference external"
@@ -102,6 +104,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="%60-%60" href="#%60-%60"><span>`-`:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="colors: `-`(color1, color2: Color): Color" href="traynim/colors.html#-%2CColor%2CColor">colors: `-`(color1, color2: Color): Color</a></li>
+          </ul></dd>
+<dt><a name="%60/%60" href="#%60/%60"><span>`/`:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="colors: `/`(col: Color; scalar: float): Color" href="traynim/colors.html#/%2CColor%2Cfloat">colors: `/`(col: Color; scalar: float): Color</a></li>
           </ul></dd>
 <dt><a name="addLight" href="#addLight"><span>addLight:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -159,6 +165,14 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="cameras: Camera" href="traynim/cameras.html#Camera">cameras: Camera</a></li>
           </ul></dd>
+<dt><a name="CAMERA" href="#CAMERA"><span>CAMERA:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.CAMERA" href="traynim/sceneFiles.html#CAMERA">KeywordEnum.CAMERA</a></li>
+          </ul></dd>
+<dt><a name="CHECKERED" href="#CHECKERED"><span>CHECKERED:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.CHECKERED" href="traynim/sceneFiles.html#CHECKERED">KeywordEnum.CHECKERED</a></li>
+          </ul></dd>
 <dt><a name="CheckeredPigment" href="#CheckeredPigment"><span>CheckeredPigment:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="materials: CheckeredPigment" href="traynim/materials.html#CheckeredPigment">materials: CheckeredPigment</a></li>
@@ -171,6 +185,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="colors: Color" href="traynim/colors.html#Color">colors: Color</a></li>
           </ul></dd>
+<dt><a name="DIFFUSE" href="#DIFFUSE"><span>DIFFUSE:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.DIFFUSE" href="traynim/sceneFiles.html#DIFFUSE">KeywordEnum.DIFFUSE</a></li>
+          </ul></dd>
 <dt><a name="DiffuseBRDF" href="#DiffuseBRDF"><span>DiffuseBRDF:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="materials: DiffuseBRDF" href="traynim/materials.html#DiffuseBRDF">materials: DiffuseBRDF</a></li>
@@ -182,6 +200,26 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="materials: eval(brdf: DiffuseBRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color" href="traynim/materials.html#eval.e%2CDiffuseBRDF%2CNormal%2CVec%2CVec%2CVec2d">materials: eval(brdf: DiffuseBRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color</a></li>
           <li><a class="reference external"
           data-doc-search-tag="materials: eval(brdf: SpecularBRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color" href="traynim/materials.html#eval.e%2CSpecularBRDF%2CNormal%2CVec%2CVec%2CVec2d">materials: eval(brdf: SpecularBRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color</a></li>
+          </ul></dd>
+<dt><a name="expectIdentifier" href="#expectIdentifier"><span>expectIdentifier:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: expectIdentifier(inputS: var InputStream): string" href="traynim/sceneFiles.html#expectIdentifier%2CInputStream">sceneFiles: expectIdentifier(inputS: var InputStream): string</a></li>
+          </ul></dd>
+<dt><a name="expectKeywords" href="#expectKeywords"><span>expectKeywords:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: expectKeywords(inputS: var InputStream; inputKeywords: seq[KeywordEnum]): KeywordEnum" href="traynim/sceneFiles.html#expectKeywords%2CInputStream%2Cseq%5BKeywordEnum%5D">sceneFiles: expectKeywords(inputS: var InputStream; inputKeywords: seq[KeywordEnum]): KeywordEnum</a></li>
+          </ul></dd>
+<dt><a name="expectNumber" href="#expectNumber"><span>expectNumber:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: expectNumber(inputS: var InputStream; scene: Scene): float" href="traynim/sceneFiles.html#expectNumber%2CInputStream%2CScene">sceneFiles: expectNumber(inputS: var InputStream; scene: Scene): float</a></li>
+          </ul></dd>
+<dt><a name="expectString" href="#expectString"><span>expectString:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: expectString(inputS: var InputStream): string" href="traynim/sceneFiles.html#expectString%2CInputStream">sceneFiles: expectString(inputS: var InputStream): string</a></li>
+          </ul></dd>
+<dt><a name="expectSymbol" href="#expectSymbol"><span>expectSymbol:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: expectSymbol(inputS: var InputStream; sym: char)" href="traynim/sceneFiles.html#expectSymbol%2CInputStream%2Cchar">sceneFiles: expectSymbol(inputS: var InputStream; sym: char)</a></li>
           </ul></dd>
 <dt><a name="fireAllRays" href="#fireAllRays"><span>fireAllRays:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -201,6 +239,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="render: FlatRenderer" href="traynim/render.html#FlatRenderer">render: FlatRenderer</a></li>
           </ul></dd>
+<dt><a name="FLOAT" href="#FLOAT"><span>FLOAT:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.FLOAT" href="traynim/sceneFiles.html#FLOAT">KeywordEnum.FLOAT</a></li>
+          </ul></dd>
 <dt><a name="getColor" href="#getColor"><span>getColor:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="materials: getColor(pigment: CheckeredPigment; vec2d: Vec2d): Color" href="traynim/materials.html#getColor.e%2CCheckeredPigment%2CVec2d">materials: getColor(pigment: CheckeredPigment; vec2d: Vec2d): Color</a></li>
@@ -211,9 +253,25 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="materials: getColor(pigment: UniformPigment; vec2d: Vec2d): Color" href="traynim/materials.html#getColor.e%2CUniformPigment%2CVec2d">materials: getColor(pigment: UniformPigment; vec2d: Vec2d): Color</a></li>
           </ul></dd>
+<dt><a name="getColor1" href="#getColor1"><span>getColor1:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="materials: getColor1(pigment: CheckeredPigment): Color" href="traynim/materials.html#getColor1%2CCheckeredPigment">materials: getColor1(pigment: CheckeredPigment): Color</a></li>
+          </ul></dd>
+<dt><a name="getColor2" href="#getColor2"><span>getColor2:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="materials: getColor2(pigment: CheckeredPigment): Color" href="traynim/materials.html#getColor2%2CCheckeredPigment">materials: getColor2(pigment: CheckeredPigment): Color</a></li>
+          </ul></dd>
 <dt><a name="getPixel" href="#getPixel"><span>getPixel:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="hdrimages: getPixel(img: HdrImage; x, y: int): colors.Color" href="traynim/hdrimages.html#getPixel%2CHdrImage%2Cint%2Cint">hdrimages: getPixel(img: HdrImage; x, y: int): colors.Color</a></li>
+          </ul></dd>
+<dt><a name="getStepsNum" href="#getStepsNum"><span>getStepsNum:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="materials: getStepsNum(pigment: CheckeredPigment): int" href="traynim/materials.html#getStepsNum%2CCheckeredPigment">materials: getStepsNum(pigment: CheckeredPigment): int</a></li>
+          </ul></dd>
+<dt><a name="GrammarError" href="#GrammarError"><span>GrammarError:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: GrammarError" href="traynim/sceneFiles.html#GrammarError">sceneFiles: GrammarError</a></li>
           </ul></dd>
 <dt><a name="HdrImage" href="#HdrImage"><span>HdrImage:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -223,9 +281,21 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="hitRecord: HitRecord" href="traynim/hitRecord.html#HitRecord">hitRecord: HitRecord</a></li>
           </ul></dd>
+<dt><a name="identifier" href="#identifier"><span>identifier:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="TokenType.identifier" href="traynim/sceneFiles.html#identifier">TokenType.identifier</a></li>
+          </ul></dd>
+<dt><a name="IDENTITY" href="#IDENTITY"><span>IDENTITY:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.IDENTITY" href="traynim/sceneFiles.html#IDENTITY">KeywordEnum.IDENTITY</a></li>
+          </ul></dd>
 <dt><a name="IdentityMatrix4x4" href="#IdentityMatrix4x4"><span>IdentityMatrix4x4:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: IdentityMatrix4x4" href="traynim/transformations.html#IdentityMatrix4x4">transformations: IdentityMatrix4x4</a></li>
+          </ul></dd>
+<dt><a name="IMAGE" href="#IMAGE"><span>IMAGE:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.IMAGE" href="traynim/sceneFiles.html#IMAGE">KeywordEnum.IMAGE</a></li>
           </ul></dd>
 <dt><a name="ImagePigment" href="#ImagePigment"><span>ImagePigment:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -234,6 +304,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="ImageTracer" href="#ImageTracer"><span>ImageTracer:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="imageTracer: ImageTracer" href="traynim/imageTracer.html#ImageTracer">imageTracer: ImageTracer</a></li>
+          </ul></dd>
+<dt><a name="InputStream" href="#InputStream"><span>InputStream:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: InputStream" href="traynim/sceneFiles.html#InputStream">sceneFiles: InputStream</a></li>
           </ul></dd>
 <dt><a name="InvalidPfmFileFormat" href="#InvalidPfmFileFormat"><span>InvalidPfmFileFormat:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -251,6 +325,26 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="world: isPointVisible(world: World; point: Point; observerPos: Point): bool" href="traynim/world.html#isPointVisible%2CWorld%2CPoint%2CPoint">world: isPointVisible(world: World; point: Point; observerPos: Point): bool</a></li>
           </ul></dd>
+<dt><a name="keyword" href="#keyword"><span>keyword:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="TokenType.keyword" href="traynim/sceneFiles.html#keyword">TokenType.keyword</a></li>
+          </ul></dd>
+<dt><a name="KeywordEnum" href="#KeywordEnum"><span>KeywordEnum:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: KeywordEnum" href="traynim/sceneFiles.html#KeywordEnum">sceneFiles: KeywordEnum</a></li>
+          </ul></dd>
+<dt><a name="LIGHT" href="#LIGHT"><span>LIGHT:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.LIGHT" href="traynim/sceneFiles.html#LIGHT">KeywordEnum.LIGHT</a></li>
+          </ul></dd>
+<dt><a name="literalNumber" href="#literalNumber"><span>literalNumber:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="TokenType.literalNumber" href="traynim/sceneFiles.html#literalNumber">TokenType.literalNumber</a></li>
+          </ul></dd>
+<dt><a name="literalString" href="#literalString"><span>literalString:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="TokenType.literalString" href="traynim/sceneFiles.html#literalString">TokenType.literalString</a></li>
+          </ul></dd>
 <dt><a name="luminosity" href="#luminosity"><span>luminosity:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="colors: luminosity(color: Color): float32" href="traynim/colors.html#luminosity%2CColor">colors: luminosity(color: Color): float32</a></li>
@@ -259,6 +353,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="materials: Material" href="traynim/materials.html#Material">materials: Material</a></li>
           </ul></dd>
+<dt><a name="MATERIAL" href="#MATERIAL"><span>MATERIAL:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.MATERIAL" href="traynim/sceneFiles.html#MATERIAL">KeywordEnum.MATERIAL</a></li>
+          </ul></dd>
 <dt><a name="Matrix4x4" href="#Matrix4x4"><span>Matrix4x4:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: Matrix4x4" href="traynim/transformations.html#Matrix4x4">transformations: Matrix4x4</a></li>
@@ -266,6 +364,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="matrixProd" href="#matrixProd"><span>matrixProd:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: matrixProd(m1, m2: Matrix4x4): Matrix4x4" href="traynim/transformations.html#matrixProd%2CMatrix4x4%2CMatrix4x4">transformations: matrixProd(m1, m2: Matrix4x4): Matrix4x4</a></li>
+          </ul></dd>
+<dt><a name="NEW" href="#NEW"><span>NEW:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.NEW" href="traynim/sceneFiles.html#NEW">KeywordEnum.NEW</a></li>
           </ul></dd>
 <dt><a name="newBaseRenderer" href="#newBaseRenderer"><span>newBaseRenderer:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -310,6 +412,10 @@ window.addEventListener('DOMContentLoaded', main);
           data-doc-search-tag="imageTracer: newImageTracer(image: HdrImage; camera: Camera; samplesPerSide: int = 0;
                pcg: PCG = newPCG()): ImageTracer" href="traynim/imageTracer.html#newImageTracer%2CHdrImage%2CCamera%2Cint%2CPCG">imageTracer: newImageTracer(image: HdrImage; camera: Camera; samplesPerSide: int = 0;
                pcg: PCG = newPCG()): ImageTracer</a></li>
+          </ul></dd>
+<dt><a name="newInputStream" href="#newInputStream"><span>newInputStream:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: newInputStream(stream: Stream; fileName = &quot;&quot;; tabulations = 8): InputStream" href="traynim/sceneFiles.html#newInputStream%2CStream%2Cstring%2Cint">sceneFiles: newInputStream(stream: Stream; fileName = &quot;&quot;; tabulations = 8): InputStream</a></li>
           </ul></dd>
 <dt><a name="newMaterial" href="#newMaterial"><span>newMaterial:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -361,6 +467,10 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="ray: newRay(origin: Point; dir: Vec; tmin = 0.00001; tmax = Inf; depth = 0): Ray" href="traynim/ray.html#newRay%2CPoint%2CVec%2Cfloat%2Cint">ray: newRay(origin: Point; dir: Vec; tmin = 0.00001; tmax = Inf; depth = 0): Ray</a></li>
           </ul></dd>
+<dt><a name="newScene" href="#newScene"><span>newScene:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: newScene(): Scene" href="traynim/sceneFiles.html#newScene">sceneFiles: newScene(): Scene</a></li>
+          </ul></dd>
 <dt><a name="newSpecularBRDF" href="#newSpecularBRDF"><span>newSpecularBRDF:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="materials: newSpecularBRDF(pigment: Pigment = newUniformPigment(white);
@@ -395,9 +505,25 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="render: OnOffRenderer" href="traynim/render.html#OnOffRenderer">render: OnOffRenderer</a></li>
           </ul></dd>
+<dt><a name="ORTHOGONAL" href="#ORTHOGONAL"><span>ORTHOGONAL:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.ORTHOGONAL" href="traynim/sceneFiles.html#ORTHOGONAL">KeywordEnum.ORTHOGONAL</a></li>
+          </ul></dd>
 <dt><a name="OrthogonalCamera" href="#OrthogonalCamera"><span>OrthogonalCamera:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="cameras: OrthogonalCamera" href="traynim/cameras.html#OrthogonalCamera">cameras: OrthogonalCamera</a></li>
+          </ul></dd>
+<dt><a name="parseBRDF" href="#parseBRDF"><span>parseBRDF:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseBRDF(inputS: var InputStream; scene: Scene): BRDF" href="traynim/sceneFiles.html#parseBRDF%2CInputStream%2CScene">sceneFiles: parseBRDF(inputS: var InputStream; scene: Scene): BRDF</a></li>
+          </ul></dd>
+<dt><a name="parseCamera" href="#parseCamera"><span>parseCamera:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseCamera(inputS: var InputStream; scene: Scene): Camera" href="traynim/sceneFiles.html#parseCamera%2CInputStream%2CScene">sceneFiles: parseCamera(inputS: var InputStream; scene: Scene): Camera</a></li>
+          </ul></dd>
+<dt><a name="parseColor" href="#parseColor"><span>parseColor:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseColor(InputS: var InputStream; scene: Scene): Color" href="traynim/sceneFiles.html#parseColor%2CInputStream%2CScene">sceneFiles: parseColor(InputS: var InputStream; scene: Scene): Color</a></li>
           </ul></dd>
 <dt><a name="parseEndianness" href="#parseEndianness"><span>parseEndianness:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -407,6 +533,44 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="hdrimages: parseImgSize(line: string): tuple" href="traynim/hdrimages.html#parseImgSize%2Cstring">hdrimages: parseImgSize(line: string): tuple</a></li>
           </ul></dd>
+<dt><a name="parseLight" href="#parseLight"><span>parseLight:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseLight(inputS: var InputStream; scene: Scene): PointLight" href="traynim/sceneFiles.html#parseLight%2CInputStream%2CScene">sceneFiles: parseLight(inputS: var InputStream; scene: Scene): PointLight</a></li>
+          </ul></dd>
+<dt><a name="parseMaterial" href="#parseMaterial"><span>parseMaterial:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseMaterial(inputS: var InputStream; scene: Scene): coupleMat" href="traynim/sceneFiles.html#parseMaterial%2CInputStream%2CScene">sceneFiles: parseMaterial(inputS: var InputStream; scene: Scene): coupleMat</a></li>
+          </ul></dd>
+<dt><a name="parsePigment" href="#parsePigment"><span>parsePigment:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parsePigment(inputS: var InputStream; scene: Scene): Pigment" href="traynim/sceneFiles.html#parsePigment%2CInputStream%2CScene">sceneFiles: parsePigment(inputS: var InputStream; scene: Scene): Pigment</a></li>
+          </ul></dd>
+<dt><a name="parsePlane" href="#parsePlane"><span>parsePlane:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parsePlane(inputS: var InputStream; scene: Scene): Plane" href="traynim/sceneFiles.html#parsePlane%2CInputStream%2CScene">sceneFiles: parsePlane(inputS: var InputStream; scene: Scene): Plane</a></li>
+          </ul></dd>
+<dt><a name="parseScene" href="#parseScene"><span>parseScene:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseScene(inputS: var InputStream;
+           variables: Table[string, float] = initTable()): Scene" href="traynim/sceneFiles.html#parseScene%2CInputStream%2CTable%5Bstring%2Cfloat%5D">sceneFiles: parseScene(inputS: var InputStream;
+           variables: Table[string, float] = initTable()): Scene</a></li>
+          </ul></dd>
+<dt><a name="parseSphere" href="#parseSphere"><span>parseSphere:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseSphere(inputS: var InputStream; scene: Scene): Sphere" href="traynim/sceneFiles.html#parseSphere%2CInputStream%2CScene">sceneFiles: parseSphere(inputS: var InputStream; scene: Scene): Sphere</a></li>
+          </ul></dd>
+<dt><a name="parseStringToken" href="#parseStringToken"><span>parseStringToken:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseStringToken(inputS: var InputStream; location: SourceLocation): Token" href="traynim/sceneFiles.html#parseStringToken%2CInputStream%2CSourceLocation">sceneFiles: parseStringToken(inputS: var InputStream; location: SourceLocation): Token</a></li>
+          </ul></dd>
+<dt><a name="parseTransformation" href="#parseTransformation"><span>parseTransformation:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseTransformation(inputS: var InputStream; scene: Scene): Transformation" href="traynim/sceneFiles.html#parseTransformation%2CInputStream%2CScene">sceneFiles: parseTransformation(inputS: var InputStream; scene: Scene): Transformation</a></li>
+          </ul></dd>
+<dt><a name="parseVector" href="#parseVector"><span>parseVector:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: parseVector(inputS: var InputStream; scene: Scene): Vec" href="traynim/sceneFiles.html#parseVector%2CInputStream%2CScene">sceneFiles: parseVector(inputS: var InputStream; scene: Scene): Vec</a></li>
+          </ul></dd>
 <dt><a name="PathTracer" href="#PathTracer"><span>PathTracer:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="render: PathTracer" href="traynim/render.html#PathTracer">render: PathTracer</a></li>
@@ -414,6 +578,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="PCG" href="#PCG"><span>PCG:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="pcg: PCG" href="traynim/pcg.html#PCG">pcg: PCG</a></li>
+          </ul></dd>
+<dt><a name="PERSPECTIVE" href="#PERSPECTIVE"><span>PERSPECTIVE:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.PERSPECTIVE" href="traynim/sceneFiles.html#PERSPECTIVE">KeywordEnum.PERSPECTIVE</a></li>
           </ul></dd>
 <dt><a name="PerspectiveCamera" href="#PerspectiveCamera"><span>PerspectiveCamera:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -426,6 +594,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="pixelOffset" href="#pixelOffset"><span>pixelOffset:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="hdrimages: pixelOffset(img: HdrImage; x, y: int): int" href="traynim/hdrimages.html#pixelOffset%2CHdrImage%2Cint%2Cint">hdrimages: pixelOffset(img: HdrImage; x, y: int): int</a></li>
+          </ul></dd>
+<dt><a name="PLANE" href="#PLANE"><span>PLANE:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.PLANE" href="traynim/sceneFiles.html#PLANE">KeywordEnum.PLANE</a></li>
           </ul></dd>
 <dt><a name="Plane" href="#Plane"><span>Plane:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -469,25 +641,49 @@ window.addEventListener('DOMContentLoaded', main);
           <li><a class="reference external"
           data-doc-search-tag="world: rayIntersection(world: World; ray: Ray): Option[HitRecord]" href="traynim/world.html#rayIntersection%2CWorld%2CRay">world: rayIntersection(world: World; ray: Ray): Option[HitRecord]</a></li>
           </ul></dd>
+<dt><a name="readChar" href="#readChar"><span>readChar:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: readChar(inputS: var InputStream): char" href="traynim/sceneFiles.html#readChar%2CInputStream">sceneFiles: readChar(inputS: var InputStream): char</a></li>
+          </ul></dd>
 <dt><a name="readPfmImage" href="#readPfmImage"><span>readPfmImage:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="hdrimages: readPfmImage(stream: Stream): HdrImage" href="traynim/hdrimages.html#readPfmImage%2CStream">hdrimages: readPfmImage(stream: Stream): HdrImage</a></li>
+          </ul></dd>
+<dt><a name="readToken" href="#readToken"><span>readToken:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: readToken(inputS: var InputStream): Token" href="traynim/sceneFiles.html#readToken%2CInputStream">sceneFiles: readToken(inputS: var InputStream): Token</a></li>
           </ul></dd>
 <dt><a name="Renderer" href="#Renderer"><span>Renderer:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="render: Renderer" href="traynim/render.html#Renderer">render: Renderer</a></li>
           </ul></dd>
+<dt><a name="ROTATIONX" href="#ROTATIONX"><span>ROTATIONX:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.ROTATIONX" href="traynim/sceneFiles.html#ROTATIONX">KeywordEnum.ROTATIONX</a></li>
+          </ul></dd>
 <dt><a name="rotationX" href="#rotationX"><span>rotationX:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: rotationX(theta: float64): Transformation" href="traynim/transformations.html#rotationX%2Cfloat64">transformations: rotationX(theta: float64): Transformation</a></li>
+          </ul></dd>
+<dt><a name="ROTATIONY" href="#ROTATIONY"><span>ROTATIONY:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.ROTATIONY" href="traynim/sceneFiles.html#ROTATIONY">KeywordEnum.ROTATIONY</a></li>
           </ul></dd>
 <dt><a name="rotationY" href="#rotationY"><span>rotationY:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: rotationY(theta: float64): Transformation" href="traynim/transformations.html#rotationY%2Cfloat64">transformations: rotationY(theta: float64): Transformation</a></li>
           </ul></dd>
+<dt><a name="ROTATIONZ" href="#ROTATIONZ"><span>ROTATIONZ:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.ROTATIONZ" href="traynim/sceneFiles.html#ROTATIONZ">KeywordEnum.ROTATIONZ</a></li>
+          </ul></dd>
 <dt><a name="rotationZ" href="#rotationZ"><span>rotationZ:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: rotationZ(theta: float64): Transformation" href="traynim/transformations.html#rotationZ%2Cfloat64">transformations: rotationZ(theta: float64): Transformation</a></li>
+          </ul></dd>
+<dt><a name="SCALING" href="#SCALING"><span>SCALING:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.SCALING" href="traynim/sceneFiles.html#SCALING">KeywordEnum.SCALING</a></li>
           </ul></dd>
 <dt><a name="scaling" href="#scaling"><span>scaling:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -507,6 +703,10 @@ window.addEventListener('DOMContentLoaded', main);
            interactionPoint: Point; normal: Normal; depth: int): Ray" href="traynim/materials.html#scatterRay.e%2CSpecularBRDF%2CPCG%2CVec%2CPoint%2CNormal%2Cint">materials: scatterRay(brdf: SpecularBRDF; pcg: var PCG; incomingDir: Vec;
            interactionPoint: Point; normal: Normal; depth: int): Ray</a></li>
           </ul></dd>
+<dt><a name="Scene" href="#Scene"><span>Scene:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: Scene" href="traynim/sceneFiles.html#Scene">sceneFiles: Scene</a></li>
+          </ul></dd>
 <dt><a name="setPixel" href="#setPixel"><span>setPixel:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="hdrimages: setPixel(img: var HdrImage; x, y: int; newColor: colors.Color)" href="traynim/hdrimages.html#setPixel%2CHdrImage%2Cint%2Cint%2C">hdrimages: setPixel(img: var HdrImage; x, y: int; newColor: colors.Color)</a></li>
@@ -515,9 +715,25 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="shapesDef: Shape" href="traynim/shapesDef.html#Shape">shapesDef: Shape</a></li>
           </ul></dd>
+<dt><a name="skipWhiteSpAndComments" href="#skipWhiteSpAndComments"><span>skipWhiteSpAndComments:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: skipWhiteSpAndComments(inputS: var InputStream)" href="traynim/sceneFiles.html#skipWhiteSpAndComments%2CInputStream">sceneFiles: skipWhiteSpAndComments(inputS: var InputStream)</a></li>
+          </ul></dd>
+<dt><a name="SourceLocation" href="#SourceLocation"><span>SourceLocation:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: SourceLocation" href="traynim/sceneFiles.html#SourceLocation">sceneFiles: SourceLocation</a></li>
+          </ul></dd>
+<dt><a name="SPECULAR" href="#SPECULAR"><span>SPECULAR:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.SPECULAR" href="traynim/sceneFiles.html#SPECULAR">KeywordEnum.SPECULAR</a></li>
+          </ul></dd>
 <dt><a name="SpecularBRDF" href="#SpecularBRDF"><span>SpecularBRDF:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="materials: SpecularBRDF" href="traynim/materials.html#SpecularBRDF">materials: SpecularBRDF</a></li>
+          </ul></dd>
+<dt><a name="SPHERE" href="#SPHERE"><span>SPHERE:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.SPHERE" href="traynim/sceneFiles.html#SPHERE">KeywordEnum.SPHERE</a></li>
           </ul></dd>
 <dt><a name="Sphere" href="#Sphere"><span>Sphere:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -531,6 +747,30 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="shapes: spherePointToUV(p: Point): Vec2d" href="traynim/shapes.html#spherePointToUV%2CPoint">shapes: spherePointToUV(p: Point): Vec2d</a></li>
           </ul></dd>
+<dt><a name="stopToken" href="#stopToken"><span>stopToken:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="TokenType.stopToken" href="traynim/sceneFiles.html#stopToken">TokenType.stopToken</a></li>
+          </ul></dd>
+<dt><a name="symbol" href="#symbol"><span>symbol:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="TokenType.symbol" href="traynim/sceneFiles.html#symbol">TokenType.symbol</a></li>
+          </ul></dd>
+<dt><a name="SYMBOLS" href="#SYMBOLS"><span>SYMBOLS:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: SYMBOLS" href="traynim/sceneFiles.html#SYMBOLS">sceneFiles: SYMBOLS</a></li>
+          </ul></dd>
+<dt><a name="Token" href="#Token"><span>Token:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: Token" href="traynim/sceneFiles.html#Token">sceneFiles: Token</a></li>
+          </ul></dd>
+<dt><a name="TokenType" href="#TokenType"><span>TokenType:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: TokenType" href="traynim/sceneFiles.html#TokenType">sceneFiles: TokenType</a></li>
+          </ul></dd>
+<dt><a name="TokenValue" href="#TokenValue"><span>TokenValue:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: TokenValue" href="traynim/sceneFiles.html#TokenValue">sceneFiles: TokenValue</a></li>
+          </ul></dd>
 <dt><a name="transform" href="#transform"><span>transform:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="ray: transform(ray: Ray; transformation: Transformation): Ray" href="traynim/ray.html#transform%2CRay%2CTransformation">ray: transform(ray: Ray; transformation: Transformation): Ray</a></li>
@@ -539,13 +779,33 @@ window.addEventListener('DOMContentLoaded', main);
 <li><a class="reference external"
           data-doc-search-tag="transformations: Transformation" href="traynim/transformations.html#Transformation">transformations: Transformation</a></li>
           </ul></dd>
+<dt><a name="TRANSLATION" href="#TRANSLATION"><span>TRANSLATION:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.TRANSLATION" href="traynim/sceneFiles.html#TRANSLATION">KeywordEnum.TRANSLATION</a></li>
+          </ul></dd>
 <dt><a name="translation" href="#translation"><span>translation:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="transformations: translation(v: Vec): Transformation" href="traynim/transformations.html#translation%2CVec">transformations: translation(v: Vec): Transformation</a></li>
           </ul></dd>
+<dt><a name="UNIFORM" href="#UNIFORM"><span>UNIFORM:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="KeywordEnum.UNIFORM" href="traynim/sceneFiles.html#UNIFORM">KeywordEnum.UNIFORM</a></li>
+          </ul></dd>
 <dt><a name="UniformPigment" href="#UniformPigment"><span>UniformPigment:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="materials: UniformPigment" href="traynim/materials.html#UniformPigment">materials: UniformPigment</a></li>
+          </ul></dd>
+<dt><a name="unreadChar" href="#unreadChar"><span>unreadChar:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: unreadChar(inputS: var InputStream; ch: char)" href="traynim/sceneFiles.html#unreadChar%2CInputStream%2Cchar">sceneFiles: unreadChar(inputS: var InputStream; ch: char)</a></li>
+          </ul></dd>
+<dt><a name="unreadToken" href="#unreadToken"><span>unreadToken:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: unreadToken(inputS: var InputStream; token: Token)" href="traynim/sceneFiles.html#unreadToken%2CInputStream%2CToken">sceneFiles: unreadToken(inputS: var InputStream; token: Token)</a></li>
+          </ul></dd>
+<dt><a name="updatePos" href="#updatePos"><span>updatePos:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: updatePos(inputS: var InputStream; ch: char)" href="traynim/sceneFiles.html#updatePos%2CInputStream%2Cchar">sceneFiles: updatePos(inputS: var InputStream; ch: char)</a></li>
           </ul></dd>
 <dt><a name="validCoordinates" href="#validCoordinates"><span>validCoordinates:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -554,6 +814,10 @@ window.addEventListener('DOMContentLoaded', main);
 <dt><a name="white" href="#white"><span>white:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
           data-doc-search-tag="colors: white" href="traynim/colors.html#white">colors: white</a></li>
+          </ul></dd>
+<dt><a name="WHITESPACE" href="#WHITESPACE"><span>WHITESPACE:</span></a></dt><dd><ul class="simple">
+<li><a class="reference external"
+          data-doc-search-tag="sceneFiles: WHITESPACE" href="traynim/sceneFiles.html#WHITESPACE">sceneFiles: WHITESPACE</a></li>
           </ul></dd>
 <dt><a name="World" href="#World"><span>World:</span></a></dt><dd><ul class="simple">
 <li><a class="reference external"
@@ -572,7 +836,7 @@ window.addEventListener('DOMContentLoaded', main);
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-06-02 17:42:30 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-06-18 11:05:45 UTC</small>
       </div>
     </div>
   </div>

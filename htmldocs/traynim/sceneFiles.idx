@@ -1,0 +1,62 @@
+WHITESPACE	traynim/sceneFiles.html#WHITESPACE	sceneFiles: WHITESPACE	
+SYMBOLS	traynim/sceneFiles.html#SYMBOLS	sceneFiles: SYMBOLS	
+SourceLocation	traynim/sceneFiles.html#SourceLocation	sceneFiles: SourceLocation	
+`$`	traynim/sceneFiles.html#$,SourceLocation	sceneFiles: `$`(loc: SourceLocation): string	
+NEW	traynim/sceneFiles.html#NEW	KeywordEnum.NEW	
+MATERIAL	traynim/sceneFiles.html#MATERIAL	KeywordEnum.MATERIAL	
+PLANE	traynim/sceneFiles.html#PLANE	KeywordEnum.PLANE	
+SPHERE	traynim/sceneFiles.html#SPHERE	KeywordEnum.SPHERE	
+DIFFUSE	traynim/sceneFiles.html#DIFFUSE	KeywordEnum.DIFFUSE	
+SPECULAR	traynim/sceneFiles.html#SPECULAR	KeywordEnum.SPECULAR	
+UNIFORM	traynim/sceneFiles.html#UNIFORM	KeywordEnum.UNIFORM	
+CHECKERED	traynim/sceneFiles.html#CHECKERED	KeywordEnum.CHECKERED	
+IMAGE	traynim/sceneFiles.html#IMAGE	KeywordEnum.IMAGE	
+IDENTITY	traynim/sceneFiles.html#IDENTITY	KeywordEnum.IDENTITY	
+TRANSLATION	traynim/sceneFiles.html#TRANSLATION	KeywordEnum.TRANSLATION	
+ROTATIONX	traynim/sceneFiles.html#ROTATIONX	KeywordEnum.ROTATIONX	
+ROTATIONY	traynim/sceneFiles.html#ROTATIONY	KeywordEnum.ROTATIONY	
+ROTATIONZ	traynim/sceneFiles.html#ROTATIONZ	KeywordEnum.ROTATIONZ	
+SCALING	traynim/sceneFiles.html#SCALING	KeywordEnum.SCALING	
+CAMERA	traynim/sceneFiles.html#CAMERA	KeywordEnum.CAMERA	
+ORTHOGONAL	traynim/sceneFiles.html#ORTHOGONAL	KeywordEnum.ORTHOGONAL	
+PERSPECTIVE	traynim/sceneFiles.html#PERSPECTIVE	KeywordEnum.PERSPECTIVE	
+FLOAT	traynim/sceneFiles.html#FLOAT	KeywordEnum.FLOAT	
+LIGHT	traynim/sceneFiles.html#LIGHT	KeywordEnum.LIGHT	
+KeywordEnum	traynim/sceneFiles.html#KeywordEnum	sceneFiles: KeywordEnum	
+keyword	traynim/sceneFiles.html#keyword	TokenType.keyword	
+identifier	traynim/sceneFiles.html#identifier	TokenType.identifier	
+literalNumber	traynim/sceneFiles.html#literalNumber	TokenType.literalNumber	
+literalString	traynim/sceneFiles.html#literalString	TokenType.literalString	
+symbol	traynim/sceneFiles.html#symbol	TokenType.symbol	
+stopToken	traynim/sceneFiles.html#stopToken	TokenType.stopToken	
+TokenType	traynim/sceneFiles.html#TokenType	sceneFiles: TokenType	
+TokenValue	traynim/sceneFiles.html#TokenValue	sceneFiles: TokenValue	
+Token	traynim/sceneFiles.html#Token	sceneFiles: Token	
+GrammarError	traynim/sceneFiles.html#GrammarError	sceneFiles: GrammarError	
+InputStream	traynim/sceneFiles.html#InputStream	sceneFiles: InputStream	
+newInputStream	traynim/sceneFiles.html#newInputStream,Stream,string,int	sceneFiles: newInputStream(stream: Stream; fileName = &quot;&quot;; tabulations = 8): InputStream	
+updatePos	traynim/sceneFiles.html#updatePos,InputStream,char	sceneFiles: updatePos(inputS: var InputStream; ch: char)	
+readChar	traynim/sceneFiles.html#readChar,InputStream	sceneFiles: readChar(inputS: var InputStream): char	
+unreadChar	traynim/sceneFiles.html#unreadChar,InputStream,char	sceneFiles: unreadChar(inputS: var InputStream; ch: char)	
+skipWhiteSpAndComments	traynim/sceneFiles.html#skipWhiteSpAndComments,InputStream	sceneFiles: skipWhiteSpAndComments(inputS: var InputStream)	
+parseStringToken	traynim/sceneFiles.html#parseStringToken,InputStream,SourceLocation	sceneFiles: parseStringToken(inputS: var InputStream; location: SourceLocation): Token	
+readToken	traynim/sceneFiles.html#readToken,InputStream	sceneFiles: readToken(inputS: var InputStream): Token	
+unreadToken	traynim/sceneFiles.html#unreadToken,InputStream,Token	sceneFiles: unreadToken(inputS: var InputStream; token: Token)	
+Scene	traynim/sceneFiles.html#Scene	sceneFiles: Scene	
+newScene	traynim/sceneFiles.html#newScene	sceneFiles: newScene(): Scene	
+expectKeywords	traynim/sceneFiles.html#expectKeywords,InputStream,seq[KeywordEnum]	sceneFiles: expectKeywords(inputS: var InputStream; inputKeywords: seq[KeywordEnum]): KeywordEnum	
+expectString	traynim/sceneFiles.html#expectString,InputStream	sceneFiles: expectString(inputS: var InputStream): string	
+expectSymbol	traynim/sceneFiles.html#expectSymbol,InputStream,char	sceneFiles: expectSymbol(inputS: var InputStream; sym: char)	
+expectNumber	traynim/sceneFiles.html#expectNumber,InputStream,Scene	sceneFiles: expectNumber(inputS: var InputStream; scene: Scene): float	
+expectIdentifier	traynim/sceneFiles.html#expectIdentifier,InputStream	sceneFiles: expectIdentifier(inputS: var InputStream): string	
+parseColor	traynim/sceneFiles.html#parseColor,InputStream,Scene	sceneFiles: parseColor(InputS: var InputStream; scene: Scene): Color	
+parsePigment	traynim/sceneFiles.html#parsePigment,InputStream,Scene	sceneFiles: parsePigment(inputS: var InputStream; scene: Scene): Pigment	
+parseBRDF	traynim/sceneFiles.html#parseBRDF,InputStream,Scene	sceneFiles: parseBRDF(inputS: var InputStream; scene: Scene): BRDF	
+parseVector	traynim/sceneFiles.html#parseVector,InputStream,Scene	sceneFiles: parseVector(inputS: var InputStream; scene: Scene): Vec	
+parseTransformation	traynim/sceneFiles.html#parseTransformation,InputStream,Scene	sceneFiles: parseTransformation(inputS: var InputStream; scene: Scene): Transformation	
+parseMaterial	traynim/sceneFiles.html#parseMaterial,InputStream,Scene	sceneFiles: parseMaterial(inputS: var InputStream; scene: Scene): coupleMat	
+parseSphere	traynim/sceneFiles.html#parseSphere,InputStream,Scene	sceneFiles: parseSphere(inputS: var InputStream; scene: Scene): Sphere	
+parsePlane	traynim/sceneFiles.html#parsePlane,InputStream,Scene	sceneFiles: parsePlane(inputS: var InputStream; scene: Scene): Plane	
+parseLight	traynim/sceneFiles.html#parseLight,InputStream,Scene	sceneFiles: parseLight(inputS: var InputStream; scene: Scene): PointLight	
+parseCamera	traynim/sceneFiles.html#parseCamera,InputStream,Scene	sceneFiles: parseCamera(inputS: var InputStream; scene: Scene): Camera	
+parseScene	traynim/sceneFiles.html#parseScene,InputStream,Table[string,float]	sceneFiles: parseScene(inputS: var InputStream;\n           variables: Table[string, float] = initTable()): Scene	
