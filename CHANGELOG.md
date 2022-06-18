@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## Unreleased
+## [1.0.0] - 18/06/2022
 
 ## Added
 - **Major update**: new `renderer` command to add scene from file 
@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
 - `demo` command
 
 
-## [0.3.0](https://github.com/ottyanna/traynim/releases/tag/v0.3.0)
+## [0.3.0] - 25/05/2022
 
 ## Added
 - **Major update**: Path Tracing renderer
@@ -22,7 +22,7 @@ All notable changes to this project will be documented in this file.
 - Some pigments and BRDFs
 
 
-## [0.2.0](https://github.com/ottyanna/traynim/releases/tag/v0.2.0)
+## [0.2.0] - 11/05/2022
 
 ### Added
 - **Major update**: new `demo` command
@@ -51,3 +51,5 @@ First release of the code
 
 [0.1.0]: https://github.com/ottyanna/traynim/releases/tag/v0.1.0
 [0.1.1]: https://github.com/ottyanna/traynim/releases/tag/v0.1.1
+[0.2.0]: https://github.com/ottyanna/traynim/releases/tag/v0.2.0
+[0.3.0]: https://github.com/ottyanna/traynim/releases/tag/v0.3.0
