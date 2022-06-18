@@ -56,7 +56,7 @@ Traynim can produce images like this with four different renderers: path tracer,
 ### Dependencies
 - [nim](https://github.com/nim-lang) >= 1.6.4
 - [nimble](https://github.com/nim-lang/nimble)
-- [ffmpeg](https://www.ffmpeg.org/) and [parallel](https://en.wikipedia.org/wiki/GNU_parallel) for the animations and for `stack` command
+- [ffmpeg](https://www.ffmpeg.org/) and [parallel](https://en.wikipedia.org/wiki/GNU_parallel) for the bash scripts
 
 
 
@@ -106,7 +106,7 @@ Run "traynim help" to get *comprehensive* help.
 
 ### `renderer`
 
-To generate one image with default parameters (the default input file is ...) use
+To generate one image with default parameters (the default and example input file is [here](examples/example.txt)) use
 
 ```sh
 $ ./traynim renderer
@@ -114,9 +114,9 @@ $ ./traynim renderer
 
 You can change the size of the image and the `png` output conversion luminosity by running `--help`.
 
-As it is shown in [Demo-Preview](#demo-preview), it is possible to use different rendering methods by using the `-a` or `--algorithm` flag.
+As shown in [Demo-Preview](#demo-preview), it is possible to use different rendering methods by using the `-a` or `--algorithm` flag.
 
- Renderer |  Feature | command
+ Renderer |  Feature | Option
 :-------------------------:|:-------------------------: | :------:
 Simple Path Tracer  | Uses Russian roulette method | `-a=pathtracing` (Default)
 Point Light Renderer  | The source light is considered a dirac delta | `-a=pointlight`
@@ -128,7 +128,7 @@ While the path tracer is really slow, the flat, point light and on/off renderers
 
 ANIMATIONS
 
-You can generate the animations by running and tweaking [this]() bash script, then just run
+You can generate the animations by running and tweaking [this](scripts/generateImage.sh) bash script, then just run
 
 ```sh
 $ ./animation.sh NUM_OF_CORES >/dev/null
@@ -138,8 +138,12 @@ where `NUM_OF_CORES` are the number of cores to parallelize the generation.
 
 ### `stack`
 
-Generating an image can take long, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#examples) feature or you can just use the `stack` feature that takes advantage of the randomness of the number generator (by setting a different `initSeq` which is different from the seed), to generate the same image with different noise and the it merges them into the same image.
-The [script]() makes this automatic using [parallel](https://en.wikipedia.org/wiki/GNU_parallel). You can also use this feature to reduce noise AND to make blurry images like these????
+Generating an image can take long, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#antialiasing-in-case-of-flat-rendering) feature or you can just use the `stack` feature that takes advantage of the randomness of the number generator (by setting a different `initSeq` which is different from the seed). It generates the same image with different noise and the it merges them into the same image.
+This [script](scripts/stackMain.sh) makes this automatic using [parallel](https://en.wikipedia.org/wiki/GNU_parallel).
+
+You can also use this feature to reduce noise AND to make blurry images.
+
+[Here](#example-for-the-blurry-effect) you can see examples of these two features.
 
 ### `pfm2format`
 
@@ -147,7 +151,7 @@ To use the `pfm2format` feature, you have to bear in mind that just PNG, PPM, BM
 
 ### `demo` (Deprecated)
 
-The `demo` command is still usable, but since version 1.0.0, it is deprecated and it's better to use inputFiles for scenes. Despite this, if you wish to create your images with `for` cycles, it's better to tweak directly the `demo` part of the code.
+The `demo` command is still usable, but since version 1.0.0, it's better to use files for scenes. Despite this, if you wish to create your images with `for` cycles, like the scene in the on/off example in the [demo_preview](#demo-preview) it's better to tweak directly the `demo` part of the code.
 
 
 ## Examples
@@ -165,7 +169,23 @@ The scene has a white light in coordinates (-50, 30, 30). The number of rays is 
 
 As you can see the noise is sensibly reduced by increasing the samplesPerPixel.
 
+### Example of the noise reduction with `stack`
 
+<p align="center"> 
+  <img src="img/test0.png" alt="Sample signal" width="45%" height="50%">
+  <img src="img/testDef.png" alt="Sample signal" width="45%" height="50%">
+</p>
+
+On the left there is one of the six images generated with different `initSeq` value.
+On the right there is the "stacked" image: you can see how it gets less noisy.
+
+### Example for the blurry effect
+
+<p align="left"> 
+  <img src="img/blurrystack.png" alt="blurrystack" width="45%" height="50%">
+</p>
+
+This image was obtained by rotating both spheres a little and by using a different `initSeq` value, in order to reduce the overall noise.
 
 ### `--gamma` and `--factor` variation in `pfm2format` feature:
 
