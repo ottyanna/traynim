@@ -128,12 +128,12 @@ Point Light Renderer  | The source light is considered a dirac delta | `-a=point
 Flat Renderer | The scene is traced without considering the radiance, so it is in solid colors | `-a=flat`
 On/off renderer | There are just two colors, one for the objects, one for the background | `-a=on/off`
 
-While the path tracer is really slow, the flat, point light and on/off renderers are fast, so they are useful for debugging or to get an idea if the object positions are right. The time scale depends really on the scene but for a simple scene it can take up to 5 minutes for the path tracing while about 5/20 seconds for the others. 
+While the path tracer is really slow, the flat, point light and on/off renderers are fast, so they are useful for debugging or to get an idea if the object positions are right. The time scale depends really on the scene but for a simple scene it can take up to 5 minutes for the path tracing while about 5 to 20 seconds for the others. 
 <!--- Moreover, bear in mind that if you use a sphere for the sky the on/off renderer--> 
 
 ANIMATIONS
 
-You can generate the animations by running and tweaking [this](scripts/generateImage.sh) bash script, then just run
+You can generate the animations by tweaking [this](scripts/generateImage.sh) bash script, then just run
 
 ```sh
 $ ./animation.sh NUM_OF_CORES >/dev/null
@@ -143,12 +143,10 @@ where `NUM_OF_CORES` are the number of cores to parallelize the generation.
 
 ### `stack`
 
-Generating an image can take long, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#antialiasing-in-case-of-flat-rendering) feature or you can just use the `stack` feature that takes advantage of the randomness of the number generator (by setting a different `initSeq` which is different from the seed). It generates the same image with different noise and the it merges them into the same image.
-This [script](scripts/stackMain.sh) makes this automatic using [parallel](https://en.wikipedia.org/wiki/GNU_parallel).
+Generating an image can take long, especially if you need to cancel out noise. You can reduce the time by using the [antialiasing](#antialiasing-in-case-of-flat-rendering) feature or you can just use the `stack` command that takes advantage of the seekability property of the chosen number generator (by setting a different `initSeq`). Once you generated the same image with different noise (again by setting `-initSeq`to different values), the `stack` command merges them into the same image. 
+The only thing you have to bear in mind is that the images must be named img0, img1, img2 etc. This [script](scripts/stackMain.sh) makes these procedure automatic using [parallel](https://en.wikipedia.org/wiki/GNU_parallel).
 
-You can also use this feature to reduce noise AND to make blurry images.
-
-[Here](#example-for-the-blurry-effect) you can see examples of these two features.
+You can also use this feature to reduce noise AND to make blurry images.[Here](#example-for-the-blurry-effect) you can see an example.
 
 ### `pfm2format`
 
@@ -163,7 +161,7 @@ The `demo` command is still usable, but since version 1.0.0, it's better to use 
 
 ### Antialiasing in case of flat rendering:
 
-You can reduce the noise of the image by increasing the number of rays or by increasing the samples per pixel.
+You can reduce the noise of the image by increasing the number of rays or by increasing the samples per pixel. The latter can be used with all the tracing algorithms.
 
 The scene has a white light in coordinates (-50, 30, 30). The number of rays is always 4 (`-r=4`) and the luminosity is 0.8.
 
@@ -190,7 +188,7 @@ On the right there is the "stacked" image: you can see how it gets less noisy.
   <img src="img/blurrystack.png" alt="blurrystack" width="45%" height="50%">
 </p>
 
-This image was obtained by rotating both spheres a little and by using a different `initSeq` value, in order to reduce the overall noise.
+This image was obtained by rotating both spheres a little. In case of path tracing you could also use a different `initSeq` value, in order to reduce the overall noise. Refer to this [script](scripts/stack.sh) for an example.
 
 ### `--gamma` and `--factor` variation in `pfm2format` feature:
 
