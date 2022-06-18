@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.3.0"
+version       = "1.0.0"
 author        = "Jacopo Fera, Anna Spanò"
 description   = "The Nim ray tracer"
 license       = "GPLv3"
