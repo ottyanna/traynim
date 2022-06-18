@@ -246,11 +246,23 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
             )
         
 
-        let bigSphereMaterial = newMaterial(
+        #[ let bigSphereMaterial = newMaterial(
             brdf = newDiffuseBRDF(
                 pigment = newUniformPigment(newColor(0.3, 0.4, 0.8))
             )
         )
+ ]#
+
+        let inPfm = newFileStream("img/pfm2formatExamples/sample.pfm", fmRead)
+        var img = readPfmImage(inPfm)
+        inPfm.close()
+
+
+        let bigSphereMaterial = newMaterial(
+            brdf = newDiffuseBRDF(
+                pigment = newImagePigment(img))
+            )
+        
 
         let littleSphereMaterial = newMaterial(brdf = newDiffuseBRDF(
                 pigment = newUniformPigment(newColor(0.7, 0.1, 0.3)))
@@ -287,13 +299,13 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         )
 
 
-        world.addShape(
+        #[ world.addShape(
             newSphere(
                 material = mirrorMaterial,
                 transformation = translation(newVec(1, 2.5, 0))
             )
         )
-
+ ]#
         world.addLight(newPointLight(position = newPoint(-30, 30, 30),
                 color = white))
         
