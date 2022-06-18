@@ -1,0 +1,2 @@
+areClose	traynim/common.html#areClose,float32,float32,float	common: areClose(a`gensym0, b`gensym0: float32; epsilon`gensym0 = 0.00001): bool	
+areClose	traynim/common.html#areClose,float64,float64,float	common: areClose(a`gensym1, b`gensym1: float64; epsilon`gensym1 = 0.00001): bool	

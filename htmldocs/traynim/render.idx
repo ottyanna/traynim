@@ -1,0 +1,15 @@
+Renderer	traynim/render.html#Renderer	render: Renderer	
+newBaseRenderer	traynim/render.html#newBaseRenderer.e,Renderer,World	render: newBaseRenderer(renderer: Renderer; world: World; backgroundColor = black)	
+call	traynim/render.html#call.e,Renderer,Ray	render: call(renderer: Renderer; ray: Ray): Color	
+OnOffRenderer	traynim/render.html#OnOffRenderer	render: OnOffRenderer	
+newOnOffRenderer	traynim/render.html#newOnOffRenderer,World	render: newOnOffRenderer(world: World; backgroundColor = black; color = white): OnOffRenderer	
+call	traynim/render.html#call.e,OnOffRenderer,Ray	render: call(renderer: OnOffRenderer; ray: Ray): Color	
+FlatRenderer	traynim/render.html#FlatRenderer	render: FlatRenderer	
+newFlatRenderer	traynim/render.html#newFlatRenderer,World	render: newFlatRenderer(world: World; backgroundColor = black): FlatRenderer	
+call	traynim/render.html#call.e,FlatRenderer,Ray	render: call(renderer: FlatRenderer; ray: Ray): Color	
+PathTracer	traynim/render.html#PathTracer	render: PathTracer	
+newPathTracer	traynim/render.html#newPathTracer,World,PCG,int,int,int	render: newPathTracer(world: World; backgroundColor = black; pcg: PCG; raysNum = 10;\n              maxDepth = 2; rouletteMax = 3): PathTracer	
+call	traynim/render.html#call.e,PathTracer,Ray	render: call(renderer: PathTracer; ray: Ray): Color	
+PointLightRenderer	traynim/render.html#PointLightRenderer	render: PointLightRenderer	
+newPointLightRenderer	traynim/render.html#newPointLightRenderer,World,Color,Color	render: newPointLightRenderer(world: World; backgroundColor: Color = black;\n                      ambientColor: Color = newColor(0.1, 0.1, 0.1)): PointLightRenderer	
+call	traynim/render.html#call.e,PointLightRenderer,Ray	render: call(renderer: PointLightRenderer; ray: Ray): Color	

@@ -1,0 +1,4 @@
+ImageTracer	traynim/imageTracer.html#ImageTracer	imageTracer: ImageTracer	
+newImageTracer	traynim/imageTracer.html#newImageTracer,HdrImage,Camera,int,PCG	imageTracer: newImageTracer(image: HdrImage; camera: Camera; samplesPerSide: int = 0;\n               pcg: PCG = newPCG()): ImageTracer	
+fireRay	traynim/imageTracer.html#fireRay,ImageTracer,int,int,float,float	imageTracer: fireRay(imagetracer: ImageTracer; col, row: int; uPixel = 0.5; vPixel = 0.5): Ray	
+fireAllRays	traynim/imageTracer.html#fireAllRays,ImageTracer,	imageTracer: fireAllRays(imagetracer: var ImageTracer; fun: (Ray) -&gt; Color)	

@@ -1,0 +1,3 @@
+HitRecord	traynim/hitRecord.html#HitRecord	hitRecord: HitRecord	
+newHitRecord	traynim/hitRecord.html#newHitRecord,Point,Normal,Vec2d,float,Ray	hitRecord: newHitRecord(worldPoint: Point; normal: Normal; surfacePoint: Vec2d; t: float;\n             ray: Ray; shape = Shape()): HitRecord	
+areClose	traynim/hitRecord.html#areClose,HitRecord,Option[HitRecord],float	hitRecord: areClose(self: HitRecord; other: Option[HitRecord]; epsilon = 0.00001): bool	

@@ -1,0 +1,20 @@
+Matrix4x4	traynim/transformations.html#Matrix4x4	transformations: Matrix4x4	
+IdentityMatrix4x4	traynim/transformations.html#IdentityMatrix4x4	transformations: IdentityMatrix4x4	
+matrixProd	traynim/transformations.html#matrixProd,Matrix4x4,Matrix4x4	transformations: matrixProd(m1, m2: Matrix4x4): Matrix4x4	
+areClose	traynim/transformations.html#areClose,Matrix4x4,Matrix4x4,float	transformations: areClose(m1, m2: Matrix4x4; epsilon = 0.00001): bool	
+`$`	traynim/transformations.html#$,Matrix4x4	transformations: `$`(m: Matrix4x4): string	
+Transformation	traynim/transformations.html#Transformation	transformations: Transformation	
+newTransformation	traynim/transformations.html#newTransformation	transformations: newTransformation(m = IdentityMatrix4x4; invm = IdentityMatrix4x4): Transformation	
+isConsistent	traynim/transformations.html#isConsistent,Transformation	transformations: isConsistent(t: Transformation): bool	
+areClose	traynim/transformations.html#areClose,Transformation,Transformation,float	transformations: areClose(t1, t2: Transformation; epsilon = 0.00001): bool	
+inverse	traynim/transformations.html#inverse,Transformation	transformations: inverse(t: Transformation): Transformation	
+`*`	traynim/transformations.html#*,Transformation,Transformation	transformations: `*`(t1, t2: Transformation): Transformation	
+`$`	traynim/transformations.html#$,Transformation	transformations: `$`(t: Transformation): string	
+scaling	traynim/transformations.html#scaling,Vec	transformations: scaling(v: Vec): Transformation	
+translation	traynim/transformations.html#translation,Vec	transformations: translation(v: Vec): Transformation	
+rotationX	traynim/transformations.html#rotationX,float64	transformations: rotationX(theta: float64): Transformation	
+rotationY	traynim/transformations.html#rotationY,float64	transformations: rotationY(theta: float64): Transformation	
+rotationZ	traynim/transformations.html#rotationZ,float64	transformations: rotationZ(theta: float64): Transformation	
+`*`	traynim/transformations.html#*,Transformation,Vec	transformations: `*`(t: Transformation; v: Vec): Vec	
+`*`	traynim/transformations.html#*,Transformation,Normal	transformations: `*`(t: Transformation; n: Normal): Normal	
+`*`	traynim/transformations.html#*,Transformation,Point	transformations: `*`(t: Transformation; p: Point): Point	

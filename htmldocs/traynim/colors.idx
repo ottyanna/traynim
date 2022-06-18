@@ -1,0 +1,13 @@
+Color	traynim/colors.html#Color	colors: Color	
+newColor	traynim/colors.html#newColor,float32,float32,float32	colors: newColor(r, g, b: float32): Color	
+white	traynim/colors.html#white	colors: white	
+black	traynim/colors.html#black	colors: black	
+`+`	traynim/colors.html#+,Color,Color	colors: `+`(color1, color2: Color): Color	
+`*`	traynim/colors.html#*,Color,float32	colors: `*`(col: Color; scalar: float32): Color	
+`*`	traynim/colors.html#*,float32,Color	colors: `*`(scalar: float32; col: Color): Color	
+`-`	traynim/colors.html#-,Color,Color	colors: `-`(color1, color2: Color): Color	
+`*`	traynim/colors.html#*,Color,Color	colors: `*`(color1, color2: Color): Color	
+`/`	traynim/colors.html#/,Color,float	colors: `/`(col: Color; scalar: float): Color	
+`$`	traynim/colors.html#$,Color	colors: `$`(color: Color): string	
+areClose	traynim/colors.html#areClose,Color,Color,float	colors: areClose(color1, color2: Color; epsilon = 0.00001): bool	
+luminosity	traynim/colors.html#luminosity,Color	colors: luminosity(color: Color): float32	

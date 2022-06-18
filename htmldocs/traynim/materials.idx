@@ -1,0 +1,28 @@
+Pigment	traynim/materials.html#Pigment	materials: Pigment	
+getColor	traynim/materials.html#getColor.e,Pigment,Vec2d	materials: getColor(pigment: Pigment; vec2d: Vec2d): Color	
+UniformPigment	traynim/materials.html#UniformPigment	materials: UniformPigment	
+newUniformPigment	traynim/materials.html#newUniformPigment,Color	materials: newUniformPigment(color: Color): UniformPigment	
+getColor	traynim/materials.html#getColor.e,UniformPigment,Vec2d	materials: getColor(pigment: UniformPigment; vec2d: Vec2d): Color	
+CheckeredPigment	traynim/materials.html#CheckeredPigment	materials: CheckeredPigment	
+newCheckeredPigment	traynim/materials.html#newCheckeredPigment,Color,Color,int	materials: newCheckeredPigment(color1, color2: Color; stepsNum = 10): CheckeredPigment	
+getColor	traynim/materials.html#getColor.e,CheckeredPigment,Vec2d	materials: getColor(pigment: CheckeredPigment; vec2d: Vec2d): Color	
+ImagePigment	traynim/materials.html#ImagePigment	materials: ImagePigment	
+newImagePigment	traynim/materials.html#newImagePigment,HdrImage	materials: newImagePigment(image: HdrImage): ImagePigment	
+getColor	traynim/materials.html#getColor.e,ImagePigment,Vec2d	materials: getColor(pigment: ImagePigment; vec2d: Vec2d): Color	
+getColor1	traynim/materials.html#getColor1,CheckeredPigment	materials: getColor1(pigment: CheckeredPigment): Color	
+getColor2	traynim/materials.html#getColor2,CheckeredPigment	materials: getColor2(pigment: CheckeredPigment): Color	
+getStepsNum	traynim/materials.html#getStepsNum,CheckeredPigment	materials: getStepsNum(pigment: CheckeredPigment): int	
+BRDF	traynim/materials.html#BRDF	materials: BRDF	
+newBRDF	traynim/materials.html#newBRDF,Pigment	materials: newBRDF(pigment: Pigment = newUniformPigment(white)): BRDF	
+eval	traynim/materials.html#eval.e,BRDF,Normal,Vec,Vec,Vec2d	materials: eval(brdf: BRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color	
+scatterRay	traynim/materials.html#scatterRay.e,BRDF,PCG,Vec,Point,Normal,int	materials: scatterRay(brdf: BRDF; pcg: var PCG; incomingDir: Vec; interactionPoint: Point;\n           normal: Normal; depth: int): Ray	
+DiffuseBRDF	traynim/materials.html#DiffuseBRDF	materials: DiffuseBRDF	
+newDiffuseBRDF	traynim/materials.html#newDiffuseBRDF,Pigment,float	materials: newDiffuseBRDF(pigment: Pigment = newUniformPigment(white); reflectance = 1.0): DiffuseBRDF	
+eval	traynim/materials.html#eval.e,DiffuseBRDF,Normal,Vec,Vec,Vec2d	materials: eval(brdf: DiffuseBRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color	
+scatterRay	traynim/materials.html#scatterRay.e,DiffuseBRDF,PCG,Vec,Point,Normal,int	materials: scatterRay(brdf: DiffuseBRDF; pcg: var PCG; incomingDir: Vec;\n           interactionPoint: Point; normal: Normal; depth: int): Ray	
+SpecularBRDF	traynim/materials.html#SpecularBRDF	materials: SpecularBRDF	
+newSpecularBRDF	traynim/materials.html#newSpecularBRDF,Pigment	materials: newSpecularBRDF(pigment: Pigment = newUniformPigment(white);\n                thresholdAngleRad = PI / 1800.0): SpecularBRDF	
+eval	traynim/materials.html#eval.e,SpecularBRDF,Normal,Vec,Vec,Vec2d	materials: eval(brdf: SpecularBRDF; normal: Normal; inDir: Vec; outDir: Vec; uv: Vec2d): Color	
+scatterRay	traynim/materials.html#scatterRay.e,SpecularBRDF,PCG,Vec,Point,Normal,int	materials: scatterRay(brdf: SpecularBRDF; pcg: var PCG; incomingDir: Vec;\n           interactionPoint: Point; normal: Normal; depth: int): Ray	
+Material	traynim/materials.html#Material	materials: Material	
+newMaterial	traynim/materials.html#newMaterial,BRDF,Pigment	materials: newMaterial(brdf: BRDF = newBRDF();\n            emittedRadiance: Pigment = newUniformPigment(black)): Material	
