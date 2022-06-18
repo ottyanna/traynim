@@ -27,7 +27,7 @@ To get a more detailed description of the source code, refer to the [documentati
 
 ## Demo-Preview
 
-Traynim can produce images like these with four different renderers: path tracer, on/off, point light and flat renderer respectively.
+Traynim can produce images like these with four different renderers: path tracer, on/off, point light and flat renderer respectively. [Here](https://ottyanna.github.io/traynim/gallery/gallery.html) you can find some more images.
 
 <p align="center"> 
   <img src="img/demo/Antialiasing/pathTracingr4s16.png" alt="Sample signal" width="45%" height="50%">
