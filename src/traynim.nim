@@ -169,7 +169,6 @@ proc stack(inPfmFileName: string, numOfFiles : int,
             quit("ERROR: " & getCurrentExceptionMsg())
         imgs.add(readPfmImage(inPfm))
         inPfm.close()
-    #I need to verify that images are of the same width and height maybe
 
     var oImg = newHDRImage(imgs[0].width, imgs[0].height)
 
@@ -244,14 +243,6 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
                     color1 = newColor(0.3, 0.5, 0.1),
                     color2 = newColor(0.1, 0.2, 0.5)))
             )
-        
-
-        #[ let bigSphereMaterial = newMaterial(
-            brdf = newDiffuseBRDF(
-                pigment = newUniformPigment(newColor(0.3, 0.4, 0.8))
-            )
-        )
- ]#
 
         let inPfm = newFileStream("img/pfm2formatExamples/sample.pfm", fmRead)
         var img = readPfmImage(inPfm)
@@ -268,11 +259,13 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
                 pigment = newUniformPigment(newColor(0.7, 0.1, 0.3)))
         )
 
+        #[
         let mirrorMaterial = newMaterial(
             brdf = newSpecularBRDF(
                 pigment = newUniformPigment(newColor(0.6, 0.2, 0.3))
             )
         )
+        ]#
 
         world.addShape(
             newSphere(material = skyMaterial,
@@ -293,19 +286,10 @@ proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
             newSphere(
                 material = littleSphereMaterial,
                 transformation = translation(newVec(0,0, 2.5))*scaling(newVec(0.3,0.3,0.3))
-                # Pay attention to the order of the transformations! 
-                # In order to do it right the scaling must be second to the translation
+                # Pay attention to the order of the transformations!
             )
         )
-
-
-        #[ world.addShape(
-            newSphere(
-                material = mirrorMaterial,
-                transformation = translation(newVec(1, 2.5, 0))
-            )
-        )
- ]#
+ 
         world.addLight(newPointLight(position = newPoint(-30, 30, 30),
                 color = white))
         
