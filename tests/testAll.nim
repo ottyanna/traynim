@@ -21,8 +21,10 @@ import
     math,
     options, 
     streams,
+    strutils,
     sugar,
-    unittest
+    unittest,
+    tables
 
 import
     cameras, 
@@ -33,9 +35,11 @@ import
     hitRecord,
     imageTracer,
     materials,
+    lights,
     pcg,  
     ray, 
     render,
+    sceneFiles,
     shapesDef,
     shapes,
     transformations,
@@ -109,6 +113,7 @@ suite "test colors.nim":
         assert (col1 * col2).areClose(Color(r: 5.0, g: 14.0, b: 27.0))
         assert not (col1 + col2).areClose(Color(r: 3.0, g: 9.0, b: 12.0))
         assert ($col1) == "<r: 1.0 , g: 2.0, b: 3.0>" #test on Color print
+        assert (col1 / 2.0).areClose(newColor(0.5, 1, 1.5))
 
     test "test on Color Luminosity":
         assert areClose(luminosity(col1), 2.0)
@@ -291,7 +296,7 @@ suite "test imageTracer.nim":
         setup:
             let image = newHdrImage(width = 4, height = 2)
             let camera = newPerspectiveCamera(aspectRatio = 2)
-            var tracer = newImageTracer(image = image, camera = camera)
+            var tracer {.used.} = newImageTracer(image = image, camera = camera)
 
         test "test orientation":
             # Fire a ray against top-left corner of the screen
@@ -903,3 +908,262 @@ suite "test world.nim":
                                       observerPos=newPoint(0.0, 0.0, 0.0))
         assert world.isPointVisible(point=newPoint(0.0, 0.0, 10.0),
                                       observerPos=newPoint(0.0, 0.0, 0.0))
+
+suite "test sceneFiles.nim":
+
+    test "test Input Files":
+
+        var stream = newInputStream(newStringStream("abc   \nd\nef"))
+
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 1
+
+        assert stream.readChar() == 'a'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 2
+
+        stream.unreadChar('A')
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 1
+
+        assert stream.readChar() == 'A'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 2
+
+        assert stream.readChar() == 'b'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 3
+
+        assert stream.readChar() == 'c'
+        assert stream.location.lineNum == 1
+        assert stream.location.colNum == 4
+
+        stream.skipWhiteSpAndComments()
+
+        assert stream.readChar() == 'd'
+        assert stream.location.lineNum == 2
+        assert stream.location.colNum == 2
+
+        assert stream.readChar() == '\n'
+        assert stream.location.lineNum == 3
+        assert stream.location.colNum == 1
+
+        assert stream.readChar() == 'e'
+        assert stream.location.lineNum == 3
+        assert stream.location.colNum == 2
+
+        assert stream.readChar() == 'f'
+        assert stream.location.lineNum == 3
+        assert stream.location.colNum == 3
+
+        assert stream.readChar() == '\0'
+    
+    
+    test "test lexer":
+
+        const testString = """
+        # This is a comment
+        # This is another comment
+        new material sky_material(
+            diffuse(image("my file.pfm")),
+            <5.0, 500.0, 300.0>
+        ) # Comment at the end of the line
+        """
+        var inputFile = newInputStream(newStringStream(testString))
+
+        var testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("new")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("material")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == identifier
+        assert testToken.token.idWord == "sky_material"
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '('
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("diffuse")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '('
+        
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == keyword
+        assert testToken.token.keywords == parseEnum[KeywordEnum]("image")
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '('
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalString
+        assert testToken.token.litString == "my file.pfm"
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ','
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '<'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalNumber
+        assert areClose(testToken.token.litNum, 5.0)
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ','
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalNumber
+        assert areClose(testToken.token.litNum, 500.0)
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ','
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == literalNumber
+        assert areClose(testToken.token.litNum, 300.0)
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == '>'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == symbol
+        assert testToken.token.sym == ')'
+
+        testToken = inputFile.readToken()
+        assert testToken.token.kind == stopToken
+        
+    test "test parser":
+
+        const testString = """
+            float clock(150)
+
+            material skyMaterial(
+                diffuse(uniform(<0, 0, 0>)),
+                uniform(<0.7, 0.5, 1>)
+            )
+
+            # Here is a comment
+
+            material groundMaterial(
+                diffuse(checkered(<0.3, 0.5, 0.1>,
+                                  <0.1, 0.2, 0.5>, 4)),
+                uniform(<0, 0, 0>)
+            )
+
+            material sphereMaterial(
+                specular(uniform(<0.5, 0.5, 0.5>)),
+                uniform(<0, 0, 0>)
+            )
+
+            plane (skyMaterial, translation([0, 0, 100]) * rotation_y(clock))
+            plane (groundMaterial, identity)
+
+            sphere(sphereMaterial, translation([0, 0, 1]))
+
+            light([-30,30,30],<1,1,1>)
+            light([-30,30,10],<1,1,0.5>, 9.3)
+
+            camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 2.0)"""
+
+        var inputFile = newInputStream(newStringStream(testString))
+
+        let scene = parseScene(inputFile)
+
+        # Check that the float variables are ok
+
+        assert scene.floatVariables.len == 1
+        assert "clock" in scene.floatVariables
+        assert scene.floatVariables["clock"] == 150.0
+
+        # Check that the materials are ok
+
+        assert len(scene.materials) == 3
+        assert "sphereMaterial" in scene.materials
+        assert "skyMaterial" in scene.materials
+        assert "groundMaterial" in scene.materials
+
+        let sphereMaterial = scene.materials["sphereMaterial"]
+        let skyMaterial = scene.materials["skyMaterial"]
+        let groundMaterial = scene.materials["groundMaterial"]
+
+        assert not (skyMaterial.brdf of SpecularBRDF)
+        assert skyMaterial.brdf of DiffuseBRDF
+        assert DiffuseBRDF(skyMaterial.brdf).pigment of UniformPigment
+        assert (DiffuseBRDF(skyMaterial.brdf)).pigment.UniformPigment.color.areClose(black)
+        assert (DiffuseBRDF(skyMaterial.brdf)).pigment.UniformPigment.color.areClose(black)
+
+
+
+        assert groundMaterial.brdf of DiffuseBRDF
+        assert DiffuseBRDF(groundMaterial.brdf).pigment of CheckeredPigment
+        assert getColor1(CheckeredPigment(DiffuseBRDF(groundMaterial.brdf).pigment)).areClose(newColor(0.3, 0.5, 0.1))
+        assert getColor2(CheckeredPigment(DiffuseBRDF(groundMaterial.brdf).pigment)).areClose(newColor(0.1, 0.2, 0.5))
+        assert getStepsNum(CheckeredPigment(DiffuseBRDF(groundMaterial.brdf).pigment)) == 4
+
+        assert sphereMaterial.brdf of SpecularBRDF
+        assert SpecularBRDF(sphereMaterial.brdf).pigment of UniformPigment
+        assert (SpecularBRDF(sphereMaterial.brdf)).pigment.UniformPigment.color.areClose(newColor(0.5, 0.5, 0.5))
+
+        assert skyMaterial.emittedRadiance of UniformPigment
+        assert UniformPigment(skyMaterial.emittedRadiance).color.areClose(newColor(0.7, 0.5, 1.0))
+        assert groundMaterial.emittedRadiance of UniformPigment
+        assert UniformPigment(groundMaterial.emittedRadiance).color.areClose(newColor(0, 0, 0))
+        assert sphereMaterial.emittedRadiance of UniformPigment
+        assert UniformPigment(sphereMaterial.emittedRadiance).color.areClose(newColor(0, 0, 0))
+
+
+
+        # Check that the shapes are ok
+
+        assert len(scene.world.shapes) == 3
+        assert scene.world.shapes[0] of shapes.Plane
+        assert scene.world.shapes[0].transformation.areClose(translation(newVec(0, 0, 100)) * rotationY(150.0))
+        assert scene.world.shapes[1] of shapes.Plane
+        assert scene.world.shapes[1].transformation.areClose(newTransformation())
+        assert scene.world.shapes[2] of shapes.Sphere
+        assert scene.world.shapes[2].transformation.areClose(translation(newVec(0, 0, 1)))
+
+        # Check that the lights are ok
+        assert scene.world.pointLights[0] is PointLight
+        assert scene.world.pointLights[0].position.areClose(newPoint(-30,30,30))
+        assert scene.world.pointLights[0].color.areClose(white)
+
+        assert scene.world.pointLights[1] is PointLight
+        assert scene.world.pointLights[1].position.areClose(newPoint(-30,30,10))
+        assert scene.world.pointLights[1].color.areClose(newColor(1,1,0.5))
+        assert scene.world.pointLights[1].linearRadius.areClose(9.3)
+
+        # Check that the camera is ok
+
+        assert scene.camera.get of PerspectiveCamera
+        assert scene.camera.get.transformation.areClose(rotationZ(30) * translation(newVec(-4, 0, 1)))
+        assert areClose(scene.camera.get.aspectRatio,1.0)
+        assert areClose(PerspectiveCamera(scene.camera.get).screenDistance,2.0)
+            
+
+        
+
+        
+

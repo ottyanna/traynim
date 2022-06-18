@@ -1,0 +1,24 @@
+float ang(0)
+
+material skyMaterial(
+    diffuse(uniform(<0.5, 0.0, 0.7>)),
+    uniform(<0.7, 0.5, 1>)
+)
+
+material groundMaterial(
+    diffuse(checkered(<0.3, 0.5, 0.1>,
+                      <0.1, 0.2, 0.5>, 4)),
+    uniform(<0.2, 0.3, 0.3>)
+)
+
+material sphereMaterial(
+    diffuse(uniform(<0.5, 0.5, 0.5>)),
+    uniform(<0.1, 0.1, 0>)
+)
+
+plane (skyMaterial, translation([0, 0, 100]))
+plane (groundMaterial, identity)
+sphere(sphereMaterial, translation([0, 0, 1]))
+light([-5,5,5],<1,1,1>)
+
+camera(perspective, rotation_z(ang) * translation([-4, 0, 1]), 1.0, 2.0)

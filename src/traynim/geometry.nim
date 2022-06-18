@@ -170,6 +170,7 @@ template define3dOpParsing(fname: untyped, type1: typedesc, rettype: typedesc) =
 define3dOpParsing(parsePointToVec, Point, Vec)
 define3dOpParsing(parseNormalToVec, Normal, Vec)
 define3dOpParsing(parseVecToNormal, Vec, Normal)
+define3dOpParsing(parseVecToPoint, Vec, Point)
 
 template defineSqrNorm(type1: typedesc) =
     proc sqrNorm*(a: type1): float64 =

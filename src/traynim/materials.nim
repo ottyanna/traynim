@@ -119,6 +119,15 @@ method getColor*(pigment: ImagePigment, vec2d: Vec2d): Color =
     # See https://en.wikipedia.org/wiki/Bilinear_interpolation
     return pigment.image.getPixel(col, row)
 
+proc getColor1*(pigment:CheckeredPigment):Color=
+    return pigment.color1
+
+proc getColor2*(pigment:CheckeredPigment):Color=
+    return pigment.color2
+
+proc getStepsNum*(pigment:CheckeredPigment):int=
+    return pigment.stepsNum
+
 
 #-------------- BRDF --------------
 

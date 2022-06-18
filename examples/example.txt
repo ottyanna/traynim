@@ -1,0 +1,36 @@
+# example input file for traynim
+
+# declare float variables
+# to overwrite the value you can use the 
+# option -d="ang:20 clock:90"
+float ang(0)
+float clock(10)
+
+# declare materials
+material skyMaterial(
+    diffuse(uniform(<0.5, 0.0, 0.7>)),
+    uniform(<0.7, 0.5, 1>)
+)
+
+material groundMaterial(
+    diffuse(checkered(<0.3, 0.5, 0.1>,
+                      <0.1, 0.2, 0.5>, 4)),
+    uniform(<0, 0, 0>)
+)
+
+# The path to the image must be from the executable
+material sphereMaterial(
+    diffuse(image("tests/HdrImageReferences/grass.pfm" )),
+    uniform(<0.1, 0.1, 0>)
+)
+
+# if you want to use -a=pointlight declare a light
+light([-5,5,5],<1,1,1>)
+
+# construct the scene
+sphere (skyMaterial, scaling([100, 100, 100]))
+plane (groundMaterial, identity)
+sphere(sphereMaterial, rotationZ(clock)*translation([0, 0, 1]))
+
+# declare a camera with position, aspect ratio (width/height) and distance from screen
+camera(perspective, rotation_z(ang) * translation([-4, 0, 1]), 1.3, 2.0)
