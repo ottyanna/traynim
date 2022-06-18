@@ -59,7 +59,7 @@ proc buildVariablesTable(declareFloat:string):Table[string,float] =
 
 # --------------RENDER--------------
 
-proc renderer( inSceneName : string = "examples/exTest.txt",
+proc renderer( inSceneName : string = "examples/example.txt",
                declareFloat:string ="",
                width = 640, height = 480,
                algorithm = "pathtracing",
@@ -213,7 +213,7 @@ proc pfm2format(inPfmFileName: string, factor = 0.2, gamma = 1.0,
 
     echo ("File " & outputFileName & " has been written to disk")
 
-# --------------DEMO--------------
+# --------------DEMO (Deprecated)--------------
 
 proc demo(angleDeg = 0.0, orthogonal = false, width = 640, height = 480,
         fileName = "demo", format = "png", algorithm = "pathtracing",
