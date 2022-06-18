@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 ## Added
 - **Major update**: new `renderer` command to add scene from file 
 - **Major update**: new `stack` command to reduce noise
+- Added compiler to parse scene from file
+
+## Deprecated
+- `demo` command
 
 
 ## [0.3.0](https://github.com/ottyanna/traynim/releases/tag/v0.3.0)
