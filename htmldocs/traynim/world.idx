@@ -1,6 +1,0 @@
-World	traynim/world.html#World	world: World	
-newWorld	traynim/world.html#newWorld	world: newWorld(): World	
-addShape	traynim/world.html#addShape,World,Shape	world: addShape(world: var World; shape: Shape)	
-addLight	traynim/world.html#addLight,World,PointLight	world: addLight(world: var World; light: PointLight)	
-rayIntersection	traynim/world.html#rayIntersection,World,Ray	world: rayIntersection(world: World; ray: Ray): Option[HitRecord]	
-isPointVisible	traynim/world.html#isPointVisible,World,Point,Point	world: isPointVisible(world: World; point: Point; observerPos: Point): bool	

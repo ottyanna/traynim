@@ -1,2 +1,0 @@
-PointLight	traynim/lights.html#PointLight	lights: PointLight	
-newPointLight	traynim/lights.html#newPointLight,Point,Color,float	lights: newPointLight(position: Point; color: Color; linearRadius: float = 0.0): PointLight	

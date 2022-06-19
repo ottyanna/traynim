@@ -1,8 +1,0 @@
-Camera	traynim/cameras.html#Camera	cameras: Camera	
-fireRay	traynim/cameras.html#fireRay.e,Camera,float64,float64	cameras: fireRay(c: Camera; u: float64; v: float64): Ray	
-OrthogonalCamera	traynim/cameras.html#OrthogonalCamera	cameras: OrthogonalCamera	
-newOrthogonalCamera	traynim/cameras.html#newOrthogonalCamera,float	cameras: newOrthogonalCamera(aspectRatio = 1.0; transformation = newTransformation()): OrthogonalCamera	
-fireRay	traynim/cameras.html#fireRay.e,OrthogonalCamera,float64,float64	cameras: fireRay(c: OrthogonalCamera; u: float64; v: float64): Ray	
-PerspectiveCamera	traynim/cameras.html#PerspectiveCamera	cameras: PerspectiveCamera	
-newPerspectiveCamera	traynim/cameras.html#newPerspectiveCamera,float,float	cameras: newPerspectiveCamera(aspectRatio = 1.0; screenDistance = 1.0;\n                     transformation = newTransformation()): PerspectiveCamera	
-fireRay	traynim/cameras.html#fireRay.e,PerspectiveCamera,float64,float64	cameras: fireRay(c: PerspectiveCamera; u: float64; v: float64): Ray	

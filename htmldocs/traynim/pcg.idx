@@ -1,4 +1,0 @@
-PCG	traynim/pcg.html#PCG	pcg: PCG	
-random	traynim/pcg.html#random,PCG	pcg: random(pcg: var PCG): uint32	
-newPCG	traynim/pcg.html#newPCG,uint64,uint64	pcg: newPCG(initState: uint64 = 42; initSeq: uint64 = 54): PCG	
-randomFloat	traynim/pcg.html#randomFloat,PCG	pcg: randomFloat(pcg: var PCG): float	

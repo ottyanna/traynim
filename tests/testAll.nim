@@ -489,11 +489,12 @@ suite "test render.nim":
 
         var pcg = newPCG()
 
+        # Run the furnace test several times using random values for the emitted radiance and reflectance
         for i in 0 ..< 10:
             var world = newWorld()
             
             let emittedRadiance = pcg.randomFloat()
-            let reflectance = pcg.randomFloat() * 0.9
+            let reflectance = pcg.randomFloat() * 0.9 # Be sure to pick a reflectance that's not too close to 1
             let enclosureMaterial = newMaterial(
                 brdf = newDiffuseBRDF(pigment=newUniformPigment(white*reflectance)),
                 emittedRadiance = newUniformPigment(white*emittedRadiance) 
@@ -502,6 +503,7 @@ suite "test render.nim":
             world.addShape(newSphere(material=enclosureMaterial))
             
             let pathTracer = newPathTracer(pcg = pcg, raysNum=1, world=world, maxDepth = 100, rouletteMax=101)
+            # We don't want to use russian roulette so we set rouletteMax>maxDepth
 
             let ray = newRay(origin = newPoint(0,0,0), dir = newVec(1,0,0))
             let color = pathTracer.call(ray)
@@ -1164,6 +1166,25 @@ suite "test sceneFiles.nim":
             
 
         
+    test "test parser undefinedMaterial":
+        # Check that unknown materials raises a GrammarError
+        let stream = """
+        plane(this_material_does_not_exist, identity)
+        """
 
-        
+        var inputFile = newInputStream(newStringStream(stream))
 
+        expect GrammarError:
+            discard parseScene(inputFile)
+
+    test "test parser double camera":
+        # Check that defining two cameras in the same file raises a GrammarError
+        let stream = """
+        camera(perspective, rotation_z(30) * translation([-4, 0, 1]), 1.0, 1.0)
+        camera(orthogonal, identity, 1.0, 1.0)
+        """
+        var inputFile = newInputStream(newStringStream(stream))
+
+        expect GrammarError:
+
+            discard parseScene(inputFile)
