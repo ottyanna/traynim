@@ -1188,3 +1188,12 @@ suite "test sceneFiles.nim":
         expect GrammarError:
 
             discard parseScene(inputFile)
+
+suite "test issue #9":
+
+    test "test bug on file":
+
+        let inSceneName = "examples/example.txt"
+        let inScene = openFileStream(inSceneName,fmRead)
+        var inputStream = newInputStream(stream=inScene, fileName=inSceneName)
+        var scene = parseScene(inputStream)
