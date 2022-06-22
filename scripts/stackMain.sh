@@ -37,8 +37,8 @@ nimble run
 cd scripts
 
 # the first one is the angle, the second the imput scene, the third the initSeq
-parallel -j "$1" ./provaStack.sh '{}' "$2" '{}' ::: $(seq 0 10) 
+parallel -j "$1" ./stack.sh '{}' "$2" '{}' ::: $(seq 0 10) 
 
 ./../traynim stack -i="stack/img" -o="stack/Def" -n=11 
 
-rm stackProva/img*
+rm stack/img*

@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 ## [1.0.1] - 22/06/2022
 
 ### Fixed
--   Fixed an issue with missing pfm image [#10](https://github.com/ottyanna/traynim/pull/10)
+- Fixed an issue with missing pfm image [#10](https://github.com/ottyanna/traynim/pull/10)
+- Fixed bug with stackMain.sh script
 
 ## [1.0.0] - 18/06/2022
 
